@@ -42,7 +42,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://axon-hire.vercel.app"
+      // "https://axon-hire.vercel.app"
+      "https://axon-hire-complete-mvp.vercel.app"
     ],
     methods: "GET,POST,PUT,DELETE,PATCH",
     allowedHeaders: ["Content-Type", "Authorization"],

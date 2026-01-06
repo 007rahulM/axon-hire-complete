@@ -38,7 +38,11 @@ const jobSchema = new mongoose.Schema({
     type: Boolean, 
     default: true 
   },
-
+  // 👇 ADD THIS FIELD HERE
+  deadline: { 
+    type: Date 
+  },
+ 
   //--------new field link the job to the recruiter who posted it
   postedBy: {
       type: Schema.Types.ObjectId,

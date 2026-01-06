@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
+// 👇 NEW IMPORT: Google Button Component
+import { GoogleLogin } from '@react-oauth/google';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,7 +12,8 @@ function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const navigate = useNavigate();
-  const { login } = useAuth();
+  // 👇 UPDATE: Get googleLogin from context
+  const { login, googleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +31,18 @@ function Login() {
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");
       setIsSubmitting(false);
+    }
+  };
+// 👇 NEW: Handle Google Login Success
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      console.log("Google response:", credentialResponse); // Debug log
+      // Send ONLY the credential string to context
+      await googleLogin(credentialResponse.credential);
+      navigate("/"); 
+    } catch (error) {
+      console.error("Google Login Failed:", error);
+      setError("Google Login Failed. Please try again.");
     }
   };
 
@@ -103,6 +118,26 @@ function Login() {
             >
               {isSubmitting ? "Signing in..." : "Sign In"}
             </button>
+
+            {/* 👇 GOOGLE LOGIN SECTION */}
+            <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-800"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-[#0f172a] text-slate-500">Or continue with</span>
+                </div>
+            </div>
+
+            <div className="flex justify-center">
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => console.log('Login Failed')}
+                    theme="filled_black" // Fits your Dark Theme perfectly
+                    shape="pill"
+                    width="100%"
+                />
+            </div>
 
           </form>
 

@@ -6,6 +6,10 @@ const Application = require("../models/Application"); // Import Application to h
 const verifyToken = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
+// 👇 NEW IMPORTS FOR JOB ALERTS
+const JobAlert = require("../models/JobAlert");
+const nodemailer = require("nodemailer");
+
 /*
 @route GET /api/jobs
 @desc Get all ACTIVE jobs (Public)
@@ -32,8 +36,6 @@ router.get("/my-jobs", verifyToken, async (req, res) => {
     const jobs = await Job.find({ postedBy: req.user.id }).sort({ createdAt: -1 });
     
     // Optional: Calculate applicant count for each job
-    // We map over jobs and find count. Note: This assumes not too many jobs. 
-    // For scaling, we would use aggregation, but this is fine for MVP.
     const jobsWithCounts = await Promise.all(jobs.map(async (job) => {
         const count = await Application.countDocuments({ jobId: job._id });
         return { ...job.toObject(), applicantCount: count };
@@ -53,33 +55,70 @@ router.get("/my-jobs", verifyToken, async (req, res) => {
 */
 router.post("/", [verifyToken, adminMiddleware], async (req, res) => {
   try {
-    const { title, company, location, salary ,description, requirements} = req.body;
+    const { title, company, location, salary, description, requirements, deadline } = req.body;
 
     if (!title || !company || !location || !salary || !description || !requirements) {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
-    let atsEnabled = true;
-    if (!requirements || requirements.length === 0) {
-      atsEnabled = false;
-    }
-
     const newJob = new Job({
-      title,
-      company,
-      location,
-      salary,
-      description,
+      title, company, location, salary, description,
       requirements: requirements || [],
-      atsEnabled, 
+      atsEnabled: requirements?.length > 0,
+      deadline, // Saved to DB
       postedBy: req.user.id
     });
 
     const savedJob = await newJob.save();
+
+    // ✅ STEP 1: Send the response IMMEDIATELY
+    // This stops the frontend from hanging and prevents timeouts.
     res.status(201).json(savedJob);
+
+    // ✅ STEP 2: Background Task (Emails & Notifications)
+    // setImmediate moves this logic out of the main request-response cycle.
+    setImmediate(async () => {
+      try {
+        const matchingAlerts = await JobAlert.find({ keywords: { $in: [title] } });
+
+        if (matchingAlerts.length > 0) {
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "codementoraiyt@gmail.com",
+              pass: "YOUR_APP_PASSWORD" 
+            }
+          });
+
+          // Send notifications to DB first (Fast)
+          const Notification = require("../models/Notification");
+          const notifs = matchingAlerts.map(alert => ({
+            user: alert.userId, // Ensure your Alert model has userId
+            title: "New Job Match!",
+            message: `${company} just posted a ${title} position.`,
+            relatedLink: "/jobs"
+          }));
+          await Notification.insertMany(notifs);
+
+          // Send Emails (Slow - now safe because it's in background)
+          matchingAlerts.forEach(alert => {
+            const mailOptions = {
+              from: '"Axon Hire" <codementoraiyt@gmail.com>',
+              to: alert.userEmail,
+              subject: `🔥 New Job Alert: ${title}`,
+              html: `<h3>New Job Found: ${title}</h3><p>Posted by ${company}</p>`
+            };
+            transporter.sendMail(mailOptions);
+          });
+        }
+      } catch (bgError) {
+        console.error("Background Alert Error:", bgError);
+      }
+    });
+
   } catch (err) {
     console.error("Error posting job:", err.message);
-    res.status(500).json({ message: "Server error" });
+    if (!res.headersSent) res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -106,7 +145,6 @@ router.delete("/:id", verifyToken, async (req, res) => {
         await Job.findByIdAndDelete(jobId);
         
         // 2. 🔥 CASCADE DELETE: Delete all applications for this job
-        // This ensures they don't show up as "Deleted Job" in your dashboard
         await Application.deleteMany({ jobId: jobId });
 
         res.json({ message: "Job and associated applications removed" });
@@ -133,8 +171,7 @@ router.patch("/:id/toggle", verifyToken, async (req, res) => {
         return res.status(404).json({ message: "Job not found" });
     }
 
-    // 2. Safe Ownership Check (Convert both to strings to be sure)
-    // We handle cases where postedBy might be an object or a string
+    // 2. Safe Ownership Check
     const postedById = job.postedBy._id ? job.postedBy._id.toString() : job.postedBy.toString();
     
     if (postedById !== userId) {
@@ -142,25 +179,47 @@ router.patch("/:id/toggle", verifyToken, async (req, res) => {
     }
 
     // 3. Determine New Status
-    // If isOpen is undefined (old job), assume it was OPEN (true), so we switch to CLOSED (false).
     const currentStatus = job.isOpen === undefined ? true : job.isOpen;
     const newStatus = !currentStatus;
 
-    // 4. Force Update using findByIdAndUpdate
-    // This bypasses schema strictness issues on old documents
+    // 4. Force Update
     const updatedJob = await Job.findByIdAndUpdate(
         jobId,
-        { $set: { isOpen: newStatus } }, // Explicitly set the field
-        { new: true } // Return the updated document
+        { $set: { isOpen: newStatus } }, 
+        { new: true } 
     );
 
-    console.log(`Job ${jobId} toggled to ${newStatus}`); // Log success to server terminal
+    console.log(`Job ${jobId} toggled to ${newStatus}`);
 
     res.json({ message: "Job status updated", job: updatedJob });
 
   } catch (err) {
-    console.error("CRITICAL TOGGLE ERROR:", err); // This prints the real error to your VS Code terminal
+    console.error("CRITICAL TOGGLE ERROR:", err); 
     res.status(500).json({ message: "Server error during toggle" });
   }
 });
+
+// @route   POST /api/jobs/cron/cleanup
+router.post("/cron/cleanup", async (req, res) => {
+  try {
+    // 1. Check for the Secret Key in the headers
+    const cronSecret = req.headers["x-cron-auth"];
+    
+    // You should put this secret in your .env file
+    if (cronSecret !== process.env.CRON_SECRET) {
+      return res.status(401).json({ message: "Unauthorized: Invalid Secret Key" });
+    }
+
+    const now = new Date();
+    const result = await Job.updateMany(
+      { deadline: { $lt: now }, isOpen: true },
+      { $set: { isOpen: false } }
+    );
+    
+    res.json({ success: true, closedCount: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

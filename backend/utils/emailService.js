@@ -15,7 +15,7 @@ const createTemplate = (title, bodyContent, buttonText, buttonLink) => {
   return `
     <!DOCTYPE html>
     <html>
-    <head>
+    <head> 
       <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f5; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -85,7 +85,7 @@ const sendWelcomeEmail = async (user) => {
     <p>You are now part of an intelligent ecosystem that filters noise and highlights talent. To get started, please upload your master resume to unlock our AI scoring engine.</p>
   `;
   
-  const html = createTemplate("Account Activated", body, "Go to Dashboard", "https://axon-hire.vercel.app/login");
+  const html = createTemplate("Account Activated", body, "Go to Dashboard", "https://axon-hire-complete-mvp.vercel.app");
   await sendEmail(user.email, subject, html);
 };
 
@@ -102,7 +102,7 @@ const sendApplicationEmail = async (user, jobTitle, companyName) => {
     <p>Good luck!</p>
   `;
 
-  const html = createTemplate("Application Sent", body, "Track Application", "https://axon-hire.vercel.app/my-applications");
+  const html = createTemplate("Application Sent", body, "Track Application", "https://axon-hire-complete-mvp.vercel.app/my-applications");
   await sendEmail(user.email, subject, html);
 };
 
@@ -143,7 +143,7 @@ const sendStatusUpdateEmail = async (user, jobTitle, status) => {
     isShortlisted ? "Congratulations!" : "Application Update", 
     content, 
     "View Details", 
-    "https://axon-hire.vercel.app/my-applications"
+    "https://axon-hire-complete-mvp.vercel.app/my-applications"
   );
   
   await sendEmail(user.email, subject, html);
@@ -163,5 +163,28 @@ const sendOtpEmail = async (email, otpCode) => {
   await sendEmail(email, subject, html);
 };
 
+// --- 📧 5. INTERVIEW INVITATION ---
+const sendInterviewEmail = async (user, jobTitle, company, details) => {
+  const subject = `Interview Invitation: ${jobTitle} at ${company}`;
+  
+  const body = `
+    <p>Hi ${user.name},</p>
+    <p>We were impressed by your profile and would like to invite you for an interview for the <strong>${jobTitle}</strong> position.</p>
+    
+    <div class="status-box" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;">
+      <h3 style="margin: 0 0 10px 0; color: #166534;">🗓️ Interview Details</h3>
+      <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(details.date).toDateString()}</p>
+      <p style="margin: 5px 0;"><strong>Time:</strong> ${details.time}</p>
+      <p style="margin: 5px 0;"><strong>Link:</strong> <a href="${details.link}" target="_blank">${details.link}</a></p>
+    </div>
+
+    <p>Please make sure to join the link 5 minutes early. If this time does not work, reply to this email immediately.</p>
+  `;
+
+  const html = createTemplate("You're Invited!", body, "Join Meeting", details.link);
+  await sendEmail(user.email, subject, html);
+};
+
+
 // Don't forget to add it to exports!
-module.exports = { sendWelcomeEmail, sendApplicationEmail, sendStatusUpdateEmail, sendOtpEmail };
+module.exports = { sendWelcomeEmail, sendApplicationEmail, sendStatusUpdateEmail, sendOtpEmail, sendInterviewEmail };

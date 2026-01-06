@@ -15,12 +15,14 @@ import AIBot from "./pages/AIBot";//import the AIbot page
 
 import RegisterRecruiter  from "./pages/RegisterRecruiter"; //import the register recuiter page 
 
+import AdminDashboard from "./pages/AdminDashboard";
 
 import MyApplications from "./pages/MyApplications";
 //import our security guards 
 import ProtectedRoute from "./routes/ProtectedRoute";//import the  protected route security
 import AdminRoute from "./routes/AdminRoute";//import the admin route security
 import RecruiterDashboard from "./pages/RecruiterDashboard";
+import SavedJobs from "./pages/SavedJobs"; // 👈 IMPORT THIS
 
 /*
 // function App() {
@@ -121,10 +123,11 @@ function App(){
 
        <Route path="/" element={<Home/>}/>
      <Route path="/jobs" element={<Jobs/>}/>
+     <Route path="/saved-jobs" element={<SavedJobs />} />
      <Route path="/profile" element={<Profile/>}/>
      <Route path="/ai-bot" element={<AIBot/>}/>
      <Route path="/my-applications" element={<MyApplications/>}/>
-    
+    <Route path="/post-job" element={<AdminPostJob />} />
 
     </Route>
 
@@ -132,6 +135,8 @@ function App(){
   <Route element={<AdminRoute />}>
           <Route path="/post-job" element={<AdminPostJob />} />
           <Route path="/recruiter-dashboard" element={<RecruiterDashboard/>}/>
+          {/* 👇 ADD THIS NEW LINE */}
+           <Route path="/admin-dashboard" element={<AdminDashboard/>}/>
         </Route>
 
  </Routes>

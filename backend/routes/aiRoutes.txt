@@ -1,0 +1,1820 @@
+// // // backend/routes/aiRoutes.js
+// // // This file handles all routes that talk to the AI
+
+// // // 1. Import Express
+// // const express = require("express");
+// // // 2. Create the router
+// // const router = express.Router();
+// // // 3. Import our "security guard" (JWT checker)
+// // const verifyToken = require("../middleware/authMiddleware");
+// // // 4. Import the Google AI library
+// // const { GoogleGenerativeAI } = require("@google/generative-ai");
+// // const parseResumeFromUrl = require("../utils/resumeParser");
+
+// // // 5. Initialize the Google AI client (it reads the key from .env)
+// // const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+
+// // /*
+// //  * @route   POST /api/ai/generate-questions
+// //  * @desc    Generate interview questions using Google Gemini
+// //  * @access  Private (User must be logged in)
+// //  */
+// // // 6. Define the route
+// // router.post("/generate-questions", verifyToken, async (req, res) => {
+// //   // 7. Safety net: 'try...catch' block
+// //   try {
+// //     // 8. Get the 'jobTitle' from the request body (from Postman/React)
+// //     const { jobTitle } = req.body;
+
+// //     // 9. Validation
+// //     if (!jobTitle) {
+// //       return res.status(400).json({ message: "Job title is required." });
+// //     }
+
+// //     // 10.  Use the 'gemini-1.0-pro' model.
+// //     // This is the most stable and widely available free-tier model.
+// //     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+// //    const prompt = `
+// // You are Axon — a structured interview intelligence system used by hiring teams
+// // to generate consistent, role-appropriate interview questions.
+
+// // You are NOT a free-form assistant.
+// // You operate using recruiter-calibrated logic similar to real interview banks
+// // used by enterprise companies.
+
+// // INPUT:
+// // JOB TITLE: "${jobTitle}"
+
+// // INTERVIEW DESIGN RULES (MANDATORY):
+
+// // 1. ROLE CALIBRATION
+// // - Infer the expected seniority level from the JOB TITLE.
+// // - Do NOT assume senior or architect-level experience unless explicitly implied.
+// // - Questions must align with what is realistically asked for this role level.
+
+// // 2. QUESTION SELECTION LOGIC
+// // - Generate exactly 5 interview questions.
+// // - Questions must reflect:
+// //   - Frequently asked real-world interview questions
+// //   - Practical decision-making and applied reasoning
+// //   - Scenarios candidates are likely to face on the job
+// // - Avoid trivia, theory-only, or academic questions.
+
+// // 3. DIFFICULTY CONTROL
+// // - At least:
+// //   - 2 practical / scenario-based questions
+// //   - 2 technical depth questions
+// //   - 1 judgment or trade-off question
+// // - Do NOT exceed realistic difficulty for the inferred role level.
+// // - Avoid niche tools or advanced architecture unless role-appropriate.
+
+// // 4. ANSWER EVALUATION STRUCTURE
+// // For EACH question, provide:
+// // - A brief explanation of what the interviewer is evaluating
+// // - The reasoning a strong candidate should demonstrate
+// // - A polished, realistic model answer (clear, concise, job-aligned)
+
+// // 5. CONSISTENCY & REALISM RULES
+// // - Do NOT escalate complexity across runs without new input.
+// // - Do NOT assume technologies not implied by the job title.
+// // - Answers should demonstrate competence, not perfection.
+
+// // OUTPUT FORMAT (STRICT):
+
+// // Question 1) <interview question ending with a question mark?>
+
+// // Answer:
+// // <Explanation of intent + strong candidate reasoning + realistic model answer>
+
+// // (Repeat for Questions 2–5)
+
+// // FORMATTING RULES:
+// // - Exactly one blank line between Question and Answer
+// // - No markdown, no bullets, no special formatting
+// // - Clean, professional, interview-ready language
+// // - Persona: analytical, precise, calm, recruiter-grade
+// // - Depth over verbosity; clarity over excess detail
+
+// // FINAL CONSTRAINTS:
+// // - Do NOT mention being an AI
+// // - Do NOT add extra commentary
+// // - Do NOT exceed 5 questions
+// // `;
+
+
+// //     // 12. Call the Google AI API
+// //     const result = await model.generateContent(prompt);
+// //     // 13. Get the response
+// //     const response = await result.response;
+// //     // 14. Get just the text
+// //     const questions = response.text();
+    
+// //     // 15. Send the AI's answer back to the user
+// //     res.status(200).json({ questions });
+    
+// //   } catch (err) {
+// //     // 16. If anything in the 'try' block fails, send a server error
+// //     console.error("AI generation error:", err.message);
+// //     res.status(500).json({ message: "Error generating questions from AI." });
+// //   }
+// // });
+
+
+// // /*
+// // route -POST/api/ai/analyze-resume
+// // this extract text from resume and analyze it 
+// // this is a private endpoint and its private only recruiter can acces it
+
+// // */
+// // router.post("/analyze-resume",verifyToken, async(req,res)=>{
+// //   try{
+// //     const{resumeUrl,jobTitle}=req.body;
+
+// //     if(!resumeUrl || !jobTitle){
+// //       return res.status(400).json({message:"Resume Url and Job Title are required"});
+// //     }
+// //     // extract text from the pdf url
+// //     console.log("Extracting text from:",resumeUrl);
+// //     const resumeText=await parseResumeFromUrl(resumeUrl);
+
+// //     //safety check that is the resume empty or just a image
+// //     if(!resumeText || resumeText.length<50){
+// //       return res.status(400).json({
+// //         message:"Resume appears emty or is an image so Please upload a text-based PDF"
+
+// //       })}
+
+// //       //the brain  construct the promt for gemini here
+// //       console.log("Asking Gemini to evaluate match...")
+// //       const model=genAI.getGenerativeModel({model:"gemini-2.5-flash-lite"});
+
+// //       // const prompt=`Act as a Senior Tech Recruiter
+// //       // JOB TITLE:"${jobTitle}"
+// //       // CANDIDATE RESUME: "${resumeText}"
+      
+// //       // TASK: Evaluate the candidate's relevance to this job.
+// //       // Output ONLY a JSON object  (no markdown, no extra text) with this format:
+// //       // {
+// //       // "matchScore":<number between 0-100>,
+// //       // "keyStrengths":["<strength 1>" ,"<strength 2>", "<strength 3>"],
+// //       // "missingSkills":"["<missing 1>","<missing 2>"],
+// //       // "summary":"<1 sentence verdict>"
+// //       // }
+// //       // `;
+
+// //       // JOB DESCRIPTION: "${jobDescription}"  ← currently unavailable
+// //   const prompt = `
+// // Act as a modern Applicant Tracking System (ATS) used by enterprise tech recruiters.
+// // You are not a human reviewer. You evaluate resumes using structured, rule-based,
+// // keyword-driven logic similar to real ATS software.
+
+// // INPUTS:
+// // JOB TITLE: "${jobTitle}"
+// // CANDIDATE RESUME TEXT: "${resumeText}"
+
+// // EVALUATION PROCESS (FOLLOW ALL STEPS INTERNALLY):
+
+// // 1. ROLE EXPECTATION INFERENCE
+// // - Infer core (required) and secondary (preferred) skills from the JOB TITLE
+// //   using current industry standards.
+// // - Required skills are mandatory for shortlisting.
+
+// // 2. SKILL NORMALIZATION
+// // - Normalize skill variants and synonyms
+// //   (e.g., JS → JavaScript, Node → Node.js, ReactJS → React).
+// // - Treat equivalent technologies as the same skill.
+
+// // 3. RESUME STRUCTURE AWARENESS
+// // - Detect and prioritize relevant sections:
+// //   Experience > Projects > Skills > Education.
+// // - Skills mentioned with real usage carry more weight than lists.
+
+// // 4. KEYWORD & CONTEXT ANALYSIS
+// // - Validate skills by contextual usage (projects, responsibilities, outcomes).
+// // - Ignore keyword stuffing without explanation or evidence.
+
+// // 5. EXPERIENCE RELEVANCE ASSESSMENT
+// // - Evaluate depth based on:
+// //   - Project complexity
+// //   - Use of real-world tools
+// //   - Backend/frontend/system exposure
+// // - Classify experience relevance as high, medium, or low.
+
+// // 6. HARD CONSTRAINTS:
+// // - If Job Description is not provided, matchScore MUST NOT exceed 85.
+// // - If a required skill is listed but not demonstrated in projects or experience,
+// //   it must reduce the score.
+// // - Do NOT award 100% without JD-based validation.
+
+// // 7. SCORING RULES (DETERMINISTIC)
+// // - Required skills match: 55%
+// // - Preferred skills match: 20%
+// // - Experience relevance: 15%
+// // - Resume clarity and structure: 10%
+// // - Apply penalties (up to −20%) for:
+// //   - Missing required skills
+// //   - Irrelevant or unfocused content
+// //   - Very shallow or unclear experience
+
+// // 8. SCORE SANITY CHECK
+// // - Scores above 85 require strong evidence.
+// // - Scores below 40 indicate weak alignment.
+// // - Final score must be explainable and realistic.
+
+// // OUTPUT RULES:
+// // - Return ONLY valid JSON.
+// // - No markdown, no explanations, no extra text.
+// // - Follow the exact schema below.
+
+// // OUTPUT FORMAT:
+// // {
+// //   "matchScore": <number between 0-100>,
+// //   "matchedSkills": ["skill1", "skill2"],
+// //   "missingRequiredSkills": ["missing1", "missing2"],
+// //   "matchedPreferredSkills": ["skillA"],
+// //   "experienceRelevance": "high | medium | low",
+// //   "summary": "<1 sentence ATS-style verdict>"
+// // }
+// // `;
+
+
+
+// //       //get response form AI
+// //       const result=await model.generateContent(prompt);
+// //       const response=await result.response;
+// //       const text=response.text();
+
+// //       //clean the output (gemini sometimes adds ```json...`` wrappers)
+// //       const cleanedText=text.replace(/```json/g,"").replace(/```/g, "").trim();
+// //       const analysisData=JSON.parse(cleanedText);
+
+// //       //send the intelligence back to the fornted 
+// //       res.status(200).json({
+// //         success:true,
+// //         analysis:analysisData
+// //       });
+// //     }  
+    
+  
+// //   catch(err){
+// //     console.error("AI Analysis Error:", err.message);
+// //     res.status(500).json({message:"Failed to analyze resume with AI "});
+// //   }
+// // });
+
+// // // ---------------------------------------------
+// // // Route 2: CANDIDATE SELF-CHECK (Flexible Mode)
+// // // ---------------------------------------------
+// // router.post("/evaluate-myself", verifyToken, async (req, res) => {
+// //   try {
+// //     const { resumeUrl, targetRole } = req.body; // targetRole is Optional
+
+// //     if (!resumeUrl) return res.status(400).json({ message: "Resume URL is required" });
+
+// //     console.log(`🔍 Candidate Self-Check. Target: ${targetRole || "General"}`);
+// //     const resumeText = await parseResumeFromUrl(resumeUrl);
+
+// //     if (!resumeText || resumeText.length < 50) return res.status(400).json({ message: "Resume empty." });
+
+// //     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+// //     // Dynamic Prompt: Did they provide a dream job title?
+   
+// //   let prompt;
+
+// // if (targetRole) {
+// //   // 🎯 ROLE-SPECIFIC CAREER ANALYSIS
+// //   prompt = `
+// // Act as a structured Career Evaluation System used by hiring coaches and screening tools.
+// // You are analytical and role-focused, not motivational.
+
+// // INPUTS:
+// // TARGET ROLE: "${targetRole}"
+// // CANDIDATE RESUME TEXT: "${resumeText}"
+
+// // EVALUATION RULES (FOLLOW STRICTLY):
+
+// // 1. ROLE EXPECTATION INFERENCE
+// // - Infer required and preferred skills for the TARGET ROLE using current industry standards.
+// // - Required skills are mandatory for role-fit consideration.
+
+// // 2. SKILL NORMALIZATION
+// // - Normalize skill variants and synonyms.
+// // - Treat equivalent technologies as the same skill.
+
+// // 3. EVIDENCE CHECK
+// // - Skills demonstrated in projects or experience carry more weight than skill lists.
+// // - Skills listed without evidence are treated as partial matches.
+
+// // 4. EXPERIENCE RELEVANCE
+// // - Assess relevance based on alignment of projects and experience with the TARGET ROLE.
+// // - Classify experience relevance as High, Medium, or Low.
+
+// // 5. SCORING RULES
+// // - Required skills match: 55%
+// // - Preferred skills match: 20%
+// // - Experience relevance: 15%
+// // - Resume clarity and focus for the role: 10%
+// // - Apply penalties (up to −20%) for missing critical required skills or unfocused experience.
+
+// // 6. SCORE SANITY CHECK
+// // - Scores above 85 require strong evidence.
+// // - Scores below 40 indicate weak role alignment.
+// // - Final score must be realistic and explainable.
+
+// // OUTPUT RULES:
+// // - Output ONLY valid JSON.
+// // - No markdown, no extra text.
+
+// // OUTPUT FORMAT:
+// // {
+// //   "matchScore": <0-100 fit for ${targetRole}>,
+// //   "matchedSkills": ["Skills they have for this role"],
+// //   "missingRequiredSkills": ["Critical skills missing for ${targetRole}"],
+// //   "matchedPreferredSkills": ["Bonus skills they have"],
+// //   "experienceRelevance": "High | Medium | Low",
+// //   "summary": "<Concrete, role-specific advice to improve chances for this job>"
+// // }
+// // `;
+// // } else {
+// //   // 🧾 GENERAL RESUME HEALTH CHECK
+// //   prompt = `
+// // Act as a Resume Quality Evaluation System used by recruiters and screening software.
+// // You evaluate resumes objectively for clarity, structure, and impact.
+
+// // INPUT:
+// // CANDIDATE RESUME TEXT: "${resumeText}"
+
+// // EVALUATION RULES:
+
+// // 1. STRUCTURE & FORMATTING
+// // - Assess layout clarity, section ordering, readability, and consistency.
+
+// // 2. IMPACT & CONTENT QUALITY
+// // - Evaluate use of metrics, outcomes, and specificity.
+// // - Penalize vague or generic statements.
+
+// // 3. SKILL PRESENTATION
+// // - Identify strongest skills clearly supported by evidence.
+// // - Detect weak, missing, or unclear sections.
+
+// // 4. SCORING RULES
+// // - Content clarity and structure: 40%
+// // - Demonstrated skills and projects: 40%
+// // - Professional presentation and focus: 20%
+
+// // 5. SCORE SANITY CHECK
+// // - Scores above 85 indicate strong, job-ready resumes.
+// // - Scores below 50 indicate significant improvement needed.
+
+// // OUTPUT RULES:
+// // - Output ONLY valid JSON.
+// // - No markdown, no extra text.
+
+// // OUTPUT FORMAT:
+// // {
+// //   "matchScore": <0-100 overall resume quality>,
+// //   "matchedSkills": ["Strongest skills clearly demonstrated"],
+// //   "missingRequiredSkills": ["Formatting gaps", "Weak or unclear sections"],
+// //   "matchedPreferredSkills": ["Good resume practices found"],
+// //   "experienceRelevance": "N/A",
+// //   "summary": "<Clear, practical feedback on how to improve resume quality>"
+// // }
+// // `;
+// // }
+
+
+// //     const result = await model.generateContent(prompt);
+// //     const text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+    
+// //     res.status(200).json({ success: true, analysis: JSON.parse(text) });
+
+// //   } catch (err) {
+// //     console.error("Candidate Check Error:", err.message);
+// //     res.status(500).json({ message: "Self-evaluation failed." });
+// //   }
+// // });
+
+
+// // // 17. Export this router so server.js can use it
+// // module.exports = router;
+
+
+
+// // backend/routes/aiRoutes.js
+// // This file handles all routes that talk to the AI
+
+// // 1. Import Express
+// const express = require("express");
+// // 2. Create the router
+// const router = express.Router();
+// // 3. Import our "security guard" (JWT checker)
+// const verifyToken = require("../middleware/authMiddleware");
+// // 4. Import the Google AI library
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
+// const parseResumeFromUrl = require("../utils/resumeParser");
+// const Job=require("../models/Job");
+// const Application = require("../models/Application"); // Import the model
+
+// // 5. Initialize the Google AI client (it reads the key from .env)
+// const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+
+// /*
+//  * @route   POST /api/ai/generate-questions
+//  * @desc    Generate interview questions using Google Gemini
+//  * @access  Private (User must be logged in)
+//  */
+// // 6. Define the route
+// router.post("/generate-questions", verifyToken, async (req, res) => {
+//   // 7. Safety net: 'try...catch' block
+//   try {
+//     // 8. Get the 'jobTitle' from the request body (from Postman/React)
+//     const { jobTitle } = req.body;
+
+//     // 9. Validation
+//     if (!jobTitle) {
+//       return res.status(400).json({ message: "Job title is required." });
+//     }
+
+//     // 10.  Use the 'gemini-1.0-pro' model.
+//     // This is the most stable and widely available free-tier model.
+//     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+//    const prompt = `
+// You are Axon — a structured interview intelligence system used by hiring teams
+// to generate consistent, role-appropriate interview questions.
+
+// You are NOT a free-form assistant.
+// You operate using recruiter-calibrated logic similar to real interview banks
+// used by enterprise companies.
+
+// INPUT:
+// JOB TITLE: "${jobTitle}"
+
+// INTERVIEW DESIGN RULES (MANDATORY):
+
+// 1. ROLE CALIBRATION
+// - Infer the expected seniority level from the JOB TITLE.
+// - Do NOT assume senior or architect-level experience unless explicitly implied.
+// - Questions must align with what is realistically asked for this role level.
+
+// 2. QUESTION SELECTION LOGIC
+// - Generate exactly 5 interview questions.
+// - Questions must reflect:
+//   - Frequently asked real-world interview questions
+//   - Practical decision-making and applied reasoning
+//   - Scenarios candidates are likely to face on the job
+// - Avoid trivia, theory-only, or academic questions.
+
+// 3. DIFFICULTY CONTROL
+// - At least:
+//   - 2 practical / scenario-based questions
+//   - 2 technical depth questions
+//   - 1 judgment or trade-off question
+// - Do NOT exceed realistic difficulty for the inferred role level.
+// - Avoid niche tools or advanced architecture unless role-appropriate.
+
+// 4. ANSWER EVALUATION STRUCTURE
+// For EACH question, provide:
+// - A brief explanation of what the interviewer is evaluating
+// - The reasoning a strong candidate should demonstrate
+// - A polished, realistic model answer (clear, concise, job-aligned)
+
+// 5. CONSISTENCY & REALISM RULES
+// - Do NOT escalate complexity across runs without new input.
+// - Do NOT assume technologies not implied by the job title.
+// - Answers should demonstrate competence, not perfection.
+
+// OUTPUT FORMAT (STRICT):
+
+// Question 1) <interview question ending with a question mark?>
+
+// Answer:
+// <Explanation of intent + strong candidate reasoning + realistic model answer>
+
+// (Repeat for Questions 2–5)
+
+// FORMATTING RULES:
+// - Exactly one blank line between Question and Answer
+// - No markdown, no bullets, no special formatting
+// - Clean, professional, interview-ready language
+// - Persona: analytical, precise, calm, recruiter-grade
+// - Depth over verbosity; clarity over excess detail
+
+// FINAL CONSTRAINTS:
+// - Do NOT mention being an AI
+// - Do NOT add extra commentary
+// - Do NOT exceed 5 questions
+// `;
+
+
+//     // 12. Call the Google AI API
+//     const result = await model.generateContent(prompt);
+//     // 13. Get the response
+//     const response = await result.response;
+//     // 14. Get just the text
+//     const questions = response.text();
+    
+//     // 15. Send the AI's answer back to the user
+//     res.status(200).json({ questions });
+    
+//   } catch (err) {
+//     // 16. If anything in the 'try' block fails, send a server error
+//     console.error("AI generation error:", err.message);
+//     res.status(500).json({ message: "Error generating questions from AI." });
+//   }
+// });
+
+
+// /*
+// route -POST/api/ai/analyze-resume
+// this extract text from resume and analyze it 
+// this is a private endpoint and its private only recruiter can acces it
+
+// */
+// // function calculateATSScore(extracted, requiredSkillsCount) {
+// //   const matchedRequired = extracted.matchedRequiredSkills || [];
+// //   const missingRequired = extracted.missingRequiredSkills || [];
+// //   const matchedPreferred = extracted.matchedPreferredSkills || [];
+
+// //   const M = matchedRequired.length;
+// //   const X = missingRequired.length;
+// //   const R = requiredSkillsCount;
+
+// //   /* =====================================================
+// //      CASE 1: JOB HAS NO REQUIRED SKILLS (LEGACY / BAD DATA)
+// //      ===================================================== */
+// //   if (R === 0) {
+// //     const bonusSkillScore = Math.min(
+// //       40,
+// //       matchedPreferred.length * 5
+// //     );
+
+// //     const experienceScore =
+// //       extracted.experienceRelevance === "high" ? 20 :
+// //       extracted.experienceRelevance === "medium" ? 12 : 6;
+
+// //     const rawScore = bonusSkillScore + experienceScore;
+
+// //     const finalScore = Math.min(60, rawScore);
+
+// //     return {
+// //       matchScore: finalScore,
+// //       matchedSkills: matchedPreferred,
+// //       missingRequiredSkills: [],
+// //       matchedPreferredSkills: matchedPreferred,
+// //       experienceRelevance: extracted.experienceRelevance || "low",
+// //       summary: "Job lacks required skills; score based on general profile alignment"
+// //     };
+// //   }
+
+// //   /* =====================================================
+// //      CASE 2: NORMAL ATS FLOW (REQUIRED SKILLS PRESENT)
+// //      ===================================================== */
+
+// //   // Required skills score (55)
+// //   const requiredSkillScore = Math.round((M / R) * 55);
+
+// //   // Bonus skills score (20 max)
+// //   const bonusSkillScore = Math.min(
+// //     20,
+// //     matchedPreferred.length * 5
+// //   );
+
+// //   // Experience relevance score (15)
+// //   const experienceScore =
+// //     extracted.experienceRelevance === "high" ? 15 :
+// //     extracted.experienceRelevance === "medium" ? 8 : 3;
+
+// //   // Resume structure score (fixed & deterministic)
+// //   const structureScore = 6;
+
+// //   const rawScore =
+// //     requiredSkillScore +
+// //     bonusSkillScore +
+// //     experienceScore +
+// //     structureScore;
+
+// //   // Hard caps based on missing required skills
+// //   const missingRatio = X / R;
+// //   let cap = 100;
+
+// //   if (missingRatio > 0.6) cap = 40;
+// //   else if (missingRatio > 0.4) cap = 60;
+// //   else if (missingRatio <= 0.2) cap = 90;
+
+// //   const finalScore = Math.min(rawScore, cap);
+
+// //   // Verdict
+// //   let summary =
+// //     finalScore < 40 ? "Weak alignment" :
+// //     finalScore < 65 ? "Partial match" :
+// //     finalScore < 85 ? "Strong match" :
+// //     "Near-perfect match";
+
+// //   return {
+// //     matchScore: finalScore,
+// //     matchedSkills: matchedRequired,
+// //     missingRequiredSkills: missingRequired,
+// //     matchedPreferredSkills: matchedPreferred,
+// //     experienceRelevance: extracted.experienceRelevance || "low",
+// //     summary
+// //   };
+// // }
+
+// // router.post("/analyze-resume", verifyToken, async (req, res) => {
+// //   try {
+// //     const { resumeUrl, jobId, applicationId } = req.body;
+
+// //     if (!resumeUrl || !jobId) {
+// //       return res.status(400).json({ message: "Resume Url and Job ID are required" });
+// //     }
+
+// //     const job = await Job.findById(jobId);
+// //     if (!job) {
+// //       return res.status(404).json({ message: "Job not found in database" });
+// //     }
+
+// //     // 🔥 ATS DISABLED GUARD
+// // if (job.atsEnabled === false) {
+// //   return res.status(400).json({
+// //     message: "ATS scoring disabled for this job (no required skills provided)"
+// //   });
+// // }
+
+// //     const resumeText = await parseResumeFromUrl(resumeUrl);
+// //     if (!resumeText || resumeText.length < 50) {
+// //       return res.status(400).json({
+// //         message: "Resume appears empty or image-based"
+// //       });
+// //     }
+ 
+// //     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-pro" });
+// //     const prompt = `
+// // You are an information extraction engine for an Applicant Tracking System.
+// // You do NOT calculate scores.
+// // You do NOT write verdicts.
+
+// // RULES:
+// // - Do NOT infer skills.
+// // - Do NOT guess.
+// // - Extract only what is explicitly present.
+// // - Output must be factual and stable.
+
+// // INPUTS:
+// // JOB TITLE: "${job.title}"
+// // JOB DESCRIPTION: "${job.description}"
+// // REQUIRED SKILLS: "${job.requirements.join(", ")}"
+// // RESUME TEXT: "${resumeText}"
+
+// // TASKS:
+// // 1. For each REQUIRED SKILL:
+// //    - Mark it as present ONLY if explicitly found in resume text.
+// //    - Otherwise mark it as missing.
+
+// // 2. Extract NON-required technical skills explicitly mentioned.
+
+// // 3. Classify experience relevance to JOB DESCRIPTION as:
+// //    - high
+// //    - medium
+// //    - low
+
+// // OUTPUT JSON ONLY:
+// // {
+// //   "matchedRequiredSkills": [],
+// //   "missingRequiredSkills": [],
+// //   "matchedPreferredSkills": [],
+// //   "experienceRelevance": "high | medium | low"
+// // }
+// // `;
+
+
+// //     const result = await model.generateContent(prompt);
+// //     const response = await result.response;
+// //     const text = response.text();
+
+// //     const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+// //     let extractedData;
+// //     try {
+// //       extractedData = JSON.parse(cleanedText);
+// //     } catch {
+// //       return res.status(500).json({ message: "AI returned invalid JSON" });
+// //     }
+
+// //     // 🔥 MATHEMATICAL ATS SCORING (DETERMINISTIC)
+// //     const analysisData = calculateATSScore(
+// //       extractedData,
+// //       job.requirements.length
+// //     );
+
+// //     analysisData.analyzedAt = new Date();
+
+// //     // Save to DB (your logic preserved)
+// //    if (applicationId) {
+// //   try {
+// //     // ✅ Normal case: aiAnalysis is already an array
+// //     await Application.findByIdAndUpdate(applicationId, {
+// //       $push: {
+// //         aiAnalysis: {
+// //           $each: [analysisData],
+// //           $position: 0
+// //         }
+// //       }
+// //     });
+// //   } catch (err) {
+// //     // 🔥 Legacy fix: aiAnalysis was stored as an object
+// //     if (
+// //       err.codeName === "BadValue" ||
+// //       err.message.includes("must be an array")
+// //     ) {
+// //       console.log("⚠️ Legacy aiAnalysis detected. Migrating document...");
+
+// //       const oldDoc = await Application.findById(applicationId);
+
+// //       const newHistory = [analysisData];
+
+// //       if (
+// //         oldDoc.aiAnalysis &&
+// //         typeof oldDoc.aiAnalysis === "object" &&
+// //         !Array.isArray(oldDoc.aiAnalysis)
+// //       ) {
+// //         newHistory.push(oldDoc.aiAnalysis);
+// //       }
+
+// //       await Application.findByIdAndUpdate(applicationId, {
+// //         aiAnalysis: newHistory
+// //       });
+
+// //       console.log("✅ aiAnalysis migration successful.");
+// //     } else {
+// //       throw err;
+// //     }
+// //   }
+// // }
+
+
+// //     res.status(200).json({ success: true, analysis: analysisData });
+
+// //   } catch (err) {
+// //     console.error("AI Analysis Error:", err);
+// //     res.status(500).json({ message: "AI Analysis Failed" });
+// //   }
+// // });
+
+// // --- HELPER: Mathematical Scoring (Your Custom Logic) ---
+// function calculateATSScore(extracted, requiredSkillsCount) {
+//   const matchedRequired = extracted.matchedRequiredSkills || [];
+//   const missingRequired = extracted.missingRequiredSkills || [];
+//   const matchedPreferred = extracted.matchedPreferredSkills || [];
+
+//   const M = matchedRequired.length;
+//   const X = missingRequired.length;
+//   const R = requiredSkillsCount;
+
+//   // Case 1: No required skills defined
+//   if (R === 0) {
+//     const bonusSkillScore = Math.min(40, matchedPreferred.length * 5);
+//     const experienceScore = extracted.experienceRelevance === "high" ? 20 : extracted.experienceRelevance === "medium" ? 12 : 6;
+//     const finalScore = Math.min(60, bonusSkillScore + experienceScore);
+//     return {
+//       matchScore: finalScore,
+//       matchedSkills: matchedPreferred,
+//       missingRequiredSkills: [],
+//       matchedPreferredSkills: matchedPreferred,
+//       experienceRelevance: extracted.experienceRelevance || "low",
+//       summary: "Job lacks required skills; score based on general profile alignment"
+//     };
+//   }
+
+//   // Case 2: Normal Scoring
+//   const requiredSkillScore = Math.round((M / R) * 55);
+//   const bonusSkillScore = Math.min(20, matchedPreferred.length * 5);
+//   const experienceScore = extracted.experienceRelevance === "high" ? 15 : extracted.experienceRelevance === "medium" ? 8 : 3;
+//   const structureScore = 6;
+
+//   const rawScore = requiredSkillScore + bonusSkillScore + experienceScore + structureScore;
+
+//   // Penalties
+//   const missingRatio = X / R;
+//   let cap = 100;
+//   if (missingRatio > 0.6) cap = 40;
+//   else if (missingRatio > 0.4) cap = 60;
+//   else if (missingRatio <= 0.2) cap = 90;
+
+//   const finalScore = Math.min(rawScore, cap);
+
+//   let summary =
+//     finalScore < 40 ? "Weak alignment" :
+//     finalScore < 65 ? "Partial match" :
+//     finalScore < 85 ? "Strong match" :
+//     "Near-perfect match";
+
+//   return {
+//     matchScore: finalScore,
+//     matchedSkills: matchedRequired,
+//     missingRequiredSkills: missingRequired,
+//     matchedPreferredSkills: matchedPreferred,
+//     experienceRelevance: extracted.experienceRelevance || "low",
+//     summary
+//   };
+// }
+
+// // --- Route 2: Analyze Resume (FIXED SAVING LOGIC) ---
+// router.post("/analyze-resume", verifyToken, async (req, res) => {
+//   try {
+//     const { resumeUrl, jobId, applicationId } = req.body;
+
+//     if (!resumeUrl || !jobId) {
+//       return res.status(400).json({ message: "Resume Url and Job ID are required" });
+//     }
+
+//     const job = await Job.findById(jobId);
+//     if (!job) {
+//       return res.status(404).json({ message: "Job not found in database" });
+//     }
+
+//     if (job.atsEnabled === false) {
+//       return res.status(400).json({ message: "ATS scoring disabled for this job" });
+//     }
+
+//     const resumeText = await parseResumeFromUrl(resumeUrl);
+//     if (!resumeText || resumeText.length < 50) {
+//       return res.status(400).json({ message: "Resume appears empty or image-based" });
+//     }
+
+//     // AI Processing
+//     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+//     const prompt = `
+//       You are an information extraction engine for an ATS.
+//       Extract factual data. Do not score.
+//       INPUTS:
+//       JOB TITLE: "${job.title}"
+//       JOB DESCRIPTION: "${job.description}"
+//       REQUIRED SKILLS: "${job.requirements.join(", ")}"
+//       RESUME TEXT: "${resumeText}"
+
+//       OUTPUT JSON ONLY:
+//       {
+//         "matchedRequiredSkills": [],
+//         "missingRequiredSkills": [],
+//         "matchedPreferredSkills": [],
+//         "experienceRelevance": "high | medium | low"
+//       }
+//     `;
+
+//     const result = await model.generateContent(prompt);
+//     const text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+    
+//     let extractedData;
+//     try {
+//       extractedData = JSON.parse(text);
+//     } catch {
+//       return res.status(500).json({ message: "AI returned invalid JSON" });
+//     }
+
+//     // Mathematical Scoring
+//     const analysisData = calculateATSScore(extractedData, job.requirements.length);
+//     analysisData.analyzedAt = new Date();
+
+//     // ===============================================
+//     // 🔥 FIXED: SELF-HEALING DATABASE SAVE
+//     // ===============================================
+//     if (applicationId) {
+//         // 1. Fetch the document first (Safe)
+//         const appDoc = await Application.findById(applicationId);
+        
+//         if (appDoc) {
+//             // 2. Prepare the new history array
+//             // Start with the NEW result
+//             let newHistory = [analysisData];
+
+//             // 3. Check existing data (Is it Array or Object?)
+//             if (Array.isArray(appDoc.aiAnalysis)) {
+//                 // If it's already an array, add old items to it
+//                 newHistory.push(...appDoc.aiAnalysis);
+//             } else if (appDoc.aiAnalysis && typeof appDoc.aiAnalysis === 'object') {
+//                 // If it's an old Object (Legacy), save it into the array
+//                 newHistory.push(appDoc.aiAnalysis);
+//             }
+
+//             // 4. Overwrite the field with the correct Array structure
+//             appDoc.aiAnalysis = newHistory;
+//             await appDoc.save();
+//             console.log("✅ Analysis saved successfully (Self-Healed).");
+//         }
+//     }
+//     // ===============================================
+
+//     res.status(200).json({ success: true, analysis: analysisData });
+
+//   } catch (err) {
+//     console.error("AI Analysis Error:", err);
+//     res.status(500).json({ message: "AI Analysis Failed" });
+//   }
+// });
+// // ---------------------------------------------
+// // Route 2: CANDIDATE SELF-CHECK (Flexible Mode)
+// // ---------------------------------------------
+// router.post("/evaluate-myself", verifyToken, async (req, res) => {
+//   try {
+//     // 🎯 UPDATE: Added jobDescription and requirements to inputs
+//     const { resumeUrl, targetRole, jobDescription, requirements } = req.body; 
+
+//     if (!resumeUrl) return res.status(400).json({ message: "Resume URL is required" });
+
+//     console.log(`🔍 Candidate Self-Check. Target: ${targetRole || "General"}`);
+//     const resumeText = await parseResumeFromUrl(resumeUrl);
+
+//     if (!resumeText || resumeText.length < 50) return res.status(400).json({ message: "Resume empty." });
+
+//     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+//     // Dynamic Prompt: Did they provide a dream job title?
+   
+//   let prompt;
+
+// if (targetRole) {
+//   // 🎯 ROLE-SPECIFIC CAREER ANALYSIS
+//   prompt = `
+// Act as a structured Career Evaluation System used by hiring coaches and screening tools.
+// You are analytical and role-focused, not motivational.
+
+// INPUTS:
+// TARGET ROLE: "${targetRole}"
+// ${jobDescription ? `JOB DESCRIPTION: "${jobDescription}"` : ""}
+// ${requirements ? `REQUIRED SKILLS: "${requirements.join(", ")}"` : ""}
+// CANDIDATE RESUME TEXT: "${resumeText}"
+
+// EVALUATION RULES (FOLLOW STRICTLY):
+
+// 1. ROLE EXPECTATION INFERENCE
+// - If a Job Description is provided, use it as the GROUND TRUTH for required skills.
+// - If not, infer required and preferred skills for the TARGET ROLE using current industry standards.
+// - Required skills are mandatory for role-fit consideration.
+
+// 2. SKILL NORMALIZATION
+// - Normalize skill variants and synonyms.
+// - Treat equivalent technologies as the same skill.
+
+// 3. EVIDENCE CHECK
+// - Skills demonstrated in projects or experience carry more weight than skill lists.
+// - Skills listed without evidence are treated as partial matches.
+
+// 4. EXPERIENCE RELEVANCE
+// - Assess relevance based on alignment of projects and experience with the TARGET ROLE (and Description if present).
+// - Classify experience relevance as High, Medium, or Low.
+
+// 5. SCORING RULES
+// - Required skills match: 55%
+// - Preferred skills match: 20%
+// - Experience relevance: 15%
+// - Resume clarity and focus for the role: 10%
+// - Apply penalties (up to −20%) for missing critical required skills or unfocused experience.
+
+// 6. SCORE SANITY CHECK
+// - Scores above 85 require strong evidence.
+// - Scores below 40 indicate weak role alignment.
+// - Final score must be realistic and explainable.
+
+// OUTPUT RULES:
+// - Output ONLY valid JSON.
+// - No markdown, no extra text.
+
+// OUTPUT FORMAT:
+// {
+//   "matchScore": <0-100 fit for ${targetRole}>,
+//   "matchedSkills": ["Skills they have for this role"],
+//   "missingRequiredSkills": ["Critical skills missing for ${targetRole}"],
+//   "matchedPreferredSkills": ["Bonus skills they have"],
+//   "experienceRelevance": "High | Medium | Low",
+//   "summary": "<Concrete, role-specific advice to improve chances for this job>"
+// }
+// `;
+// } else {
+//   // 🧾 GENERAL RESUME HEALTH CHECK
+//   prompt = `
+// Act as a Resume Quality Evaluation System used by recruiters and screening software.
+// You evaluate resumes objectively for clarity, structure, and impact.
+
+// INPUT:
+// CANDIDATE RESUME TEXT: "${resumeText}"
+
+// EVALUATION RULES:
+
+// 1. STRUCTURE & FORMATTING
+// - Assess layout clarity, section ordering, readability, and consistency.
+
+// 2. IMPACT & CONTENT QUALITY
+// - Evaluate use of metrics, outcomes, and specificity.
+// - Penalize vague or generic statements.
+
+// 3. SKILL PRESENTATION
+// - Identify strongest skills clearly supported by evidence.
+// - Detect weak, missing, or unclear sections.
+
+// 4. SCORING RULES
+// - Content clarity and structure: 40%
+// - Demonstrated skills and projects: 40%
+// - Professional presentation and focus: 20%
+
+// 5. SCORE SANITY CHECK
+// - Scores above 85 indicate strong, job-ready resumes.
+// - Scores below 50 indicate significant improvement needed.
+
+// OUTPUT RULES:
+// - Output ONLY valid JSON.
+// - No markdown, no extra text.
+
+// OUTPUT FORMAT:
+// {
+//   "matchScore": <0-100 overall resume quality>,
+//   "matchedSkills": ["Strongest skills clearly demonstrated"],
+//   "missingRequiredSkills": ["Formatting gaps", "Weak or unclear sections"],
+//   "matchedPreferredSkills": ["Good resume practices found"],
+//   "experienceRelevance": "N/A",
+//   "summary": "<Clear, practical feedback on how to improve resume quality>"
+// }
+// `;
+// }
+
+
+//     const result = await model.generateContent(prompt);
+//     const text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+    
+//     res.status(200).json({ success: true, analysis: JSON.parse(text) });
+
+//   } catch (err) {
+//     console.error("Candidate Check Error:", err.message);
+//     res.status(500).json({ message: "Self-evaluation failed." });
+//   }
+// });
+
+
+// // 17. Export this router so server.js can use it
+// module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// //new one 
+// ////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
+// const express = require("express");
+// const router = express.Router();
+// const verifyToken = require("../middleware/authMiddleware");
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
+// const parseResumeFromUrl = require("../utils/resumeParser");
+// const Job = require("../models/Job");
+// const Application = require("../models/Application");
+
+// // Initialize Google AI
+// const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+
+// // ============================================================================
+// // 🛠️ HELPER: ROBUST SCORING (ATS)
+// // ============================================================================
+// function calculateRobustATSScore(aiOutput, totalRequiredCount) {
+//   const matchedCount = aiOutput.skillsAnalysis.filter(s => s.status === "Present").length;
+  
+//   const W_SKILLS = 0.60;
+//   const W_EXPERIENCE = 0.25;
+//   const W_FORMATTING = 0.15;
+
+//   let skillRatio = totalRequiredCount > 0 ? (matchedCount / totalRequiredCount) : 1;
+//   const skillScore = Math.round(skillRatio * 100 * W_SKILLS);
+
+//   let experienceScore = 5;
+//   if (aiOutput.experienceRelevance === "High") experienceScore = 25;
+//   else if (aiOutput.experienceRelevance === "Medium") experienceScore = 15;
+
+//   const formattingScore = 15;
+//   let totalScore = skillScore + experienceScore + formattingScore;
+
+//   if (skillRatio < 0.5) totalScore = totalScore * 0.85;
+
+//   return {
+//     matchScore: Math.round(Math.min(100, Math.max(0, totalScore))),
+//     matchedSkills: aiOutput.skillsAnalysis.filter(s => s.status === "Present").map(s => s.skill),
+//     missingRequiredSkills: aiOutput.skillsAnalysis.filter(s => s.status === "Missing").map(s => s.skill),
+//     matchedPreferredSkills: aiOutput.matchedPreferredSkills || [],
+//     experienceRelevance: aiOutput.experienceRelevance,
+//     summary: aiOutput.summary || "Analysis complete."
+//   };
+// }
+
+// // ============================================================================
+// // 📌 ROUTE 1: GENERATE INTERVIEW QUESTIONS (Fixed: Structured JSON)
+// // ============================================================================
+// router.post("/generate-questions", verifyToken, async (req, res) => {
+//   try {
+//     const { jobTitle } = req.body;
+//     if (!jobTitle) return res.status(400).json({ message: "Job title is required." });
+
+//     // 🔥 FIX 1: Use Standard Flash (Not Lite) for better reasoning
+//     const model = genAI.getGenerativeModel({ 
+//         model: "gemini-2.5-flash",
+//         generationConfig: { 
+//             temperature: 0.4, // Slight creativity for questions
+//             responseMimeType: "application/json" // 🔥 FIX 2: Force JSON mode
+//         }
+//     });
+
+//     const prompt = `
+//       You are Axon, a technical interview architect.
+//       Generate 5 interview questions for the role: "${jobTitle}".
+      
+//       RULES:
+//       1. Include: 2 Technical, 2 Scenario-based, 1 Behavioral question.
+//       2. "intent": Briefly explain what this question tests.
+//       3. "answer": A structured model answer.
+
+//       OUTPUT JSON FORMAT:
+//       [
+//         {
+//           "type": "Technical",
+//           "question": "...",
+//           "intent": "Tests knowledge of...",
+//           "answer": "..."
+//         }
+//       ]
+//     `;
+
+//     const result = await model.generateContent(prompt);
+//     // Because we forced JSON MimeType, we can parse directly
+//     const questions = JSON.parse(result.response.text());
+    
+//     res.status(200).json({ questions });
+
+//   } catch (err) {
+//     console.error("Question Generation Error:", err.message);
+//     res.status(500).json({ message: "Failed to generate questions." });
+//   }
+// });
+
+
+// // ============================================================================
+// // 📌 ROUTE 2: ANALYZE RESUME (THE FIX)
+// // ============================================================================
+// router.post("/analyze-resume", verifyToken, async (req, res) => {
+//   try {
+//     const { resumeUrl, jobId, applicationId } = req.body;
+
+//     if (!resumeUrl || !jobId) return res.status(400).json({ message: "Missing inputs" });
+
+//     // 1. Fetch Job & Check ATS Status
+//     const job = await Job.findById(jobId);
+//     if (!job) return res.status(404).json({ message: "Job not found" });
+//     if (job.atsEnabled === false) return res.status(400).json({ message: "ATS disabled for this job" });
+
+//     // 2. Parse Resume
+//     const resumeText = await parseResumeFromUrl(resumeUrl);
+//     if (!resumeText || resumeText.length < 50) return res.status(400).json({ message: "Resume empty/unreadable" });
+
+//     // 3. AI CONFIGURATION (Zero Temperature = Consistent Results)
+//     const model = genAI.getGenerativeModel({ 
+//         model: "gemini-2.5-flash", // Flash is smarter than Lite for logic
+//         generationConfig: {
+//             temperature: 0.0, // 🔥 KEY FIX: Removes randomness
+//             maxOutputTokens: 2000,
+//         }
+//     });
+
+//     // 4. THE CHECKLIST PROMPT
+//     const prompt = `
+//       You are an impartial ATS Algorithm. 
+//       Your ONLY job is to verify if the candidate has the specific REQUIRED SKILLS listed below.
+      
+//       INPUT DATA:
+//       - JOB TITLE: "${job.title}"
+//       - REQUIRED SKILLS LIST: ${JSON.stringify(job.requirements)}
+//       - CANDIDATE RESUME TEXT: "${resumeText.substring(0, 15000)}"
+
+//       INSTRUCTIONS:
+//       1. Iterate through the "REQUIRED SKILLS LIST".
+//       2. For EACH skill, check the resume for explicit mention or direct synonyms (e.g., "React" matches "React.js").
+//       3. Mark status as "Present" or "Missing".
+//       4. Assess "Experience Relevance" to the JOB TITLE (High/Medium/Low).
+//       5. Extract any EXTRA relevant technical skills found in the resume as "matchedPreferredSkills".
+
+//       OUTPUT JSON (Do not add markdown):
+//       {
+//         "skillsAnalysis": [
+//           { "skill": "Skill Name 1", "status": "Present" },
+//           { "skill": "Skill Name 2", "status": "Missing" }
+//         ],
+//         "matchedPreferredSkills": ["Java", "AWS"],
+//         "experienceRelevance": "High"
+//       }
+//     `;
+
+//     // 5. Execute AI
+//     const result = await model.generateContent(prompt);
+//     const rawText = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+    
+//     let aiOutput;
+//     try {
+//         aiOutput = JSON.parse(rawText);
+//     } catch (e) {
+//         // Fallback if JSON fails (rare with temp 0.0)
+//         return res.status(500).json({ message: "AI Analysis Parse Error" });
+//     }
+
+//     // 6. SCORING CALCULATION
+//     const analysisData = calculateRobustATSScore(aiOutput, job.requirements.length);
+//     analysisData.analyzedAt = new Date();
+
+//     // 7. SAVE TO DB (Self-Healing Logic)
+//     if (applicationId) {
+//         const appDoc = await Application.findById(applicationId);
+//         if (appDoc) {
+//             let newHistory = [analysisData];
+            
+//             // Handle legacy data structure
+//             if (Array.isArray(appDoc.aiAnalysis)) {
+//                 newHistory.push(...appDoc.aiAnalysis);
+//             } else if (appDoc.aiAnalysis && typeof appDoc.aiAnalysis === 'object') {
+//                 newHistory.push(appDoc.aiAnalysis);
+//             }
+            
+//             appDoc.aiAnalysis = newHistory;
+//             await appDoc.save();
+//         }
+//     }
+
+//     res.status(200).json({ success: true, analysis: analysisData });
+
+//   } catch (err) {
+//     console.error("AI Analysis Error:", err);
+//     res.status(500).json({ message: "AI Analysis Failed" });
+//   }
+// });
+
+
+// // ============================================================================
+// // 📌 ROUTE 3: SELF EVALUATION (Fixed: Calculated Scores)
+// // ============================================================================
+// router.post("/evaluate-myself", verifyToken, async (req, res) => {
+//   try {
+//     const { resumeUrl, targetRole, jobDescription } = req.body;
+//     if (!resumeUrl) return res.status(400).json({ message: "Resume URL required" });
+
+//     const resumeText = await parseResumeFromUrl(resumeUrl);
+    
+//     // 🔥 FIX 1: Deterministic Math Logic
+//     const model = genAI.getGenerativeModel({ 
+//         model: "gemini-2.5-flash",
+//         generationConfig: { 
+//             temperature: 0.1, 
+//             responseMimeType: "application/json" 
+//         }
+//     });
+
+//     const prompt = `
+//       Act as a strict Career Coach.
+//       Target Role: "${targetRole || "General Developer"}"
+//       Job Description: "${jobDescription || "N/A"}"
+//       Resume: "${resumeText.substring(0, 10000)}"
+
+//       Analyze the resume on 3 specific pillars (Rate 1-10 integers only).
+      
+//       1. Content Impact: (Metrics, action verbs, result-oriented?)
+//       2. Skill Match: (Does he have the tools for the target role?)
+//       3. Structure: (Formatting, clarity, brevity)
+
+//       OUTPUT JSON:
+//       {
+//         "ratings": {
+//           "contentImpact": <number 1-10>,
+//           "skillMatch": <number 1-10>,
+//           "structure": <number 1-10>
+//         },
+//         "matchedSkills": ["<list strong skills>"],
+//         "missingRequiredSkills": ["<list missing critical skills>"],
+//         "summary": "<3 sentence constructive feedback>"
+//       }
+//     `;
+
+//     const result = await model.generateContent(prompt);
+//     const aiData = JSON.parse(result.response.text());
+
+//     // 🔥 FIX 2: CALCULATE SCORE IN JS (No Hallucinations)
+//     // Formula: Skills (40%) + Content (40%) + Structure (20%)
+//     const r = aiData.ratings;
+//     const calculatedScore = (r.skillMatch * 4) + (r.contentImpact * 4) + (r.structure * 2);
+    
+//     const finalResponse = {
+//         matchScore: calculatedScore, // This will be between 10 and 100
+//         ratings: aiData.ratings,
+//         matchedSkills: aiData.matchedSkills,
+//         missingRequiredSkills: aiData.missingRequiredSkills,
+//         summary: aiData.summary
+//     };
+
+//     res.status(200).json({ success: true, analysis: finalResponse });
+
+//   } catch (err) {
+//     console.error("Self Check Error:", err);
+//     res.status(500).json({ message: "Self-evaluation failed" });
+//   }
+// });
+
+// module.exports = router;
+
+
+
+
+
+
+//###################################
+
+/////////////the switching ones 
+
+const express = require("express");
+const router = express.Router();
+const verifyToken = require("../middleware/authMiddleware");
+const parseResumeFromUrl = require("../utils/resumeParser");
+const Job = require("../models/Job");
+const Application = require("../models/Application");
+// Importing the Failover Service (Gemini -> Groq)
+const { generateJSON,generateStream } = require("../utils/aiServices"); 
+
+
+// // ============================================================================
+// // 🛠️ HELPER: MODERN ATS SCORING ENGINE (Weighted + Bonus Signals)
+// // ============================================================================
+// function calculateModernATSScore(aiOutput, totalRequiredCount) {
+//   // 1. EXTRACT COUNTS
+//   const matchedCount = aiOutput.skillsAnalysis.filter(s => s.status === "Present").length;
+  
+//   // 2. DEFINE WEIGHTS (Total Base = 90, +10 Bonus = 100)
+//   const W_SKILLS = 55;      // 55% - Core Technical Match
+//   const W_EXPERIENCE = 25;  // 25% - Experience Relevance
+//   const W_FORMATTING = 10;  // 10% - Readability & Structure
+//   const W_BONUS = 10;       // 10% - "Proof of Work" (Links, Deployments, Awards)
+
+//   // 3. CALCULATION: SKILLS (0 - 55 points)
+//   // Prevent division by zero if job has no requirements
+//   let skillRatio = totalRequiredCount > 0 ? (matchedCount / totalRequiredCount) : 1;
+//   const skillScore = Math.round(skillRatio * W_SKILLS);
+
+//   // 4. CALCULATION: EXPERIENCE (0 - 25 points)
+//   let experienceScore = 5; // Minimum points for having a resume
+//   if (aiOutput.experienceRelevance === "High") experienceScore = W_EXPERIENCE;      // 25 pts
+//   else if (aiOutput.experienceRelevance === "Medium") experienceScore = 15;         // 15 pts
+//   else experienceScore = 5;                                                         // 5 pts
+
+//   // 5. CALCULATION: FORMATTING (Fixed 10 points)
+//   // We assume if the parser read the text, formatting is acceptable.
+//   const formattingScore = W_FORMATTING;
+
+//   // 6. CALCULATION: BONUS / "PROOF OF WORK" (0 - 10 points)
+//   // This detects "Hidden Gems" that standard ATS systems miss.
+//   let bonusScore = 0;
+//   if (aiOutput.globalSignals) {
+//       if (aiOutput.globalSignals.hasLiveLinks) bonusScore += 4;      // e.g., Vercel, Netlify
+//       if (aiOutput.globalSignals.hasCloudDeployments) bonusScore += 3; // e.g., AWS, Docker
+//       if (aiOutput.globalSignals.hasAchievments) bonusScore += 3;    // e.g., Hackathons, Awards
+//   }
+//   // Cap bonus at W_BONUS (10)
+//   bonusScore = Math.min(W_BONUS, bonusScore);
+
+//   // 7. TOTAL RAW SCORE
+//   let totalScore = skillScore + experienceScore + formattingScore + bonusScore;
+
+//   // 8. CRITICAL PENALTY (The "Dealbreaker" Logic)
+//   // If a candidate is missing more than 50% of required skills, apply a 15% penalty.
+//   if (skillRatio < 0.5) {
+//       totalScore = totalScore * 0.85; 
+//   }
+
+//   // 9. CLAMP (Ensure 0-100 range)
+//   totalScore = Math.min(100, Math.max(0, totalScore));
+
+//   return {
+//     matchScore: Math.round(totalScore),
+//     matchedSkills: aiOutput.skillsAnalysis.filter(s => s.status === "Present").map(s => s.skill),
+//     missingRequiredSkills: aiOutput.skillsAnalysis.filter(s => s.status === "Missing").map(s => s.skill),
+//     matchedPreferredSkills: aiOutput.matchedPreferredSkills || [],
+//     experienceRelevance: aiOutput.experienceRelevance,
+//     globalSignals: aiOutput.globalSignals, // Return signals to frontend for UI badges
+//     summary: aiOutput.summary || "Analysis complete.",
+//     provider: aiOutput.provider // Debugging: "Gemini" or "Groq"
+//   };
+// }
+
+function calculateModernATSScore(aiOutput, rawJobRequirements) {
+  // 1. FORCE requirements to be an array (Prevents the .includes() crash)
+  const requirements = Array.isArray(rawJobRequirements) ? rawJobRequirements : [];
+
+  // 2. DEFENSIVE GUARD: Handle the "Excellent Excellent" loop or empty output
+  if (!aiOutput || !Array.isArray(aiOutput.skillsAnalysis)) {
+    return {
+      matchScore: 0,
+      matchedSkills: [],
+      missingRequiredSkills: requirements, 
+      summary: "System Error: AI failed to parse data. Please re-analyze."
+    };
+  }
+
+  // 3. FACTUAL FILTERING: Only count skills that exist in YOUR database list
+  // This stops the AI from hallucinating skills like "API Security"
+  const matchedSkills = aiOutput.skillsAnalysis
+    .filter(item => item.status === "Present" && requirements.includes(item.skill))
+    .map(s => s.skill);
+
+  // 4. DETERMINISTIC MATH (Locked & Persistent)
+  const totalReq = requirements.length;
+  const matchCount = matchedSkills.length;
+  
+  // Logic: 70% Skills Match + 20% Experience + 10% Formatting
+  const skillScore = totalReq > 0 ? (matchCount / totalReq) * 70 : 0;
+  
+  let expScore = 5; 
+  if (aiOutput.experienceRelevance === "High") expScore = 20;
+  else if (aiOutput.experienceRelevance === "Medium") expScore = 10;
+
+  const finalScore = Math.round(skillScore + expScore + 10);
+
+  return {
+    matchScore: Math.min(100, Math.max(0, finalScore)),
+    matchedSkills: matchedSkills,
+    missingRequiredSkills: requirements.filter(req => !matchedSkills.includes(req)),
+    experienceRelevance: aiOutput.experienceRelevance || "Low",
+    summary: aiOutput.summary || "Analysis complete."
+  };
+}
+
+// ============================================================================
+// 🚀 ROUTE 3: GENERATE QUESTIONS (JSON Mode)
+// ============================================================================
+router.post("/generate-questions", verifyToken, async (req, res) => {
+  try {
+    const { jobTitle, mode } = req.body;
+    if (!jobTitle) return res.status(400).json({ message: "Input required." });
+
+    let systemPrompt = "";
+    let userPrompt = "";
+
+    if (mode === "solver") {
+        // 🧠 SOLVER MODE
+        systemPrompt = `
+          You are a Senior Technical Mentor.
+          
+          INPUT ANALYSIS:
+          1. If input is a JOB TITLE (e.g. "React Dev"), create a coding challenge.
+          2. If input is a PROBLEM (e.g. "Solve 10+10"), solve it.
+
+          OUTPUT JSON OBJECT ONLY:
+          {
+            "title": "Title",
+            "challenge": "Problem description",
+            "approach": ["Step 1", "Step 2"],
+            "codeSolution": "Code string",
+            "whyItMatters": "Reason"
+          }
+        `;
+        userPrompt = `Solve/Create for: "${jobTitle}"`;
+    } else {
+        // 🎤 INTERVIEW MODE
+        systemPrompt = `
+          You are an Interview Architect.
+          Generate 5 interview questions for: "${jobTitle}".
+          OUTPUT JSON ARRAY:
+          [{ "type": "Technical", "question": "...", "intent": "...", "answer": "..." }]
+        `;
+        userPrompt = `Questions for: "${jobTitle}"`;
+    }
+
+    const result = await generateJSON(systemPrompt, userPrompt);
+    let data = result.data;
+
+    // 🔥 FIX: WHITE PAGE BUG
+    // If Solver returns an Array, force it to be an Object
+    if (mode === "solver" && Array.isArray(data)) {
+        data = data[0]; 
+    }
+
+    res.status(200).json({ 
+        data: data, 
+        meta: { provider: result.provider, mode } 
+    });
+
+  } catch (err) {
+    console.error("Route Error:", err.message);
+    res.status(500).json({ message: "Generation failed." });
+  }
+});
+
+// ============================================================================
+// 🚀 ROUTE 4: STREAMING (Chat / Solver Mode)
+// ============================================================================
+router.post("/generate-questions-stream", verifyToken, async (req, res) => {
+  try {
+    const { jobTitle, mode } = req.body;
+    if (!jobTitle) return res.status(400).json({ message: "Input required." });
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    let prompt = "";
+
+    if (mode === "solver") {
+        // 🧠 SOLVER MODE
+        // 🔥 FIX: Strict formatting to prevent "Wall of Text"
+        prompt = `
+          Act as a Senior Engineer.
+          USER INPUT: "${jobTitle}"
+
+          INSTRUCTIONS:
+          If input is a Role, create a problem. If it's a specific question, solve it.
+
+          FORMATTING RULES:
+          1. Use # Headers.
+          2. Use \`\`\` code blocks.
+          3. IMPORTANT: Leave a BLANK LINE between every paragraph.
+        `;
+    } else {
+        // 🎤 INTERVIEW MODE
+        // 🔥 FIX: Forced double newlines
+        prompt = `
+          Act as a Technical Recruiter.
+          Generate 5 questions for: "${jobTitle}".
+          
+          FORMATTING RULES:
+          1. Numbered List (1., 2., 3...).
+          2. **Bold** key terms.
+          3. CRITICAL: Put TWO NEWLINES (\n\n) between every question.
+        `;
+    }
+
+    await generateStream(prompt, res);
+
+  } catch (err) {
+    console.error("Stream Error:", err);
+    if (!res.headersSent) res.status(500).json({ message: "Stream failed" });
+    else res.end();
+  }
+});
+
+// ============================================================================
+// 📌 ROUTE 2: ANALYZE RESUME (The "Modern Enterprise" Scanner)
+// ============================================================================
+router.post("/analyze-resume", verifyToken, async (req, res) => {
+  try {
+    const { resumeUrl, jobId, applicationId } = req.body;
+    if (!resumeUrl || !jobId) return res.status(400).json({ message: "Missing inputs" });
+
+    const job = await Job.findById(jobId);
+    if (!job) return res.status(404).json({ message: "Job not found" });
+    if (job.atsEnabled === false) return res.status(400).json({ message: "ATS disabled" });
+
+    const resumeText = await parseResumeFromUrl(resumeUrl);
+    if (!resumeText || resumeText.length < 50) return res.status(400).json({ message: "Resume empty" });
+
+    // 1. Construct System Prompt (The Rules)
+    // We explicitly ask for "globalSignals" to detect bonus points.
+    // const systemPrompt = `
+    //   You are an advanced ATS Extraction Engine.
+      
+    //   JOB CONTEXT:
+    //   - TITLE: "${job.title}"
+    //   - REQUIRED SKILLS: ${JSON.stringify(job.requirements)}
+      
+    //   TASKS:
+    //   1. Check REQUIRED SKILLS: Strict match or direct synonym (e.g. "ReactJS" = "React").
+    //   2. Analyze EXPERIENCE RELEVANCE: Does the candidate's past titles/projects align with "${job.title}"?
+    //   3. DETECT SIGNALS (The "Wow" Factor):
+    //      - "hasLiveLinks": Are there valid URLs (vercel.app, github.io, netlify, .com)?
+    //      - "hasCloudDeployments": Mentions of AWS, Docker, CI/CD, Vercel?
+    //      - "hasAchievments": Mentions of Hackathons, Dean's List, Olympiads, GSOC?
+
+    //   OUTPUT JSON SCHEMA:
+    //   {
+    //     "skillsAnalysis": [ { "skill": "string", "status": "Present" | "Missing" } ],
+    //     "matchedPreferredSkills": ["string"],
+    //     "experienceRelevance": "High" | "Medium" | "Low",
+    //     "globalSignals": { 
+    //        "hasLiveLinks": boolean, 
+    //        "hasCloudDeployments": boolean, 
+    //        "hasAchievments": boolean 
+    //     },
+    //     "summary": "string"
+    //   }
+    // `;
+// const systemPrompt = `
+// You are a deterministic ATS Extraction Engine.
+// You do NOT evaluate candidates.
+// You do NOT assign scores.
+// You do NOT provide advice.
+
+// YOUR ONLY FUNCTION:
+// Convert resume text into structured factual signals.
+
+// DECISION RULES (STRICT):
+// - Extract only what is explicitly stated.
+// - Treat direct synonyms as equal (e.g., "ReactJS" = "React").
+// - If evidence is unclear or indirect, mark as "Missing".
+// - Never infer seniority, intent, or skill depth.
+
+// JOB CONTEXT (Authoritative):
+// - TITLE: "${job.title}"
+// - REQUIRED SKILLS LIST: ${JSON.stringify(job.requirements)}
+
+// TASKS (FOLLOW IN ORDER):
+// 1. For EACH required skill:
+//    - Mark status as "Present" ONLY if explicitly mentioned or a direct synonym appears.
+//    - Otherwise, mark status as "Missing".
+
+// 2. Identify additional technical skills explicitly present in the resume
+//    that are NOT part of the required skills list.
+
+// 3. Classify experience relevance to the JOB TITLE:
+//    - High: Directly aligned roles or projects
+//    - Medium: Partial overlap
+//    - Low: Mostly unrelated
+//    (Choose exactly ONE value.)
+
+// 4. Detect global signals:
+//    - hasLiveLinks: true if valid URLs appear (vercel.app, github.io, netlify, .com)
+//    - hasCloudDeployments: true if AWS, Docker, CI/CD, or Vercel are mentioned
+//    - hasAchievments: true if hackathons, awards, GSOC, Dean’s List appear
+
+// OUTPUT FORMAT (STRICT JSON ONLY):
+// {
+//   "skillsAnalysis": [
+//     { "skill": "string", "status": "Present" | "Missing" }
+//   ],
+//   "matchedPreferredSkills": ["string"],
+//   "experienceRelevance": "High" | "Medium" | "Low",
+//   "globalSignals": {
+//     "hasLiveLinks": boolean,
+//     "hasCloudDeployments": boolean,
+//     "hasAchievments": boolean
+//   },
+//   "summary": "One factual sentence. No opinions."
+// }
+// `;
+
+
+const systemPrompt = `
+You are a Factual Extraction Engine. 
+DO NOT evaluate the candidate. DO NOT assign scores.
+ONLY return a JSON object based on the "REQUIRED SKILLS" list.
+
+JOB CONTEXT:
+- REQUIRED SKILLS: ${JSON.stringify(job.requirements)}
+
+RULES:
+1. ONLY check for skills in the list above. 
+2. If a skill is not in my list, ignore it (No hallucinations).
+3. Experience Relevance: "High" (SDE roles), "Medium" (General IT), "Low" (Non-Tech).
+
+OUTPUT SCHEMA (JSON ONLY):
+{
+  "skillsAnalysis": [
+    { "skill": "exact name from my list", "status": "Present" | "Missing" }
+  ],
+  "experienceRelevance": "High" | "Medium" | "Low",
+  "summary": "One factual sentence."
+}
+`;
+    const userPrompt = `Analyze this resume:\n"${resumeText.substring(0, 15000)}"`;
+
+    // 2. Call Failover Service (Gemini -> Groq)
+    // Use "fast" model (Flash / Llama 8b) for speed
+    const result = await generateJSON(systemPrompt, userPrompt, "fast");
+    
+    // 3. Calculate Score
+    // We pass the provider info to the helper so it can be stored
+    const analysisData = calculateModernATSScore({ ...result.data, provider: result.provider }, job.requirements.length);
+    analysisData.analyzedAt = new Date();
+
+    // 4. Save to DB (Self-Healing Logic)
+    if (applicationId) {
+        const appDoc = await Application.findById(applicationId);
+        if (appDoc) {
+            let newHistory = [analysisData];
+            
+            // Fix Legacy Data Structure: If it was an Object, make it an Array
+            if (Array.isArray(appDoc.aiAnalysis)) {
+                newHistory.push(...appDoc.aiAnalysis);
+            } else if (appDoc.aiAnalysis && typeof appDoc.aiAnalysis === 'object') {
+                newHistory.push(appDoc.aiAnalysis);
+            }
+            
+            appDoc.aiAnalysis = newHistory;
+            await appDoc.save();
+        }
+    }
+
+    res.status(200).json({ success: true, analysis: analysisData });
+
+  } catch (err) {
+    console.error("AI Analysis Error:", err);
+    res.status(500).json({ message: "Analysis failed" });
+  }
+});
+
+// ============================================================================
+// 📌 ROUTE 3: SELF EVALUATION (ATS & Gap Analysis Mode)
+// ============================================================================
+router.post("/evaluate-myself", verifyToken, async (req, res) => {
+  try {
+    const { resumeUrl, targetRole, jobDescription } = req.body;
+    if (!resumeUrl) return res.status(400).json({ message: "Resume URL required" });
+
+    // 1. Get Resume Text
+    const resumeText = await parseResumeFromUrl(resumeUrl);
+
+    // 2. Define "Real ATS" System Prompt
+    // This prompt forces the AI to look for industry standard keywords that are MISSING.
+    const systemPrompt = `
+      You are an advanced Enterprise ATS (Applicant Tracking System) and Career Auditor.
+      
+      CONTEXT:
+      - Candidate Target Role: "${targetRole || "Software Engineer"}"
+      ${jobDescription ? `- Specific Job Description Context: "${jobDescription.substring(0, 500)}..."` : ""}
+      
+      TASK:
+      Perform a deep "Gap Analysis" of the resume against the Target Role.
+      
+      SCORING CRITERIA (Rate 1-10 Integers):
+      1. Impact: Does the resume use numbers, metrics, and result-oriented language? (e.g., "Increased X by Y%")
+      2. Relevance: Do the technical skills and projects align with a Senior/Mid-level "${targetRole}"?
+      3. Structure: Is the formatting clean, ATS-readable, and concise?
+
+      LIST GENERATION RULES:
+      - "matchedSkills": Extract the TOP 5 strongest hard skills present in the text that fit this role.
+      - "missingRequiredSkills": Identify 3-5 critical industry-standard keywords/tools for a "${targetRole}" that are COMPLETELY ABSENT from the resume. (e.g., If DevOps, look for Docker/K8s. If Frontend, look for State Management/Testing).
+
+      OUTPUT JSON SCHEMA (Strictly follow this structure):
+      {
+        "ratings": {
+          "impact": <integer 1-10>,
+          "relevance": <integer 1-10>,
+          "structure": <integer 1-10>
+        },
+        "matchedSkills": ["string", "string", "string"],
+        "missingRequiredSkills": ["string", "string", "string"],
+        "executiveSummary": "string (2-3 sentences, direct professional feedback)"
+      }
+    `;
+
+    const userPrompt = `Analyze this resume content for the role of ${targetRole}:\n"${resumeText.substring(0, 15000)}"`;
+
+    // 3. Call AI Service (Uses Gemini -> Fails over to Groq)
+    const result = await generateJSON(systemPrompt, userPrompt, "smart");
+    const aiData = result.data;
+
+    // 4. 🔥 DETERMINISTIC SCORING (Math, not AI guessing)
+    // Formula: Relevance (40%) + Impact (40%) + Structure (20%)
+    const r = aiData.ratings || { impact: 5, relevance: 5, structure: 5 };
+    
+    const calculatedScore = Math.round(
+        (r.relevance * 4) + 
+        (r.impact * 4) + 
+        (r.structure * 2)
+    );
+
+    // 5. Structure Response for Frontend
+    // ✅ CRITICAL FIX: Keys now match your React Code (matchedSkills, missingRequiredSkills)
+    const finalResponse = {
+        matchScore: Math.min(100, Math.max(0, calculatedScore)), // Clamp 0-100
+        ratings: r,
+        matchedSkills: Array.isArray(aiData.matchedSkills) ? aiData.matchedSkills : [], 
+        missingRequiredSkills: Array.isArray(aiData.missingRequiredSkills) ? aiData.missingRequiredSkills : [],
+        summary: aiData.executiveSummary || "Analysis complete.",
+        provider: result.provider
+    };
+
+    res.status(200).json({ success: true, analysis: finalResponse });
+
+  } catch (err) {
+    console.error("Self Check Error:", err.message);
+    res.status(500).json({ message: "Self-evaluation failed." });
+  }
+});
+module.exports = router;

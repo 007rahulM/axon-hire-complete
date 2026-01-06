@@ -16,8 +16,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
+  googleId: {
+    type: String, // 👈 ADD THIS
+    unique: true,
+    sparse: true
+},
   date: {
     type: Date,
     default: Date.now, //automatically store date when user registeres
@@ -36,7 +41,28 @@ const userSchema = new mongoose.Schema({
     type:String,
     default:null,
   },
+// 👇 NEW RICH PROFILE FIELDS (Safe to add)
+  title: { type: String, default: "" },          // e.g. "Senior React Developer"
+  about: { type: String, default: "" },          // e.g. "Passionate coder..."
+  skills: { type: [String], default: [] },       // e.g. ["React", "Node.js"]
+  experience: [{
+    role: String,
+    company: String,
+    duration: String,
+    description: String
+  }],
+  education: [{
+    institution: String,
+    degree: String,
+    year: String
+  }],
+  profilePicture: { type: String, default: "" }, // Cloudinary URL
 
+
+  // ✅ ADD THIS NEW FIELD:
+  savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
+
+  
 // 👇 NEW FIELDS FOR OTP
   isVerified: { type: Boolean, default: false }, // Cannot login if false
   otp: { type: String }, // The 6-digit code

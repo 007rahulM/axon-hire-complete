@@ -200,7 +200,7 @@ function Home() {
 
   const handleMainAction = () => {
     if (isLoggedIn) {
-      if (user?.role === 'recruiter') navigate("/dashboard");
+      if (user?.role === 'recruiter') navigate("/recruiter-dashboard");
       else navigate("/jobs");
     } else {
       navigate("/register");

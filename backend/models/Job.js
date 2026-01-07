@@ -49,6 +49,16 @@ const jobSchema = new mongoose.Schema({
       ref: "User",
       required: true 
     },
+    // 🚀 NEW V3 OPTIONS: Recruiter Choice Architecture
+  autoEvaluate: { 
+    type: Boolean, 
+    default: false // Resumes arrive raw unless this is toggled ON
+  },
+  evaluationMode: {
+    type: String,
+    enum: ["local", "ai"],
+    default: "local" // Recruiter chooses between Local Math or Deep AI
+  },
  applicants: [{
       candidateId: { type: Schema.Types.ObjectId, ref: 'User' },
       appliedAt: { type: Date, default: Date.now }

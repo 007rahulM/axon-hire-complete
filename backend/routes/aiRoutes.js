@@ -1,1686 +1,17 @@
-// const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const parseResumeFromUrl = require("../utils/resumeParser");
-// const { normalizeSkill } = require("../utils/skillMap");
-// const Job = require("../models/Job");
-// const Application = require("../models/Application");
-// const { generateJSON } = require("../utils/aiServices");
-
-// /**
-//  * 🛠️ TOP1 ANALYTICS ENGINE
-//  * Handles: Section Weighting (1.5x), Tiered Links, Professional-Only YoE.
-//  */
-// function calculateTop1Score(aiOutput, jobRequirements, resumeText) {
-//   console.log("--- 🚀 TOP1 ANALYTICS START ---");
-  
-//   const rawRequirements = Array.isArray(jobRequirements) ? [...new Set(jobRequirements)] : [];
-//   const normalizedReqs = rawRequirements.map(r => normalizeSkill(r));
-
-//   // 1. LINK DETECTION (Unique & Tiered)
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = ["github.com", "vercel.app", "netlify.app", "github.io", "linkedin.com"];
-  
-//   const uniqueTrustedLinks = [...new Set(allLinks.filter(link => 
-//     trustedDomains.some(domain => link.includes(domain))
-//   ))];
-  
-//   let linkScore = 0;
-//   if (uniqueTrustedLinks.length >= 3) linkScore = 10;
-//   else if (uniqueTrustedLinks.length >= 1) linkScore = 5;
-
-//   // 2. SKILL MATCHING WITH FALLBACK & WEIGHTING (1.5x)
-//   const skillsInExp = (aiOutput.skillsBySection?.experience || []).map(s => normalizeSkill(s));
-//   const skillsInList = (aiOutput.skillsBySection?.skillsList || []).map(s => normalizeSkill(s));
-//   const generalSkills = (aiOutput.generalSkills || []).map(s => normalizeSkill(s)); // Fallback pool
-
-//   let weightedMatchCount = 0;
-//   let matchedSkillsList = [];
-
-//   normalizedReqs.forEach((req, index) => {
-//     const originalReq = rawRequirements[index];
-//     if (skillsInExp.includes(req)) {
-//       weightedMatchCount += 1.5; // Found in Experience/Projects
-//       matchedSkillsList.push(originalReq);
-//     } else if (skillsInList.includes(req) || generalSkills.includes(req)) {
-//       weightedMatchCount += 1.0; // Found in List or via General Fallback
-//       matchedSkillsList.push(originalReq);
-//     }
-//   });
-
-//   const maxPossibleWeight = normalizedReqs.length * 1.5;
-//   const skillScore = maxPossibleWeight > 0 ? (weightedMatchCount / maxPossibleWeight) * 60 : 0;
-
-//   // 3. PROFESSIONAL-ONLY EXPERIENCE (Max 20)
-//   // Logic: Ignore Education dates. Rahul's BCA dates (08/2023-05/2025) should NOT count.
-//   const totalMonths = aiOutput.totalProfessionalMonths || 0;
-//   let expScore = 5; // Junior/Fresher
-//   if (totalMonths >= 36) expScore = 20; // Senior
-//   else if (totalMonths >= 12) expScore = 12; // Mid-level
-
-//   // 4. SYSTEM INTEGRITY (Max 10)
-//   const integrityScore = 10;
-
-//   const finalScore = Math.round(skillScore + expScore + linkScore + integrityScore);
-  
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills: [...new Set(matchedSkillsList)],
-//     missingRequiredSkills: rawRequirements.filter(r => !matchedSkillsList.includes(r)),
-//     experienceRelevance: totalMonths >= 12 ? "High" : "Medium",
-//     summary: aiOutput.summary,
-//     professionalMonths: totalMonths,
-//     uniqueLinks: uniqueTrustedLinks.length
-//   };
-// }
-
-// router.post("/analyze-resume", verifyToken, async (req, res) => {
-//   try {
-//     const { resumeUrl, jobId, applicationId } = req.body;
-//     const job = await Job.findById(jobId);
-//     if (!job) return res.status(404).json({ message: "Job not found" });
-
-//     const resumeText = await parseResumeFromUrl(resumeUrl);
-
-//     // AI TASK: SECTION EXTRACTION + FALLBACK GENERAL SCAN
-//     const systemPrompt = `
-//       You are an ATS Auditor. 
-//       STRICT RULES:
-//       1. TOTAL PROFESSIONAL MONTHS: Look ONLY at Work Experience sections. IGNORE Education dates. If only Education exists, return 0.
-//       2. SECTION SCAN: Extract skills from "Projects/Experience" into "experience". Extract from "Skills list" into "skillsList".
-//       3. FALLBACK: If you find technical skills but cannot determine the section, put them in "generalSkills".
-      
-//       OUTPUT JSON ONLY:
-//       {
-//         "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
-//         "totalProfessionalMonths": 0,
-//         "summary": "1 sentence match."
-//       }
-//     `;
-
-//     const result = await generateJSON(systemPrompt, `Analyze:\n"${resumeText}"`);
-
-//     const application = await Application.findById(applicationId);
-//     const analysisData = calculateTop1Score(result.data, job.requirements, resumeText);
-//     analysisData.provider = result.provider;
-
-//     if (application) {
-//       application.aiAnalysis = [analysisData, ...(application.aiAnalysis || [])];
-//       await application.save();
-//     }
-
-//     res.status(200).json({ success: true, analysis: analysisData });
-
-//   } catch (err) {
-//     console.error("ANALYSIS FAILED:", err.message);
-//     const status = err.message.includes("INVALID_DOCUMENT") ? 400 : 500;
-//     res.status(status).json({ message: err.message });
-//   }
-// });
-
-// module.exports = router;
-
-
-// //it works jsut fixinf one issue the one thing goes worng all analysisn is failing here 
-
-// const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const parseResumeFromUrl = require("../utils/resumeParser");
-// const { normalizeSkill, skillMap } = require("../utils/skillMap");
-// const Job = require("../models/Job");
-// const Application = require("../models/Application");
-// const { generateJSON } = require("../utils/aiServices");
-
-
-
-
-// function calculateTop1Score(aiOutput, jobRequirements, resumeText) {
-//   console.log("--- 🚀 TOP1 ANALYTICS START ---");
-  
-//   const rawRequirements = Array.isArray(jobRequirements) ? [...new Set(jobRequirements)] : [];
-//   const normalizedReqs = rawRequirements.map(r => normalizeSkill(r));
-
-//   // 1. LINK DETECTION (Unique & Tiered)
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = ["github.com", "vercel.app", "netlify.app", "github.io", "linkedin.com"];
-  
-//   const uniqueTrustedLinks = [...new Set(allLinks.filter(link => 
-//     trustedDomains.some(domain => link.includes(domain))
-//   ))];
-  
-//   let linkScore = 0;
-//   if (uniqueTrustedLinks.length >= 3) linkScore = 10;
-//   else if (uniqueTrustedLinks.length >= 1) linkScore = 5;
-
-//   // 2. SKILL MATCHING WITH FALLBACK & WEIGHTING (1.5x)
-//   const skillsInExp = (aiOutput.skillsBySection?.experience || []).map(s => normalizeSkill(s));
-//   const skillsInList = (aiOutput.skillsBySection?.skillsList || []).map(s => normalizeSkill(s));
-//   const generalSkills = (aiOutput.generalSkills || []).map(s => normalizeSkill(s)); // Fallback pool
-
-//   let weightedMatchCount = 0;
-//   let matchedSkillsList = [];
-
-//   normalizedReqs.forEach((req, index) => {
-//     const originalReq = rawRequirements[index];
-//     if (skillsInExp.includes(req)) {
-//       weightedMatchCount += 1.5; // Found in Experience/Projects
-//       matchedSkillsList.push(originalReq);
-//     } else if (skillsInList.includes(req) || generalSkills.includes(req)) {
-//       weightedMatchCount += 1.0; // Found in List or via General Fallback
-//       matchedSkillsList.push(originalReq);
-//     }
-//   });
-
-//   const maxPossibleWeight = normalizedReqs.length * 1.5;
-//   const skillScore = maxPossibleWeight > 0 ? (weightedMatchCount / maxPossibleWeight) * 60 : 0;
-
-//   // 3. PROFESSIONAL-ONLY EXPERIENCE (Max 20)
-//   // Logic: Ignore Education dates. Rahul's BCA dates (08/2023-05/2025) should NOT count.
-//   const totalMonths = aiOutput.totalProfessionalMonths || 0;
-//   let expScore = 5; // Junior/Fresher
-//   if (totalMonths >= 36) expScore = 20; // Senior
-//   else if (totalMonths >= 12) expScore = 12; // Mid-level
-
-//   // 4. SYSTEM INTEGRITY (Max 10)
-//   const integrityScore = 10;
-
-//   const finalScore = Math.round(skillScore + expScore + linkScore + integrityScore);
-  
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills: [...new Set(matchedSkillsList)],
-//     missingRequiredSkills: rawRequirements.filter(r => !matchedSkillsList.includes(r)),
-//     experienceRelevance: totalMonths >= 12 ? "High" : "Medium",
-//     summary: aiOutput.summary,
-//     professionalMonths: totalMonths,
-//     uniqueLinks: uniqueTrustedLinks.length
-//   };
-// }
-
-// // ============================================================================
-// // 🛠️ NEW ENGINE HELPERS (The "Witnness" Logic)
-// // ============================================================================
-
-// /**
-//  * DETERMINISTIC MATH ENGINE
-//  * Standardizes scoring across Mode 1 (Standard) and Mode 2 (Professional).
-//  */
-// function calculateDeterministicScore(skillsMatchData, resumeText, jobRequirements, profMonths = 0) {
-//     console.log("--- 🕵️ INTERNAL SCORING LOG START ---");
-    
-//     // 1. UNIQUE REQUIREMENTS: Fixes the duplicate keyword bug
-//     const rawReqs = Array.isArray(jobRequirements) ? [...new Set(jobRequirements)] : [];
-//     const normalizedReqs = rawReqs.map(r => normalizeSkill(r));
-
-//     // 2. TIERED LINK DETECTION: (Regex - 100% stable non-AI check)
-//     const linkPattern = /(https?:\/\/[^\s]+)/g;
-//     const allLinks = resumeText.match(linkPattern) || [];
-//     const trustedDomains = ["github.com", "vercel.app", "netlify.app", "github.io"];
-//     const uniqueLinks = [...new Set(allLinks.filter(l => trustedDomains.some(d => l.includes(d))))];
-    
-//     let linkPoints = uniqueLinks.length >= 3 ? 10 : (uniqueLinks.length >= 1 ? 5 : 0);
-//     console.log(`Step 1: Trusted Links Found: ${uniqueLinks.length}. Points: ${linkPoints}`);
-
-//     // 3. SECTION WEIGHTING (1.5x for Projects/Experience)
-//     const expSkills = (skillsMatchData.experience || []).map(s => normalizeSkill(s));
-//     const listSkills = (skillsMatchData.skillsList || []).map(s => normalizeSkill(s));
-//     const fallback = (skillsMatchData.generalSkills || []).map(s => normalizeSkill(s));
-
-//     let weightedPoints = 0;
-//     let matchedList = [];
-
-//     normalizedReqs.forEach((req, idx) => {
-//         if (expSkills.includes(req)) {
-//             weightedPoints += 1.5; 
-//             matchedList.push(rawReqs[idx]);
-//         } else if (listSkills.includes(req) || fallback.includes(req)) {
-//             weightedPoints += 1.0;
-//             matchedList.push(rawReqs[idx]);
-//         }
-//     });
-
-//     const maxPossibleWeight = normalizedReqs.length * 1.5;
-//     const skillScore = maxPossibleWeight > 0 ? (weightedPoints / maxPossibleWeight) * 60 : 0;
-
-//     // 4. PROFESSIONAL DURATION TIERING (Ignores college dates)
-//     let expPoints = profMonths >= 36 ? 20 : (profMonths >= 12 ? 12 : 5);
-//     console.log(`Step 2: Prof. Duration: ${profMonths} months. Points: ${expPoints}`);
-
-//     // 5. FINAL CALCULATION (Integrity Base: 10)
-//     const finalScore = Math.round(skillScore + expPoints + linkPoints + 10);
-//     console.log(`Step 3: Final Math: Skills(${Math.round(skillScore)}) + Exp(${expPoints}) + Links(${linkPoints}) + Integrity(10) = ${finalScore}%`);
-
-//     return {
-//         matchScore: Math.min(100, finalScore),
-//         matchedSkills: [...new Set(matchedList)],
-//         missingRequiredSkills: rawReqs.filter(r => !matchedList.includes(r)),
-//         professionalMonths: profMonths,
-//         uniqueLinksFound: uniqueLinks.length
-//     };
-// }
-
-// // ============================================================================
-// // 🚀 NEW ROUTE: MULTI-MODE ANALYSIS (Standard, Professional, Beta)
-// // ============================================================================
-// router.post("/analyze-v2", verifyToken, async (req, res) => {
-//     try {
-//         const { resumeUrl, jobId, mode, applicationId } = req.body; 
-//         // mode should be: 'standard' | 'professional' | 'beta'
-        
-//         const job = await Job.findById(jobId);
-//         if (!job) return res.status(404).json({ message: "Job not found" });
-
-//         const resumeText = await parseResumeFromUrl(resumeUrl);
-//         let finalAnalysis;
-
-//         // --- MODE 1: STANDARD (WORKDAY STYLE - NO AI) ---
-//         if (mode === "standard") {
-//             console.log("🛠️ RUNNING: Standard Deterministic Mode");
-//             // We treat the whole text as a general pool for the local skillMap
-//             const mockSectionData = { generalSkills: resumeText.split(/[\s,]+/) };
-//             finalAnalysis = calculateDeterministicScore(mockSectionData, resumeText, job.requirements, 0);
-//             finalAnalysis.summary = "100% Stable match using local keyword parsing.";
-//         } 
-
-//         // --- MODE 2: PROFESSIONAL (AI AUDITOR - AUDITED BY JS) ---
-//         else if (mode === "professional") {
-//             console.log("🧠 RUNNING: Professional AI Auditor Mode");
-//             const systemPrompt = `
-//                 ACT AS: ATS Auditor. 
-//                 1. EXTRACT technical skills by section (experience/projects vs skillsList).
-//                 2. IGNORE education dates (BCA/SSLC/Degree). SUM professional experience months only.
-//                 OUTPUT JSON ONLY: { "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] }, "totalMonths": 0, "summary": "" }
-//             `;
-//             const result = await generateJSON(systemPrompt, `RESUME: ${resumeText}`);
-
-//             // 🛑 FAIL-FAST GUARD
-//             if (!result.data || !result.data.skillsBySection) {
-//                 return res.status(422).json({ success: false, message: "AI_FAILED", detail: "AI extraction returned invalid structure." });
-//             }
-
-//             finalAnalysis = calculateDeterministicScore(result.data.skillsBySection, resumeText, job.requirements, result.data.totalMonths);
-//             finalAnalysis.summary = result.data.summary;
-//             finalAnalysis.provider = result.provider;
-//         }
-
-//         // --- MODE 3: BETA (LEGACY - AI DIRECT SCORING) ---
-//         else {
-//             console.log("🧪 RUNNING: Beta Legacy Mode");
-//             const result = await generateJSON("Act as recruiter. Score this resume 0-100.", resumeText);
-//             finalAnalysis = { 
-//                 matchScore: result.data.matchScore || 0, 
-//                 summary: "Experimental Direct-AI Scoring (Beta)." 
-//             };
-//             finalAnalysis.provider = result.provider;
-//         }
-
-//         // --- 🟢 PERSISTENCE & DISCOVERY ---
-//         const application = await Application.findById(applicationId);
-//         if (application) {
-//             application.aiAnalysis = [finalAnalysis, ...(application.aiAnalysis || [])];
-            
-//             // Skill Discovery (For future model training)
-//             const allAIFound = mode === "professional" ? [
-//                 ...result.data.skillsBySection.experience, 
-//                 ...result.data.skillsBySection.skillsList
-//             ] : [];
-            
-//             const discoveries = allAIFound.filter(s => normalizeSkill(s) === s.toLowerCase().trim() && !skillMap[s.toLowerCase()]);
-//             application.discoveredSkills = [...new Set([...(application.discoveredSkills || []), ...discoveries])];
-            
-//             await application.save();
-//         }
-
-//         res.json({ success: true, analysis: finalAnalysis });
-
-//     } catch (err) {
-//         console.error("ANALYSIS_V2_ERROR:", err.message);
-//         res.status(500).json({ message: "Analysis engine failed." });
-//     }
-// });
-
-// // ============================================================================
-// // 🏛️ LEGACY ROUTES (DO NOT TOUCH)
-// // ============================================================================
-// router.post("/analyze-resume", verifyToken, async (req, res) => {
-//   try {
-//     const { resumeUrl, jobId, applicationId } = req.body;
-//     const job = await Job.findById(jobId);
-//     if (!job) return res.status(404).json({ message: "Job not found" });
-
-//     const resumeText = await parseResumeFromUrl(resumeUrl);
-
-//     // AI TASK: SECTION EXTRACTION + FALLBACK GENERAL SCAN
-    // const systemPrompt = `
-    //   You are an ATS Auditor. 
-    //   STRICT RULES:
-    //   1. TOTAL PROFESSIONAL MONTHS: Look ONLY at Work Experience sections. IGNORE Education dates. If only Education exists, return 0.
-    //   2. SECTION SCAN: Extract skills from "Projects/Experience" into "experience". Extract from "Skills list" into "skillsList".
-    //   3. FALLBACK: If you find technical skills but cannot determine the section, put them in "generalSkills".
-      
-    //   OUTPUT JSON ONLY:
-    //   {
-    //     "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
-    //     "totalProfessionalMonths": 0,
-    //     "summary": "1 sentence match."
-    //   }
-    // `;
-
-//     const result = await generateJSON(systemPrompt, `Analyze:\n"${resumeText}"`);
-
-//     const application = await Application.findById(applicationId);
-//     const analysisData = calculateTop1Score(result.data, job.requirements, resumeText);
-//     analysisData.provider = result.provider;
-
-//     if (application) {
-//       application.aiAnalysis = [analysisData, ...(application.aiAnalysis || [])];
-//       await application.save();
-//     }
-
-//     res.status(200).json({ success: true, analysis: analysisData });
-
-//   } catch (err) {
-//     console.error("ANALYSIS FAILED:", err.message);
-//     const status = err.message.includes("INVALID_DOCUMENT") ? 400 : 500;
-//     res.status(status).json({ message: err.message });
-//   }
-// });
-
-
-// module.exports = router;
-
-
-
-
-
-
-
-
-
-//=======================================================//
-
-
-// //new fixed one  //
-//  const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const parseResumeFromUrl = require("../utils/resumeParser");
-// const { normalizeSkill, skillMap } = require("../utils/skillMap");
-// const Job = require("../models/Job");
-// const Application = require("../models/Application");
-// const { generateJSON } = require("../utils/aiServices");
-
-// // ============================================================================
-// // 🛠️ ANALYTICS ENGINE (The Witness)
-// // ============================================================================
-
-// function calculateTop1Score(aiOutput, jobRequirements, resumeText) {
-//   console.log("--- 🚀 TOP1 ANALYTICS START ---");
-  
-//   const rawRequirements = Array.isArray(jobRequirements) ? [...new Set(jobRequirements)] : [];
-//   const normalizedReqs = rawRequirements.map(r => normalizeSkill(r));
-
-//   // 1. LINK DETECTION (Unique & Tiered)
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = ["github.com", "vercel.app", "netlify.app", "github.io", "linkedin.com"];
-  
-//   const uniqueTrustedLinks = [...new Set(allLinks.filter(link => 
-//     trustedDomains.some(domain => link.includes(domain))
-//   ))];
-  
-//   let linkScore = 0;
-//   if (uniqueTrustedLinks.length >= 3) linkScore = 10;
-//   else if (uniqueTrustedLinks.length >= 1) linkScore = 5;
-
-//   // 2. SKILL MATCHING WITH FALLBACK & WEIGHTING (1.5x)
-//   const skillsInExp = (aiOutput.skillsBySection?.experience || []).map(s => normalizeSkill(s));
-//   const skillsInList = (aiOutput.skillsBySection?.skillsList || []).map(s => normalizeSkill(s));
-//   const generalSkills = (aiOutput.generalSkills || []).map(s => normalizeSkill(s));
-
-//   let weightedMatchCount = 0;
-//   let matchedSkillsList = [];
-
-//   normalizedReqs.forEach((req, index) => {
-//     const originalReq = rawRequirements[index];
-//     if (skillsInExp.includes(req)) {
-//       weightedMatchCount += 1.5; 
-//       matchedSkillsList.push(originalReq);
-//     } else if (skillsInList.includes(req) || generalSkills.includes(req)) {
-//       weightedMatchCount += 1.0;
-//       matchedSkillsList.push(originalReq);
-//     }
-//   });
-
-//   const maxPossibleWeight = normalizedReqs.length * 1.5;
-//   const skillScore = maxPossibleWeight > 0 ? (weightedMatchCount / maxPossibleWeight) * 60 : 0;
-
-//   // 3. PROFESSIONAL EXPERIENCE
-//   const totalMonths = aiOutput.totalProfessionalMonths || 0;
-//   let expScore = 5; 
-//   if (totalMonths >= 36) expScore = 20; 
-//   else if (totalMonths >= 12) expScore = 12;
-
-//   // 4. SYSTEM INTEGRITY
-//   const integrityScore = 10;
-
-//   const finalScore = Math.round(skillScore + expScore + linkScore + integrityScore);
-  
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills: [...new Set(matchedSkillsList)],
-//     missingRequiredSkills: rawRequirements.filter(r => !matchedSkillsList.includes(r)),
-//     experienceRelevance: totalMonths >= 12 ? "High" : "Medium",
-//     summary: aiOutput.summary,
-//     professionalMonths: totalMonths,
-//     uniqueLinks: uniqueTrustedLinks.length
-//   };
-// }
-
-// /**
-//  * DETERMINISTIC MATH ENGINE for Multi-mode
-//  */
-// function calculateDeterministicScore(skillsMatchData, resumeText, jobRequirements, profMonths = 0) {
-//     const rawReqs = Array.isArray(jobRequirements) ? [...new Set(jobRequirements)] : [];
-//     const normalizedReqs = rawReqs.map(r => normalizeSkill(r));
-
-//     const linkPattern = /(https?:\/\/[^\s]+)/g;
-//     const allLinks = resumeText.match(linkPattern) || [];
-//     const trustedDomains = ["github.com", "vercel.app", "netlify.app", "github.io"];
-//     const uniqueLinks = [...new Set(allLinks.filter(l => trustedDomains.some(d => l.includes(d))))];
-//     let linkPoints = uniqueLinks.length >= 3 ? 10 : (uniqueLinks.length >= 1 ? 5 : 0);
-
-//     const expSkills = (skillsMatchData.experience || []).map(s => normalizeSkill(s));
-//     const listSkills = (skillsMatchData.skillsList || []).map(s => normalizeSkill(s));
-//     const fallback = (skillsMatchData.generalSkills || []).map(s => normalizeSkill(s));
-
-//     let weightedPoints = 0;
-//     let matchedList = [];
-
-//     normalizedReqs.forEach((req, idx) => {
-//         if (expSkills.includes(req)) {
-//             weightedPoints += 1.5; 
-//             matchedList.push(rawReqs[idx]);
-//         } else if (listSkills.includes(req) || fallback.includes(req)) {
-//             weightedPoints += 1.0;
-//             matchedList.push(rawReqs[idx]);
-//         }
-//     });
-
-//     const skillScore = normalizedReqs.length > 0 ? (weightedPoints / (normalizedReqs.length * 1.5)) * 60 : 0;
-//     let expPoints = profMonths >= 36 ? 20 : (profMonths >= 12 ? 12 : 5);
-
-//     return {
-//         matchScore: Math.min(100, Math.round(skillScore + expPoints + linkPoints + 10)),
-//         matchedSkills: [...new Set(matchedList)],
-//         missingRequiredSkills: rawReqs.filter(r => !matchedList.includes(r)),
-//         professionalMonths: profMonths,
-//         uniqueLinksFound: uniqueLinks.length
-//     };
-// }
-
-// // ============================================================================
-// // 🚀 ROUTE: MULTI-MODE ANALYSIS (Analyze V2)
-// // ============================================================================
-// // ============================================================================
-// // 🚀 ROUTE: MULTI-MODE ANALYSIS (Fixed V2)
-// // ============================================================================
-// // --- UPDATED ANALYZE-V2 ROUTE ---
-// router.post("/analyze-v2", verifyToken, async (req, res) => {
-//     try {
-//         const { resumeUrl, jobId, mode = "professional", applicationId } = req.body; 
-//         const job = await Job.findById(jobId);
-//         if (!job) return res.status(404).json({ message: "Job not found" });
-
-//         const resumeText = await parseResumeFromUrl(resumeUrl);
-//         let finalAnalysis;
-
-//         if (mode === "standard") {
-//             const mockSectionData = { generalSkills: resumeText.split(/[\s,]+/) };
-//             finalAnalysis = calculateDeterministicScore(mockSectionData, resumeText, job.requirements, 0);
-//             finalAnalysis.summary = "Standard keyword match (No AI).";
-//             finalAnalysis.status = "SUCCESS";
-//         } 
-//         else if (mode === "professional") {
-//             const systemPrompt = `ACT AS: ATS Auditor. 
-//             FORMAT: { "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] }, "totalMonths": 0, "summary": "Short fact." }`;
-            
-//             const result = await generateJSON(systemPrompt, `RESUME CONTENT:\n${resumeText}`);
-
-//             // FIX: Check if result.data exists and has the correct fields
-//             if (!result.data || !result.data.skillsBySection) {
-//                 finalAnalysis = {
-//                     matchScore: 0,
-//                     status: "FAIL", // Mark as FAIL for the "Retry" logic
-//                     summary: "AI failed to parse structure.",
-//                     provider: result.provider || "Error"
-//                 };
-//             } else {
-//                 // FIX: Ensure result.data.totalMonths is passed to the math engine
-//                 finalAnalysis = calculateDeterministicScore(
-//                     result.data.skillsBySection, 
-//                     resumeText, 
-//                     job.requirements, 
-//                     result.data.totalMonths || 0 
-//                 );
-//                 finalAnalysis.summary = result.data.summary;
-//                 finalAnalysis.status = "SUCCESS";
-//                 finalAnalysis.provider = result.provider;
-//             }
-//         }
-//         else {
-//             // Beta Mode Logic...
-//             finalAnalysis.status = "SUCCESS";
-//         }
-
-//         // Save to Database
-//         const application = await Application.findById(applicationId);
-//         if (application) {
-//             application.aiAnalysis = [finalAnalysis, ...(application.aiAnalysis || [])];
-//             await application.save();
-//         }
-
-//         res.json({ success: true, analysis: finalAnalysis });
-//     } catch (err) {
-//         res.status(500).json({ success: false, status: "FAIL" });
-//     }
-// });
-// // ============================================================================
-// // 🏛️ LEGACY ROUTE: Hardened with Failure Guards
-// // ============================================================================
-// router.post("/analyze-resume", verifyToken, async (req, res) => {
-//   try {
-//     const { resumeUrl, jobId, applicationId } = req.body;
-//     const job = await Job.findById(jobId);
-//     if (!job) return res.status(404).json({ message: "Job not found" });
-
-//     const resumeText = await parseResumeFromUrl(resumeUrl);
-
-//    const systemPrompt = `
-//       You are an ATS Auditor. 
-//       STRICT RULES:
-//       1. TOTAL PROFESSIONAL MONTHS: Look ONLY at Work Experience sections. IGNORE Education dates. If only Education exists, return 0.
-//       2. SECTION SCAN: Extract skills from "Projects/Experience" into "experience". Extract from "Skills list" into "skillsList".
-//       3. FALLBACK: If you find technical skills but cannot determine the section, put them in "generalSkills".
-      
-//       OUTPUT JSON ONLY:
-//       {
-//         "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
-//         "totalProfessionalMonths": 0,
-//         "summary": "1 sentence match."
-//       }
-//     `;
-
-//     const result = await generateJSON(systemPrompt, `Analyze:\n"${resumeText}"`);
-
-//     // 🛑 FAILURE GUARD: If result is empty or keys are missing
-//     let analysisData;
-//     if (!result.data || !result.data.skillsBySection) {
-//       console.warn("Legacy Route: AI Extraction failed. Sending 0 score fallback.");
-//       analysisData = {
-//         matchScore: 0,
-//         matchedSkills: [],
-//         missingRequiredSkills: job.requirements,
-//         experienceRelevance: "N/A",
-//         summary: "❌ AI Extraction Failed: The system could not read the resume structure correctly. Please try a different model or retry.",
-//         professionalMonths: 0,
-//         uniqueLinks: 0,
-//         provider: result.provider || "Unknown"
-//       };
-//     } else {
-//       analysisData = calculateTop1Score(result.data, job.requirements, resumeText);
-//       analysisData.provider = result.provider;
-//     }
-
-//     const application = await Application.findById(applicationId);
-//     if (application) {
-//       application.aiAnalysis = [analysisData, ...(application.aiAnalysis || [])];
-//       await application.save();
-//     }
-
-//     res.status(200).json({ success: true, analysis: analysisData });
-
-//   } catch (err) {
-//     console.error("ANALYSIS FAILED:", err.message);
-//     const status = err.message.includes("INVALID_DOCUMENT") ? 400 : 500;
-//     res.status(status).json({ message: err.message });
-//   }
-// });
-
-// module.exports = router; 
-
-
-
-//========================================================//
-//============it wokrs fine now ==================//
-
-// const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const parseResumeFromUrl = require("../utils/resumeParser");
-// const { 
-//   normalizeSkill, 
-//   getSkillWeight, 
-//   extractSkillsFromText 
-// } = require("../utils/skillMap");
-// const Job = require("../models/Job");
-// const Application = require("../models/Application");
-// const { generateJSON } = require("../utils/aiServices");
-
-// // ============================================================================
-// // 🧮 STANDARD MODE: Pure Keyword Matching (No AI)
-// // ============================================================================
-// function calculateStandardScore(resumeText, jobRequirements) {
-//   console.log("--- STANDARD MODE: Keyword Analysis ---");
-
-//   // Extract skills from resume text using our enhanced skillMap
-//   const detectedSkills = extractSkillsFromText(resumeText);
-//   console.log(`Detected ${detectedSkills.length} skills from resume`);
-
-//   // Normalize job requirements
-//   const normalizedReqs = jobRequirements
-//     .map(req => normalizeSkill(req))
-//     .filter(Boolean);
-
-//   // Calculate matches with weighting
-//   let totalWeight = 0;
-//   let matchedWeight = 0;
-//   const matchedSkills = [];
-//   const missingSkills = [];
-
-//   normalizedReqs.forEach((reqSkill) => {
-//     const weight = getSkillWeight(reqSkill);
-//     totalWeight += weight;
-
-//     if (detectedSkills.includes(reqSkill)) {
-//       matchedWeight += weight;
-//       matchedSkills.push(reqSkill);
-//     } else {
-//       missingSkills.push(reqSkill);
-//     }
-//   });
-
-//   // Skill match score (0-70 points)
-//   const skillScore = totalWeight > 0 
-//     ? (matchedWeight / totalWeight) * 70 
-//     : 0;
-
-//   // Link detection (0-15 points)
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = [
-//     "github.com", "linkedin.com", "portfolio",
-//     "vercel.app", "netlify.app", "github.io"
-//   ];
-//   const uniqueLinks = [...new Set(
-//     allLinks.filter(link => 
-//       trustedDomains.some(domain => link.includes(domain))
-//     )
-//   )];
-//   const linkScore = Math.min(uniqueLinks.length * 5, 15);
-
-//   // Experience detection (0-15 points)
-//   const expPatterns = [
-//     /(\d+)\+?\s*(years?|yrs?)/gi,
-//     /(\d+)\s*months?/gi,
-//     /(intern|internship|trainee)/gi,
-//     /(junior|mid-level|senior|lead)/gi
-//   ];
-//   let expScore = 5; // Base score
-//   for (const pattern of expPatterns) {
-//     if (pattern.test(resumeText)) {
-//       expScore = Math.min(expScore + 5, 15);
-//     }
-//   }
-
-//   const finalScore = Math.round(skillScore + linkScore + expScore);
-
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills,
-//     missingRequiredSkills: missingSkills,
-//     summary: `Standard keyword match found ${matchedSkills.length}/${normalizedReqs.length} required skills.`,
-//     status: "SUCCESS",
-//     mode: "standard",
-//     detectedSkillsCount: detectedSkills.length,
-//     linksFound: uniqueLinks.length
-//   };
-// }
-
-// // ============================================================================
-// // 🤖 PROFESSIONAL MODE: AI-Powered with Fallback
-// // ============================================================================
-// async function calculateProfessionalScore(resumeText, jobRequirements, appId) {
-//   console.log("--- PROFESSIONAL MODE: AI Analysis ---");
-
-//   const systemPrompt = `You are an ATS (Applicant Tracking System) analyzer.
-
-// CRITICAL RULES:
-// 1. Extract skills from EXPERIENCE/PROJECTS sections → put in "experience" array
-// 2. Extract skills from dedicated SKILLS sections → put in "skillsList" array
-// 3. If you find technical skills but can't identify section → put in "generalSkills"
-// 4. Calculate TOTAL PROFESSIONAL MONTHS from work experience ONLY (ignore education dates)
-// 5. If resume has NO work experience, set totalMonths to 0
-
-// REQUIRED JSON OUTPUT (no markdown, no explanation):
-// {
-//   "skillsBySection": {
-//     "experience": ["skill1", "skill2"],
-//     "skillsList": ["skill3", "skill4"],
-//     "generalSkills": ["skill5"]
-//   },
-//   "totalMonths": 0,
-//   "summary": "One sentence about candidate fit"
-// }`;
-
-//   try {
-//     // Attempt AI analysis
-//     const result = await generateJSON(
-//       systemPrompt,
-//       `Analyze this resume:\n\n${resumeText.substring(0, 4000)}`
-//     );
-
-//     // VALIDATION: Check if AI returned valid structure
-//     if (!result.data || 
-//         !result.data.skillsBySection ||
-//         typeof result.data.totalMonths === 'undefined') {
-      
-//       console.warn("⚠️ AI returned invalid structure, using fallback");
-//       return calculateStandardScore(resumeText, jobRequirements);
-//     }
-
-//     // Extract AI-detected skills
-//     const aiSkills = {
-//       experience: result.data.skillsBySection.experience || [],
-//       skillsList: result.data.skillsBySection.skillsList || [],
-//       generalSkills: result.data.skillsBySection.generalSkills || []
-//     };
-
-//     // Calculate score using deterministic math
-//     const score = calculateDeterministicScore(
-//       aiSkills,
-//       resumeText,
-//       jobRequirements,
-//       result.data.totalMonths || 0
-//     );
-
-//     // Add AI metadata
-//     score.summary = result.data.summary || "AI analysis complete";
-//     score.provider = result.provider || "Unknown";
-//     score.mode = "professional";
-//     score.status = "SUCCESS";
-
-//     return score;
-
-//   } catch (error) {
-//     console.error("❌ AI Analysis failed:", error.message);
-    
-//     // FALLBACK: Use standard mode if AI fails
-//     console.log("🔄 Falling back to Standard Mode");
-//     const fallbackScore = calculateStandardScore(resumeText, jobRequirements);
-//     fallbackScore.summary = "AI failed - using keyword matching as fallback";
-//     fallbackScore.provider = "Fallback";
-//     return fallbackScore;
-//   }
-// }
-
-// // ============================================================================
-// // 🧮 DETERMINISTIC SCORING (Used by Professional Mode)
-// // ============================================================================
-// function calculateDeterministicScore(
-//   aiSkills, 
-//   resumeText, 
-//   jobRequirements, 
-//   profMonths = 0
-// ) {
-//   // Normalize all detected skills
-//   const expSkills = aiSkills.experience.map(s => normalizeSkill(s));
-//   const listSkills = aiSkills.skillsList.map(s => normalizeSkill(s));
-//   const generalSkills = aiSkills.generalSkills.map(s => normalizeSkill(s));
-
-//   // Normalize job requirements
-//   const normalizedReqs = jobRequirements
-//     .map(req => normalizeSkill(req))
-//     .filter(Boolean);
-
-//   // Calculate weighted matches
-//   let totalWeight = 0;
-//   let matchedWeight = 0;
-//   const matchedSkills = [];
-//   const missingSkills = [];
-
-//   normalizedReqs.forEach((reqSkill) => {
-//     const weight = getSkillWeight(reqSkill);
-//     totalWeight += weight;
-
-//     // Priority: Experience > Skills List > General
-//     if (expSkills.includes(reqSkill)) {
-//       matchedWeight += weight * 1.5; // 50% bonus for experience
-//       matchedSkills.push(reqSkill);
-//     } else if (listSkills.includes(reqSkill)) {
-//       matchedWeight += weight * 1.2; // 20% bonus for listed
-//       matchedSkills.push(reqSkill);
-//     } else if (generalSkills.includes(reqSkill)) {
-//       matchedWeight += weight;
-//       matchedSkills.push(reqSkill);
-//     } else {
-//       missingSkills.push(reqSkill);
-//     }
-//   });
-
-//   // Skill score (0-60 points)
-//   const skillScore = totalWeight > 0 
-//     ? (matchedWeight / (totalWeight * 1.5)) * 60 
-//     : 0;
-
-//   // Experience score (0-20 points)
-//   let expScore = 5; // Base
-//   if (profMonths >= 60) expScore = 20;       // 5+ years
-//   else if (profMonths >= 36) expScore = 15;  // 3+ years
-//   else if (profMonths >= 12) expScore = 10;  // 1+ year
-
-//   // Link score (0-10 points)
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = [
-//     "github.com", "linkedin.com", "portfolio",
-//     "vercel.app", "netlify.app"
-//   ];
-//   const uniqueLinks = [...new Set(
-//     allLinks.filter(link => 
-//       trustedDomains.some(domain => link.includes(domain))
-//     )
-//   )];
-//   const linkScore = Math.min(uniqueLinks.length * 3, 10);
-
-//   // Base integrity score (always 10 points)
-//   const integrityScore = 10;
-
-//   const finalScore = Math.round(
-//     skillScore + expScore + linkScore + integrityScore
-//   );
-
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills: [...new Set(matchedSkills)],
-//     missingRequiredSkills: missingSkills,
-//     professionalMonths: profMonths,
-//     experienceRelevance: profMonths >= 24 ? "High" : 
-//                         profMonths >= 12 ? "Medium" : "Low",
-//     linksFound: uniqueLinks.length,
-//     breakdown: {
-//       skillScore: Math.round(skillScore),
-//       expScore,
-//       linkScore,
-//       integrityScore
-//     }
-//   };
-// }
-
-// // ============================================================================
-// // 🚀 MAIN ROUTE: ANALYZE-V2 (Multi-Mode)
-// // ============================================================================
-// router.post("/analyze-v2", verifyToken, async (req, res) => {
-//   try {
-//     const { 
-//       resumeUrl, 
-//       jobId, 
-//       applicationId,
-//       mode = "professional" 
-//     } = req.body;
-
-//     // Validate inputs
-//     if (!resumeUrl || !jobId || !applicationId) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Missing required fields"
-//       });
-//     }
-
-//     // Fetch job
-//     const job = await Job.findById(jobId);
-//     if (!job) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Job not found"
-//       });
-//     }
-
-//     // Parse resume
-//     const resumeText = await parseResumeFromUrl(resumeUrl);
-//     if (!resumeText || resumeText.trim().length < 50) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Resume text too short or invalid"
-//       });
-//     }
-
-//     let finalAnalysis;
-
-//     // MODE ROUTING
-//     switch (mode) {
-//       case "standard":
-//         finalAnalysis = calculateStandardScore(
-//           resumeText, 
-//           job.requirements
-//         );
-//         break;
-
-//       case "professional":
-//         finalAnalysis = await calculateProfessionalScore(
-//           resumeText,
-//           job.requirements,
-//           applicationId
-//         );
-//         break;
-
-//       case "beta":
-//         // Original AI implementation (from your analyze-resume route)
-//         finalAnalysis = await calculateBetaScore(
-//           resumeText,
-//           job.requirements
-//         );
-//         break;
-
-//       default:
-//         return res.status(400).json({
-//           success: false,
-//           message: "Invalid mode"
-//         });
-//     }
-
-//     // Save to database
-//     const application = await Application.findById(applicationId);
-//     if (application) {
-//       const existingAnalysis = Array.isArray(application.aiAnalysis) 
-//         ? application.aiAnalysis 
-//         : [];
-      
-//       application.aiAnalysis = [finalAnalysis, ...existingAnalysis];
-//       await application.save();
-//     }
-
-//     res.json({
-//       success: true,
-//       analysis: finalAnalysis
-//     });
-
-//   } catch (err) {
-//     console.error("ANALYSIS FAILED:", err);
-//     res.status(500).json({
-//       success: false,
-//       status: "FAIL",
-//       message: err.message
-//     });
-//   }
-// });
-
-// // ============================================================================
-// // 🧪 BETA MODE: Original AI (Legacy)
-// // ============================================================================
-// async function calculateBetaScore(resumeText, jobRequirements) {
-//   console.log("--- BETA MODE: Original AI ---");
-  
-//   const systemPrompt = `You are an ATS Auditor.
-// STRICT RULES:
-// 1. TOTAL PROFESSIONAL MONTHS: Look ONLY at Work Experience sections. IGNORE Education dates. If only Education exists, return 0.
-// 2. SECTION SCAN: Extract skills from "Projects/Experience" into "experience". Extract from "Skills list" into "skillsList".
-// 3. FALLBACK: If you find technical skills but cannot determine the section, put them in "generalSkills".
-
-// OUTPUT JSON ONLY:
-// {
-//   "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
-//   "totalProfessionalMonths": 0,
-//   "summary": "1 sentence match."
-// }`;
-
-//   try {
-//     const result = await generateJSON(
-//       systemPrompt,
-//       `Analyze:\n"${resumeText.substring(0, 4000)}"`
-//     );
-
-//     if (!result.data || !result.data.skillsBySection) {
-//       // Beta mode fallback
-//       return {
-//         matchScore: 0,
-//         matchedSkills: [],
-//         missingRequiredSkills: jobRequirements,
-//         summary: "Beta AI extraction failed",
-//         status: "FAIL",
-//         mode: "beta"
-//       };
-//     }
-
-//     // Use the original calculateTop1Score logic
-//     return calculateTop1Score(
-//       result.data,
-//       jobRequirements,
-//       resumeText,
-//       result.provider
-//     );
-
-//   } catch (err) {
-//     return {
-//       matchScore: 0,
-//       matchedSkills: [],
-//       missingRequiredSkills: jobRequirements,
-//       summary: "Beta AI error",
-//       status: "FAIL",
-//       mode: "beta"
-//     };
-//   }
-// }
-
-// // Original scoring function (for beta mode)
-// function calculateTop1Score(aiOutput, jobRequirements, resumeText, provider) {
-//   const rawRequirements = Array.isArray(jobRequirements) 
-//     ? [...new Set(jobRequirements)] 
-//     : [];
-//   const normalizedReqs = rawRequirements.map(r => normalizeSkill(r));
-
-//   // Link detection
-//   const linkPattern = /(https?:\/\/[^\s]+)/g;
-//   const allLinks = resumeText.match(linkPattern) || [];
-//   const trustedDomains = [
-//     "github.com", "vercel.app", "netlify.app", 
-//     "github.io", "linkedin.com"
-//   ];
-//   const uniqueTrustedLinks = [...new Set(
-//     allLinks.filter(link => 
-//       trustedDomains.some(domain => link.includes(domain))
-//     )
-//   )];
-//   let linkScore = uniqueTrustedLinks.length >= 3 ? 10 : 
-//                   uniqueTrustedLinks.length >= 1 ? 5 : 0;
-
-//   // Skill matching
-//   const skillsInExp = (aiOutput.skillsBySection?.experience || [])
-//     .map(s => normalizeSkill(s));
-//   const skillsInList = (aiOutput.skillsBySection?.skillsList || [])
-//     .map(s => normalizeSkill(s));
-//   const generalSkills = (aiOutput.generalSkills || [])
-//     .map(s => normalizeSkill(s));
-
-//   let weightedMatchCount = 0;
-//   let matchedSkillsList = [];
-
-//   normalizedReqs.forEach((req, index) => {
-//     const originalReq = rawRequirements[index];
-//     if (skillsInExp.includes(req)) {
-//       weightedMatchCount += 1.5;
-//       matchedSkillsList.push(originalReq);
-//     } else if (skillsInList.includes(req) || generalSkills.includes(req)) {
-//       weightedMatchCount += 1.0;
-//       matchedSkillsList.push(originalReq);
-//     }
-//   });
-
-//   const maxPossibleWeight = normalizedReqs.length * 1.5;
-//   const skillScore = maxPossibleWeight > 0 
-//     ? (weightedMatchCount / maxPossibleWeight) * 60 
-//     : 0;
-
-//   // Experience
-//   const totalMonths = aiOutput.totalProfessionalMonths || 0;
-//   let expScore = 5;
-//   if (totalMonths >= 36) expScore = 20;
-//   else if (totalMonths >= 12) expScore = 12;
-
-//   const integrityScore = 10;
-//   const finalScore = Math.round(
-//     skillScore + expScore + linkScore + integrityScore
-//   );
-
-//   return {
-//     matchScore: Math.min(100, finalScore),
-//     matchedSkills: [...new Set(matchedSkillsList)],
-//     missingRequiredSkills: rawRequirements.filter(
-//       r => !matchedSkillsList.includes(r)
-//     ),
-//     experienceRelevance: totalMonths >= 12 ? "High" : "Medium",
-//     summary: aiOutput.summary,
-//     professionalMonths: totalMonths,
-//     uniqueLinks: uniqueTrustedLinks.length,
-//     provider,
-//     mode: "beta",
-//     status: "SUCCESS"
-//   };
-// }
-
-// // ============================================================================
-// // 🏛️ LEGACY ROUTE (Keep for backward compatibility)
-// // ============================================================================
-// router.post("/analyze-resume", verifyToken, async (req, res) => {
-//   try {
-//     const { resumeUrl, jobId, applicationId } = req.body;
-//     const job = await Job.findById(jobId);
-//     if (!job) return res.status(404).json({ message: "Job not found" });
-
-//     const resumeText = await parseResumeFromUrl(resumeUrl);
-
-//     // Use beta mode for legacy route
-//     const analysisData = await calculateBetaScore(
-//       resumeText,
-//       job.requirements
-//     );
-
-//     const application = await Application.findById(applicationId);
-//     if (application) {
-//       application.aiAnalysis = [
-//         analysisData,
-//         ...(application.aiAnalysis || [])
-//       ];
-//       await application.save();
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       analysis: analysisData
-//     });
-
-//   } catch (err) {
-//     console.error("LEGACY ANALYSIS FAILED:", err.message);
-//     const status = err.message.includes("INVALID_DOCUMENT") ? 400 : 500;
-//     res.status(status).json({ message: err.message });
-//   }
-// });
-
-// module.exports = router;
-
-//=================================================
-//================new one done by claude 
- 
-/**
- * UNIFIED AI ANALYSIS ROUTE
- * Single endpoint that handles all analysis modes with intelligent fallback
- * 
- * Features:
- * - Auto fallback (AI → Local if AI fails)
- * - Confidence scoring
- * - Deterministic scoring (same input = same output)
- * - Edge case handling
- * - Metadata tracking for recruiter transparency
- */
-
-// const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const parseResumeFromUrl = require("../utils/resumeParser");
-// const { normalizeSkill, getSkillWeight, extractSkillsFromText } = require("../utils/skillMap");
-// const Job = require("../models/Job");
-// const Application = require("../models/Application");
-// const { generateJSON } = require("../utils/aiServices");
-
-// // ============================================================================
-// // 🔧 CONFIGURATION & CONSTANTS
-// // ============================================================================
-
-// const SCORING_CONFIG = {
-//   MAX_SKILL_SCORE: 60,
-//   MAX_EXP_SCORE: 20,
-//   MAX_LINK_SCORE: 10,
-//   BASE_INTEGRITY: 10,
-//   TRUSTED_DOMAINS: ["github.com", "linkedin.com", "vercel.app", "netlify.app", "github.io", "portfolio"]
-// };
-
-// const MIN_RESUME_LENGTH = 100; // Minimum characters to be valid resume
-
-// /**
-//  * DETERMINISTIC SCORING ENGINE
-//  * Updated to use Zonal Data for "Standard Mode" parity.
-//  * Add this after your SCORING_CONFIG object.
-//  */
-// /**
-//  * 🎯 FIXED SCORING ENGINE
-//  * Fixes variable name mismatches and implements "Summed" experience logic.
-//  */
-// function calculateDeterministicScore(extractedData, resumeZones, jobRequirements) {
-//   // 1. Initialize the score object (replacing 'scoreBreakdown' with 'score') 
-//   const score = { 
-//     skillScore: 0, 
-//     expScore: 0, 
-//     linkScore: 0, 
-//     integrityScore: SCORING_CONFIG.BASE_INTEGRITY 
-//   };
-
-//   const normalizedReqs = jobRequirements
-//     .map(req => normalizeSkill(req))
-//     .filter(Boolean);
-
-//   // 2. Map skills from AI or Local Zones
-//   const skillsFromExp = extractedData.experience?.length > 0 
-//     ? extractedData.experience.map(s => normalizeSkill(s)) 
-//     : extractSkillsFromText(resumeZones.experienceZone);
-
-//   const skillsGeneral = extractedData.generalSkills?.length > 0
-//     ? extractedData.generalSkills.map(s => normalizeSkill(s))
-//     : extractSkillsFromText(resumeZones.generalZone);
-
-//   const skillsFromList = (extractedData.skillsList || []).map(s => normalizeSkill(s));
-
-//   let totalWeight = 0;
-//   let matchedWeight = 0;
-//   const matchedSkills = [];
-
-//   normalizedReqs.forEach((reqSkill) => {
-//     const weight = getSkillWeight(reqSkill);
-//     totalWeight += weight;
-
-//     if (skillsFromExp.includes(reqSkill)) {
-//       matchedWeight += weight * 1.5;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsFromList.includes(reqSkill)) {
-//       matchedWeight += weight * 1.2;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsGeneral.includes(reqSkill)) {
-//       matchedWeight += weight * 1.0;
-//       matchedSkills.push(reqSkill);
-//     }
-//   });
-
-//   const maxPossibleWeight = totalWeight * 1.5;
-//   score.skillScore = maxPossibleWeight > 0 
-//     ? Math.round((matchedWeight / maxPossibleWeight) * SCORING_CONFIG.MAX_SKILL_SCORE)
-//     : 0;
-
-  
-// // 🔴 FIX: Using 'score' consistently instead of 'scoreBreakdown'
-//   // ─── SECTION 2: EXPERIENCE SCORING (0-20 points) ───
-//   const months = extractedData.totalMonths || 0;
-//   if (months >= 60) score.expScore = 20; 
-//   else if (months >= 36) score.expScore = 15;
-//   else if (months >= 12) score.expScore = 10;
-//   else if (months > 0) score.expScore = 5;
-
-//   // ─── SECTION 3: LINK DETECTION (0-10 points) ───
-//   const links = resumeZones.fullText.match(/(https?:\/\/[^\s]+)/g) || [];
-//   const uniqueLinks = [...new Set(links.filter(link => 
-//     SCORING_CONFIG.TRUSTED_DOMAINS.some(domain => link.includes(domain))
-//   ))];
-
-//   if (uniqueLinks.length >= 3) score.linkScore = 10;
-//   else if (uniqueLinks.length >= 2) score.linkScore = 7;
-//   else if (uniqueLinks.length >= 1) score.linkScore = 5;
-
-//   // ─── SECTION 4: INTEGRITY SCORE (10 points) ───
-//   score.integrityScore = 10; 
-
-//   // ─── FINAL CALCULATION ───
-//   const finalScore = Math.min(100, 
-//     score.skillScore + 
-//     score.expScore + 
-//     score.linkScore + 
-//     score.integrityScore
-//   );
-
-//   return {
-//     matchScore: finalScore,
-//     matchedSkills: [...new Set(matchedSkills)],
-//     missingRequiredSkills: normalizedReqs.filter(r => !matchedSkills.includes(r)), // Fixed key name here too
-//     professionalMonths: months,
-//     breakdown: score, // This correctly sends back the breakdown
-//     experienceLevel: months >= 36 ? "Experienced" : months >= 12 ? "Intermediate" : "Junior",
-//     linkedProfiles: uniqueLinks.length
-//   };
-// // ============================================================================
-// // 🤖 AI EXTRACTION MODE (Try to use AI, fallback to local)
-// // ============================================================================
-
-// async function analyzeWithAI(resumeText, jobId) {
-//   const systemPrompt = `You are an ATS (Applicant Tracking System) analyzer.
-
-// STRICT RULES:
-// 1. Extract ONLY technical skills from EXPERIENCE/PROJECTS sections → put in "experience"
-// 2. Extract skills from dedicated SKILLS sections → put in "skillsList"
-// 3. Unknown skills → put in "generalSkills"
-// 4. Calculate PROFESSIONAL MONTHS from work experience ONLY (ignore education)
-// 5. If NO work experience → totalMonths = 0
-// 6. Return VALID JSON only
-
-// OUTPUT FORMAT (MUST BE VALID JSON):
-// {
-//   "skillsBySection": {
-//     "experience": ["skill1", "skill2"],
-//     "skillsList": ["skill3"],
-//     "generalSkills": ["skill4"]
-//   },
-//   "totalMonths": 24,
-//   "summary": "Brief 1-sentence assessment"
-// }`;
-
-//   try {
-//     console.log("🤖 AI Extraction: Attempting AI analysis...");
-    
-//     const result = await generateJSON(systemPrompt, `Resume text (first 4000 chars):\n${resumeText.substring(0, 4000)}`);
-
-//     // Validate AI response structure
-//     if (!result.data || !result.data.skillsBySection || typeof result.data.totalMonths === 'undefined') {
-//       console.warn("⚠️ AI returned invalid structure, falling back to local");
-//       return {
-//         success: false,
-//         reason: "INVALID_AI_RESPONSE",
-//         data: null,
-//         provider: result.provider || "Unknown"
-//       };
-//     }
-
-//     console.log("✅ AI Extraction: Success");
-//     return {
-//       success: true,
-//       data: result.data,
-//       provider: result.provider,
-//       reason: "AI_SUCCESS"
-//     };
-//   } catch (error) {
-//     console.error("❌ AI Extraction Failed:", error.message);
-//     return {
-//       success: false,
-//       reason: "AI_ERROR",
-//       error: error.message,
-//       data: null,
-//       provider: "None"
-//     };
-//   }
-// }
-
-// // ============================================================================
-// // 📍 LOCAL EXTRACTION MODE (Fallback - Always Works)
-// // ============================================================================
-
-// function analyzeLocal(resumeText) {
-//   console.log("📍 Local Extraction: Using keyword matching...");
-
-//   const detectedSkills = extractSkillsFromText(resumeText);
-
-//   // Simple professional months detection
-//   const monthPattern = /(\d+)\s*(?:months?|mos?)/gi;
-//   const yearPattern = /(\d+)\+?\s*(?:years?|yrs?)/gi;
-
-//   let totalMonths = 0;
-  
-//   const yearMatches = resumeText.matchAll(yearPattern);
-//   for (const match of yearMatches) {
-//     totalMonths += parseInt(match[1]) * 12;
-//   }
-
-//   const monthMatches = resumeText.matchAll(monthPattern);
-//   for (const match of monthMatches) {
-//     totalMonths += parseInt(match[1]);
-//   }
-
-//   console.log(`✅ Local Extraction: Found ${detectedSkills.length} skills, ${totalMonths} months experience`);
-
-//   return {
-//     success: true,
-//     data: {
-//       skillsBySection: {
-//         experience: detectedSkills,
-//         skillsList: [],
-//         generalSkills: []
-//       },
-//       totalMonths: totalMonths,
-//       summary: `Found ${detectedSkills.length} technical skills and ${totalMonths} months of experience.`
-//     },
-//     provider: "Local/Keyword",
-//     reason: "LOCAL_SUCCESS"
-//   };
-// }
-
-// // ============================================================================
-// // 🎯 CONFIDENCE SCORING (How much can we trust this result?)
-// // ============================================================================
-
-// function calculateConfidence(analysis, extractionMethod) {
-//   let confidence = 0.5; // Base confidence
-
-//   // Bonus: If multiple skills matched
-//   if (analysis.matchedSkills.length >= 3) confidence += 0.15;
-//   else if (analysis.matchedSkills.length >= 1) confidence += 0.1;
-
-//   // Bonus: If experience found
-//   if (analysis.professionalMonths >= 12) confidence += 0.15;
-//   else if (analysis.professionalMonths > 0) confidence += 0.08;
-
-//   // Bonus: If portfolio links found
-//   if (analysis.linkedProfiles >= 2) confidence += 0.1;
-//   else if (analysis.linkedProfiles >= 1) confidence += 0.05;
-
-//   // AI extraction is more trustworthy IF successful
-//   if (extractionMethod === "ai") confidence += 0.1;
-  
-//   // Local extraction is reliable but less nuanced
-//   if (extractionMethod === "local") confidence += 0.05;
-
-//   return Math.min(1, confidence); // Cap at 1.0
-// }
-
-// // ============================================================================
-// // 🚨 EDGE CASE HANDLERS
-// // ============================================================================
-
-// function handleEdgeCases(resumeText, extractionResult, jobId) {
-//   const warnings = [];
-//   const errors = [];
-
-//   // Edge Case 1: Resume too short (corrupted?)
-//   if (resumeText.length < MIN_RESUME_LENGTH) {
-//     errors.push("Resume content too short (possibly corrupted or invalid PDF)");
-//     return { valid: false, warnings, errors };
-//   }
-
-//   // Edge Case 2: No skills detected at all
-//   if (extractionResult.data.skillsBySection.experience.length === 0 &&
-//       extractionResult.data.skillsBySection.skillsList.length === 0 &&
-//       extractionResult.data.skillsBySection.generalSkills.length === 0) {
-//     warnings.push("No technical skills detected in resume (possible edge case)");
-//   }
-
-//   // Edge Case 3: No experience data
-//   if (extractionResult.data.totalMonths === 0 || extractionResult.data.totalMonths === undefined) {
-//     warnings.push("No professional experience duration found (may be fresher or parsing issue)");
-//   }
-
-//   // Edge Case 4: Score seems unrealistic
-//   if (extractionResult.score && extractionResult.score < 10 && extractionResult.data.skillsBySection.experience.length > 5) {
-//     warnings.push("Low match score despite multiple skills detected (possible skill name mismatch)");
-//   }
-
-//   return { valid: true, warnings, errors };
-// }
-
-// // ============================================================================
-// // 🔄 MAIN ANALYSIS ORCHESTRATOR
-// // ============================================================================
-
-// /**
-//  * 🔄 MAIN ANALYSIS ORCHESTRATOR
-//  * Coordinates parsing, AI/Local extraction, and the scoring engine.
-//  */
-// async function performAnalysis(resumeUrl, jobId, mode = "auto") {
-//   try {
-//     // STEP 1: Parse resume (Now returns an object with zones)
-//     console.log(`\n📄 ANALYSIS START: Mode=${mode}`);
-//     const resumeData = await parseResumeFromUrl(resumeUrl);
-
-//     // 🔴 FIX: Check the 'fullText' property of the object
-//     if (!resumeData || !resumeData.fullText || resumeData.fullText.trim().length < MIN_RESUME_LENGTH) {
-//       throw new Error("INVALID_RESUME: Resume text too short or empty");
-//     }
-
-//     // STEP 2: Get job requirements
-//     const job = await Job.findById(jobId);
-//     if (!job) throw new Error("JOB_NOT_FOUND");
-
-//     // STEP 3: Try extraction based on mode
-//     let extractionResult;
-
-//     if (mode === "force-ai") {
-//       extractionResult = await analyzeWithAI(resumeData.fullText, jobId);
-//       if (!extractionResult.success) {
-//         throw new Error(`AI_FAILED: ${extractionResult.reason}`);
-//       }
-//     } else if (mode === "force-local") {
-//       extractionResult = analyzeLocal(resumeData.fullText);
-//     } else {
-//     //   // AUTO mode logic
-//     //   extractionResult = await analyzeWithAI(resumeData.fullText, jobId);
-
-//     //   if (!extractionResult.success) {
-//     //     console.log(`⚠️ AI failed (${extractionResult.reason}), falling back to local...`);
-//     //     extractionResult = analyzeLocal(resumeData.fullText);
-//     //     extractionResult.aiAttempted = true;
-//     //     extractionResult.aiFailedReason = extractionResult.reason;
-//     //   }
-//     // }
-
-//     // Try AI for "auto" or "force-ai" modes
-//       extractionResult = await analyzeWithAI(resumeData.fullText, jobId);
-
-//       // 🔴 CHANGE: Instead of falling back to local, we report the failure
-//       if (!extractionResult.success) {
-//         return {
-//           success: true, // The request finished, but AI logic failed
-//           analysis: {
-//             matchScore: 0,
-//             summary: "AI Extraction failed. Please retry.",
-//             metadata: {
-//               status: "FAILED",
-//               canRetry: true,
-//               error: extractionResult.reason,
-//               timestamp: new Date()
-//             }
-//           }
-//         };
-//       }
-//     }
-
-//     // STEP 4: Calculate deterministic score
-//     // 🔴 FIX: Passing 'resumeData' object which contains our zones
-//     const scoreData = calculateDeterministicScore(
-//       extractionResult.data.skillsBySection,
-//       resumeData, 
-//       job.requirements
-//     );
-
-//     // STEP 5: Check edge cases
-//     const edgeCaseCheck = handleEdgeCases(resumeData.fullText, extractionResult, jobId);
-    
-//     if (!edgeCaseCheck.valid) {
-//       return {
-//         success: false,
-//         error: edgeCaseCheck.errors[0],
-//         errors: edgeCaseCheck.errors,
-//         warnings: edgeCaseCheck.warnings
-//       };
-//     }
-
-//     // STEP 6: Calculate confidence
-//     const confidence = calculateConfidence(scoreData, extractionResult.provider === "Local/Keyword" ? "local" : "ai");
-
-//     // STEP 7: Build final response
-//     return {
-//       success: true,
-//       analysis: {
-//         matchScore: scoreData.matchScore,
-//         matchedSkills: scoreData.matchedSkills,
-//         missingRequiredSkills: scoreData.missingRequiredSkills,
-//         breakdown: scoreData.breakdown,
-//         professionalMonths: scoreData.professionalMonths,
-//         experienceLevel: scoreData.experienceLevel,
-//         linkedProfiles: scoreData.linkedProfiles,
-//         summary: extractionResult.data.summary,
-        
-//         metadata: {
-//           provider: extractionResult.provider,
-//           method: extractionResult.provider === "Local/Keyword" ? "local" : "ai",
-//           aiAttempted: extractionResult.aiAttempted || false,
-//           aiFailedReason: extractionResult.aiFailedReason || null,
-//           confidence: confidence,
-//           confidenceLabel: 
-//             confidence >= 0.8 ? "High (Trust this score)" :
-//             confidence >= 0.5 ? "Medium (Verify manually)" :
-//             "Low (Review carefully)",
-//           warnings: edgeCaseCheck.warnings,
-//           timestamp: new Date()
-//         }
-//       }
-//     };
-
-
-
-
-// // ============================================================================
-// // 🌐 MAIN ROUTE: POST /api/ai/analyze
-// // ============================================================================
-
-// router.post("/analyze", verifyToken, async (req, res) => {
-//   try {
-//     const { resumeUrl, jobId, applicationId, mode = "auto" } = req.body;
-
-//     // Validation
-//     if (!resumeUrl || !jobId || !applicationId) {
-//       return res.status(400).json({
-//         success: false,
-//         error: "Missing required fields: resumeUrl, jobId, applicationId"
-//       });
-//     }
-
-//     if (!["allprofessional", "standard", "beta"].includes(mode)) {
-//       return res.status(400).json({
-//         success: false,
-//         error: `Invalid mode: ${mode}. Must be 'auto', 'force-ai', or 'force-local'`
-//       });
-//     }
-
-//     // Perform analysis
-//     const result = await performAnalysis(resumeUrl, jobId, mode);
-
-//     if (!result.success) {
-//       return res.status(400).json(result);
-//     }
-
-//     // Save to database
-//     const application = await Application.findById(applicationId);
-//     if (application) {
-//       const existingAnalysis = Array.isArray(application.aiAnalysis) 
-//         ? application.aiAnalysis 
-//         : [];
-      
-//       application.aiAnalysis = [result.analysis, ...existingAnalysis];
-//       await application.save();
-//     }
-
-//     // Return success
-//     res.json({
-//       success: true,
-//       analysis: result.analysis
-//     });
-
-//   } catch (error) {
-//     console.error("Route error:", error);
-//     res.status(500).json({
-//       success: false,
-//       error: "Server error during analysis"
-//     });
-//   }
-// });
-
-
-
 
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/authMiddleware");
 const parseResumeFromUrl = require("../utils/resumeParser");
-const { normalizeSkill, getSkillWeight, extractSkillsFromText } = require("../utils/skillMap");
+const { normalizeSkill, getSkillWeight, refreshSkillCache } = require("../utils/skillMap");
 const Job = require("../models/Job");
 const Application = require("../models/Application");
+const Skill = require("../models/Skill"); // Needed for the Learning Loop
 const { generateJSON, generateStream } = require("../utils/aiServices");
 
+// Replace internal math with your new utility files
+const { calculateV3Score } = require("../utils/matchingEngine");
+const { calculateExperienceMonths } = require("../utils/durationMath");
 // ============================================================================
 // 🔧 CONFIGURATION & CONSTANTS
 // ============================================================================
@@ -1696,166 +27,49 @@ const SCORING_CONFIG = {
 const MIN_RESUME_LENGTH = 100;
 
 // ============================================================================
-// 🎯 DETERMINISTIC SCORING ENGINE
+// 🧮 DETERMINISTIC SCORING ENGINE (Pure JS Math)
 // ============================================================================
-// function calculateDeterministicScore(extractedData, resumeZones, jobRequirements) {
-//   const score = { 
-//     skillScore: 0, 
-//     expScore: 0, 
-//     linkScore: 0, 
-//     integrityScore: SCORING_CONFIG.BASE_INTEGRITY 
-//   };
+function calculateDeterministicScore(extractedData, jobRequirements) {
+  const scoreBreakdown = { skillScore: 0, expScore: 0, linkScore: 0, integrity: 10 };
 
-//   const normalizedReqs = jobRequirements
-//     .map(req => normalizeSkill(req))
-//     .filter(Boolean);
+  const normalizedReqs = jobRequirements.map(req => normalizeSkill(req)).filter(Boolean);
+  const foundSkills = [
+    ...extractedData.skillsBySection.experience,
+    ...extractedData.skillsBySection.skillsList,
+    ...extractedData.skillsBySection.generalSkills
+  ].map(s => normalizeSkill(s));
 
-//   const skillsFromExp = extractedData.experience?.length > 0 
-//     ? extractedData.experience.map(s => normalizeSkill(s)) 
-//     : extractSkillsFromText(resumeZones.experienceZone);
-
-//   const skillsGeneral = extractedData.generalSkills?.length > 0
-//     ? extractedData.generalSkills.map(s => normalizeSkill(s))
-//     : extractSkillsFromText(resumeZones.generalZone);
-
-//   const skillsFromList = (extractedData.skillsList || []).map(s => normalizeSkill(s));
-
-//   let totalWeight = 0;
-//   let matchedWeight = 0;
-//   const matchedSkills = [];
-
-//   normalizedReqs.forEach((reqSkill) => {
-//     const weight = getSkillWeight(reqSkill);
-//     totalWeight += weight;
-
-//     if (skillsFromExp.includes(reqSkill)) {
-//       matchedWeight += weight * 1.5;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsFromList.includes(reqSkill)) {
-//       matchedWeight += weight * 1.2;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsGeneral.includes(reqSkill)) {
-//       matchedWeight += weight * 1.0;
-//       matchedSkills.push(reqSkill);
-//     }
-//   });
-
-//   const maxPossibleWeight = totalWeight * 1.5;
-//   score.skillScore = maxPossibleWeight > 0 
-//     ? Math.round((matchedWeight / maxPossibleWeight) * SCORING_CONFIG.MAX_SKILL_SCORE)
-//     : 0;
-
-//   const months = extractedData.totalMonths || 0;
-//   if (months >= 60) score.expScore = 20; 
-//   else if (months >= 36) score.expScore = 15;
-//   else if (months >= 12) score.expScore = 10;
-//   else if (months > 0) score.expScore = 5;
-
-//   const links = resumeZones.fullText.match(/(https?:\/\/[^\s]+)/g) || [];
-//   const uniqueLinks = [...new Set(links.filter(link => 
-//     SCORING_CONFIG.TRUSTED_DOMAINS.some(domain => link.includes(domain))
-//   ))];
-
-//   if (uniqueLinks.length >= 3) score.linkScore = 10;
-//   else if (uniqueLinks.length >= 2) score.linkScore = 7;
-//   else if (uniqueLinks.length >= 1) score.linkScore = 5;
-
-//   score.integrityScore = 10; 
-
-//   const finalScore = Math.min(100, 
-//     score.skillScore + score.expScore + score.linkScore + score.integrityScore
-//   );
-
-//   return {
-//     matchScore: finalScore,
-//     matchedSkills: [...new Set(matchedSkills)],
-//     missingRequiredSkills: normalizedReqs.filter(r => !matchedSkills.includes(r)),
-//     professionalMonths: months,
-//     breakdown: score,
-//     experienceLevel: months >= 36 ? "Experienced" : months >= 12 ? "Intermediate" : "Junior",
-//     linkedProfiles: uniqueLinks.length
-//   };
-// }
-
-function calculateDeterministicScore(extractedData, resumeZones, jobRequirements) {
-  const score = { 
-    skillScore: 0, 
-    expScore: 0, 
-    linkScore: 0, 
-    integrityScore: SCORING_CONFIG.BASE_INTEGRITY 
-  };
-
-  const normalizedReqs = jobRequirements
-    .map(req => normalizeSkill(req))
-    .filter(Boolean);
-
-  // 1. COMBINE ALL SECTIONS: Treat all found skills equally
-  const allFoundSkills = [
-    ...(extractedData.experience || []),
-    ...(extractedData.skillsList || []),
-    ...(extractedData.generalSkills || [])
-  ].map(s => (typeof s === 'string' ? normalizeSkill(s) : normalizeSkill(s.name)));
-
-  // Fallback to text extraction if sections are empty
-  const textExtracted = [
-    ...extractSkillsFromText(resumeZones.experienceZone),
-    ...extractSkillsFromText(resumeZones.generalZone)
-  ];
-
-  const uniqueFoundSkills = [...new Set([...allFoundSkills, ...textExtracted])];
-
-  // 2. FLAT MATCHING: No more weights or section-based multipliers
+  // 1. Skill Match (60 Points)
   let matchedCount = 0;
-  const matchedSkills = [];
-
-  normalizedReqs.forEach((reqSkill) => {
-    if (uniqueFoundSkills.includes(reqSkill)) {
+  const matchedList = [];
+  normalizedReqs.forEach(req => {
+    if (foundSkills.includes(req)) {
       matchedCount++;
-      matchedSkills.push(reqSkill);
+      matchedList.push(req);
     }
   });
 
-  // 3. SCORE CALCULATION: Percentage based on total required
-  const skillMatchRatio = normalizedReqs.length > 0 ? (matchedCount / normalizedReqs.length) : 0;
-  score.skillScore = Math.round(skillMatchRatio * SCORING_CONFIG.MAX_SKILL_SCORE);
+  const skillRatio = normalizedReqs.length > 0 ? (matchedCount / normalizedReqs.length) : 0;
+  scoreBreakdown.skillScore = Math.round(skillRatio * 60);
 
-  // Keep months and link scoring as they are (they work well)
+  // 2. Experience Match (30 Points)
   const months = extractedData.totalMonths || 0;
-  if (months >= 60) score.expScore = 20; 
-  else if (months >= 36) score.expScore = 15;
-  else if (months >= 12) score.expScore = 10;
-  else if (months > 0) score.expScore = 5;
+  if (months >= 60) scoreBreakdown.expScore = 30;
+  else if (months >= 36) scoreBreakdown.expScore = 22;
+  else if (months >= 12) scoreBreakdown.expScore = 15;
+  else if (months > 0) scoreBreakdown.expScore = 5;
 
-  const finalScore = Math.min(100, 
-    score.skillScore + score.expScore + score.linkScore + score.integrityScore
-  );
+  const finalScore = Math.min(100, scoreBreakdown.skillScore + scoreBreakdown.expScore + scoreBreakdown.linkScore + scoreBreakdown.integrity);
 
   return {
     matchScore: finalScore,
-    matchedSkills: [...new Set(matchedSkills)],
-    missingRequiredSkills: normalizedReqs.filter(r => !matchedSkills.includes(r)),
+    matchedSkills: [...new Set(matchedList)],
+    missingRequiredSkills: jobRequirements.filter(r => !matchedList.includes(normalizeSkill(r))),
     professionalMonths: months,
-    breakdown: score
+    breakdown: scoreBreakdown
   };
 }
 
-
-
-// // ============================================================================
-// // 🤖 AI EXTRACTION MODE
-// // ============================================================================
-// async function analyzeWithAI(resumeText, jobId) {
-//   const systemPrompt = `You are an ATS analyzer. Return VALID JSON only.`;
-//   try {
-//     const result = await generateJSON(systemPrompt, `Resume text:\n${resumeText.substring(0, 4000)}`);
-//     if (!result.data || !result.data.skillsBySection) {
-//       return { success: false, reason: "INVALID_AI_RESPONSE" };
-//     }
-//     return { success: true, data: result.data, provider: result.provider };
-//   } catch (error) {
-//     return { success: false, reason: "AI_ERROR", error: error.message };
-//   }
-// }
 
 async function analyzeWithAI(resumeText, jobId, jobTitle) {
 const systemPrompt = `
@@ -1945,228 +159,158 @@ function handleEdgeCases(resumeText, extractionResult, jobId) {
 
   return { valid: true, warnings, errors };
 }
-// ============================================================================
-// 🔄 MAIN ANALYSIS ORCHESTRATOR (FIXED)
+//🔄 MAIN ANALYSIS ORCHESTRATOR (V3 TEACHER-STUDENT)//
 // ============================================================================
 async function performAnalysis(resumeUrl, jobId, mode = "auto") {
   try {
+    console.log(`\n--- ANALYSIS START | MODE: ${mode.toUpperCase()} ---`);
+    
     const resumeData = await parseResumeFromUrl(resumeUrl);
-    if (!resumeData || !resumeData.fullText) throw new Error("INVALID_RESUME");
-
     const job = await Job.findById(jobId);
     if (!job) throw new Error("JOB_NOT_FOUND");
 
-    let extractionResult;
+    console.log(`Resume Parsed: ${resumeData.fullText.length} chars.`);
 
-if (mode === "beta") {
-      extractionResult = await analyzeWithAI(resumeData.fullText, jobId, job.title);
-    } else if (mode === "standard") {
-      // ✅ PASS THE OBJECT, NOT THE TEXT
-      extractionResult = analyzeLocal(resumeData); 
-    } else {
-      extractionResult = await analyzeWithAI(resumeData.fullText, jobId, job.title);
-      // ✅ PASS THE OBJECT HERE TOO
-      if (!extractionResult.success) extractionResult = analyzeLocal(resumeData);
+    let extractedFacts = null;
+    let providerName = "Local-V3";
+
+    // 1. AI EXTRACTION PHASE (Try Carousel for Beta/Auto)
+    if (mode === "beta" || mode === "auto") {
+   // Inside performAnalysis in aiRoutes.js
+const systemPrompt = `
+  ACT AS: A Strict ATS Fact Extractor.
+  TASK: Extract ONLY raw data points from the resume text.
+  
+  STRICT RULES:
+  1. "skills": Extract every technical tool/language.
+  2. "totalMonths": Extract ONLY professional WORK/INTERNSHIP experience months. 
+     - CRITICAL: DO NOT count Education dates (e.g., BCA, PUC, SSLC) as work experience.
+  3. "links": Extract ONLY links to GitHub, Vercel, Netlify, or Portfolios. 
+     - CRITICAL: DO NOT include emails or university homepages.
+  4. "learningDiscovery": Identify all technical terms and 3 synonyms each and in this formt u shuld send example to send format {
+    "canonical": "linkedin-marketing",
+    "synonyms": ["LinkedIn ads", "LinkedIn campaigns"],
+    "category": "Marketing & Sales"
+  },.
+  
+  RETURN VALID JSON ONLY: { "skills": [], "totalMonths": 0, "links": [], "summary": "", "learningDiscovery": [] }
+`;
+
+      console.log(`AI Chain: Attempting extraction...`);
+      const aiResult = await generateJSON(systemPrompt, `RESUME TEXT:\n${resumeData.fullText.substring(0, 10000)}`);
+      
+      if (aiResult.success) {
+        extractedFacts = aiResult.data;
+        providerName = aiResult.provider;
+        // 🚀 NEW DEBUG LINES: See the raw AI output in console
+    console.log(`📝 AI SUMMARY: ${extractedFacts.summary}`);
+    console.log(`🛠️ AI DISCOVERY: Found ${extractedFacts.learningDiscovery?.length || 0} terms.`);
+        console.log(`AI Success via ${providerName}`);
+      } else if (mode === "beta") {
+        // STRICT BETA: Return error instead of falling back to 10% score
+        console.error("BETA ERROR: AI Carousel exhausted.");
+        return { 
+          success: false, 
+          error: "STRICT_BETA_FAILED", 
+          detail: "Beta Mode requires high-fidelity AI which is currently unavailable." 
+        };
+      }
     }
 
-    // 🚨 NEW: INTEGRATE EDGE CASE HANDLER
-    const validation = handleEdgeCases(resumeData.fullText, extractionResult, jobId);
-    if (!validation.valid) {
-      throw new Error(validation.errors[0] || "Resume validation failed");
+    // 2. FALLBACK PHASE (Auto Fallback or Standard Mode)
+    if (!extractedFacts) {
+      console.log(`Fallback: Using Local ZMath & Keyword Mapping.`);
+      extractedFacts = {
+        skills: resumeData.skills,
+        totalMonths: calculateExperienceMonths(resumeData.experienceZone),
+        summary: mode === "standard" ? "Standard zonal analysis complete." : "Local fallback used (AI Rate Limited)."
+      };
     }
 
-    // Determine score using the deterministic engine
-    const scoreData = calculateDeterministicScore(
-      extractionResult.data.skillsBySection,
-      resumeData, 
-      job.requirements
-    );
+    // 3. SCORING PHASE (Deterministic 60/30/10)
+    const finalAnalysis = calculateV3Score({ 
+      skills: extractedFacts.skills || [], 
+      totalMonths: Number(extractedFacts.totalMonths) || 0,
+      links: resumeData.links || [] 
+    }, job.requirements || []);
 
-    const confidence = calculateConfidence(scoreData, extractionResult.provider === "Local/Keyword" ? "local" : "ai");
+    // 4. CONSOLE DEBUGGING
+    console.log(`\n--- [V3 SCORECARD: ${job.title}] ---`);
+    console.table({
+      "Result Method": providerName.includes("Local") ? "LOCAL" : "AI",
+      "Provider": providerName,
+      "Match Score": `${finalAnalysis.score}%`
+    });
+    console.log(`MATCHED: ${finalAnalysis.matchedSkills.join(", ")}`);
+    console.log(`------------------------------------\n`);
 
-    return {
+ return {
       success: true,
       analysis: {
-        ...scoreData,
-        summary: extractionResult.data.summary,
-        // ✅ Add warnings to metadata so the UI can show them
-        warnings: validation.warnings, 
-        metadata: {
-          provider: extractionResult.provider,
-          confidence: confidence,
-          timestamp: new Date()
+        ...finalAnalysis,
+        // 🚀 FORCE SYNC: Ensure both keys exist so UI always finds the number
+        matchScore: finalAnalysis.score, 
+        score: finalAnalysis.score,
+        summary: extractedFacts.summary,
+        metadata: { 
+          provider: providerName, 
+          status: "SUCCESS", 
+          timestamp: new Date(),
+          method: providerName.includes("Local") ? "local" : "ai" 
         }
       }
     };
   } catch (error) {
-    console.error("❌ ANALYSIS FAILED:", error.message);
+    console.error(`ORCHESTRATOR ERROR: ${error.message}`);
     return { success: false, error: error.message };
   }
 }
-
-
-function analyzeLocal(resumeData) {
-  // 🧹 CLEANING: Replace "Function 32" corrupt spaces with real spaces
-  const cleanExpZone = (resumeData.experienceZone || "").replace(/\s+/g, ' ').trim();
-  
-  const expSkills = extractSkillsFromText(cleanExpZone);
-  const genSkills = extractSkillsFromText(resumeData.generalZone);
-  
-  // 🕒 Date Scanner Fix
-  const dateRegex = /(?:19|20)\d{2}/g;
-  const yearsFound = cleanExpZone.match(dateRegex) || [];
-  
-  let estimatedMonths = 0;
-  if (yearsFound.length >= 2) {
-    const years = yearsFound.map(Number);
-    const duration = Math.max(...years) - Math.min(...years);
-    estimatedMonths = Math.max(12, duration * 12); 
-  }
-
-  return {
-    success: true,
-    data: {
-      skillsBySection: { experience: expSkills, skillsList: [], generalSkills: genSkills },
-      totalMonths: estimatedMonths,
-      summary: "Standard Zonal Analysis complete." 
-    },
-    provider: "Local/Keyword"
-  };
-}
-
 // ============================================================================
-// 🌐 MAIN ROUTE: /analyze
-
+// 🌐 MAIN ROUTE: POST /api/ai/analyze
 // ============================================================================
 router.post("/analyze", verifyToken, async (req, res) => {
   try {
     const { resumeUrl, jobId, applicationId, mode = "auto" } = req.body;
     const result = await performAnalysis(resumeUrl, jobId, mode);
 
-    if (!result.success) return res.status(400).json(result);
+    if (result.success) {
+      const application = await Application.findById(applicationId);
+      if (!application) return res.status(404).json({ success: false, error: "App not found" });
 
-    const application = await Application.findById(applicationId);
-    
-    if (application) {
-      const Skill = require("../models/Skill"); 
-      const { refreshSkillCache } = require("../utils/skillMap");
-      
-      // 🧠 AUTONOMOUS BRAIN SYNC
-      const sections = result.analysis.skillsBySection || {};
-      const allDiscovered = [
-        ...(sections.experience || []),
-        ...(sections.skillsList || []),
-        ...(sections.generalSkills || [])
-      ];
-
-      if (allDiscovered.length > 0) {
-        for (const skillItem of allDiscovered) {
-          // AI fetches category (type) and name as objects
-          const name = (typeof skillItem === 'string' ? skillItem : skillItem.name).toLowerCase().trim();
-          const category = skillItem.category || "technical"; // Hidden background category
-
-          await Skill.findOneAndUpdate(
-            { canonical: name }, 
-            { 
-              $set: {
-                canonical: name, 
-                isApproved: true, // ⚡ AUTO-APPROVE
-                category: category, 
-                weight: 1.0       // ⚡ FLAT WEIGHT: No variation
-              }
-            }, 
-            { upsert: true }
-          );
+      // 🧠 OPTIMIZED LEARNING LOOP
+      const discovery = result.analysis.learningDiscovery || [];
+      if (discovery.length > 0) {
+        // Run updates in background so the user doesn't wait
+        const bulkOps = discovery.map(item => ({
+          updateOne: {
+            filter: { canonical: item.canonical.toLowerCase().trim() },
+            update: { 
+              $set: { isApproved: true }, 
+              $addToSet: { synonyms: { $each: (item.synonyms || []).map(s => s.toLowerCase().trim()) } },
+              $setOnInsert: { weight: 1.0 }
+            },
+            upsert: true
+          }
+        }));
+        
+        await Skill.bulkWrite(bulkOps).catch(e => console.error("Bulk save failed"));
+        
+        // 🚀 CRITICAL: Throttle the cache refresh. 
+        // Only refresh if it's been more than 30 seconds since the last one.
+        if (!global.lastCacheRefresh || Date.now() - global.lastCacheRefresh > 30000) {
+            await refreshSkillCache();
+            global.lastCacheRefresh = Date.now();
         }
-        // 🔄 Sync Brain Immediately
-        await refreshSkillCache(); 
       }
 
+      delete result.analysis.learningDiscovery;
       application.aiAnalysis = [result.analysis, ...(application.aiAnalysis || [])];
       await application.save();
     }
-
-    // 🛡️ CRITICAL: Send the response back to the frontend
-    res.json({ success: true, analysis: result.analysis });
-
+    res.json(result);
   } catch (error) {
-    console.error("❌ Analysis Route Error:", error.message);
-    res.status(500).json({ success: false, error: error.message });
-  }
-}); 
-    
-//     if (application) {
-//       const Skill = require("../models/Skill"); 
-//       const { refreshSkillCache } = require("../utils/skillMap");
-      
-//       // 🧠 AUTONOMOUS BRAIN SYNC
-//       // AI directly injects and APPROVES the skill into the global map
-//       const matchedSkills = result.analysis.matchedSkills || [];
-
-//       if (matchedSkills.length > 0) {
-//         for (const skillName of matchedSkills) {
-//           const canonicalName = skillName.toLowerCase().trim();
-          
-//           await Skill.findOneAndUpdate(
-//             { canonical: canonicalName }, 
-//             { 
-//               $set: {
-//                 canonical: canonicalName, 
-//                 isApproved: true,       // ⚡ AUTO-APPROVE: No human intervention
-//                 category: "technical",  // Auto-categorized as technical
-//                 weight: 1.1             // Standard AI discovery weight
-//               }
-//             }, 
-//             { upsert: true }
-//           );
-//         }
-//         // 🔄 Immediate Sync: Force the local keyword scanner to learn these now
-//         await refreshSkillCache(); 
-//       }
-
-//       application.aiAnalysis = [result.analysis, ...(application.aiAnalysis || [])];
-//       await application.save();
-//     }
-
-//     res.json({ success: true, analysis: result.analysis });
-//   } catch (error) {
-//     console.error("Analysis Route Error:", error.message);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// }); // 🛡️ This closing brace is likely what was missing!
-
-// Inside backend/routes/aiRoutes.js -> router.post("/analyze")
-// Inside router.post("/analyze", ...)
-
-// ============================================================================
-// 🧪 TEST ROUTE: POST /api/ai/test-analysis
-// For debugging - returns detailed logs
-// ============================================================================
-
-router.post("/test-analysis", verifyToken, async (req, res) => {
-  try {
-    const { resumeUrl, jobId, mode = "auto" } = req.body;
-
-    if (!resumeUrl || !jobId) {
-      return res.status(400).json({ error: "Missing resumeUrl or jobId" });
-    }
-
-    const result = await performAnalysis(resumeUrl, jobId, mode);
-
-    res.json({
-      ...result,
-      debugInfo: {
-        timestamp: new Date(),
-        mode: mode,
-        note: "Test endpoint - use /analyze in production"
-      }
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
+    console.error("❌ BACKEND CRASH PREVENTED:", error.message);
+    res.status(500).json({ success: false, error: "Server overloaded or parsing failed." });
   }
 });
 
@@ -2362,4 +506,173 @@ router.post("/evaluate-myself", verifyToken, async (req, res) => {
     res.status(500).json({ success: false, message: err.message || "Self-evaluation failed." });
   }
 });
+
+// ============================================================================
+// 🚀 THE V3 ANALYSIS ROUTE
+// ============================================================================
+router.post("/analyze-v3", verifyToken, async (req, res) => {
+  try {
+    const { resumeUrl, jobId, applicationId } = req.body;
+    const job = await Job.findById(jobId);
+    if (!job) return res.status(404).json({ message: "Job not found" });
+
+    // 1. ZONAL PARSING
+    const resumeData = await parseResumeFromUrl(resumeUrl);
+
+    // 2. ENTITY EXTRACTION PROMPT
+    const systemPrompt = `
+      ACT AS: A JSON Entity Extractor.
+      TASK: Convert resume text into a strict data object.
+      
+      RULES:
+      1. Extract all technical skills.
+      2. Identify "experience" (found in job descriptions), "skillsList" (found in tools sections), and "generalSkills" (rest).
+      3. Calculate total professional months (IGNORE education dates).
+      4. RETURN ONLY JSON.
+
+      SCHEMA:
+      {
+        "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
+        "totalMonths": 0,
+        "summary": "1 sentence fit assessment."
+      }
+    `;
+
+    const result = await generateJSON(systemPrompt, `RESUME TEXT:\n${resumeData.fullText}`);
+
+    if (!result.data || !result.data.skillsBySection) {
+      throw new Error("AI failed to extract structured entities.");
+    }
+
+    // 3. THE AUTONOMOUS LEARNING LOOP (Direct DB Injection)
+    const allFoundSkills = [
+      ...result.data.skillsBySection.experience,
+      ...result.data.skillsBySection.skillsList,
+      ...result.data.skillsBySection.generalSkills
+    ];
+
+    if (allFoundSkills.length > 0) {
+      for (const rawName of allFoundSkills) {
+        const canonical = rawName.toLowerCase().trim();
+        if (canonical.length < 2) continue;
+
+        // Directly update/create the skill to improve Local Mode for everyone
+        await Skill.findOneAndUpdate(
+          { canonical },
+          { 
+            $set: { canonical, isApproved: true },
+            $addToSet: { synonyms: rawName } // Save variations as synonyms
+          },
+          { upsert: true }
+        );
+      }
+      // Force refresh the memory cache so Local Mode gets smarter immediately
+      await refreshSkillCache();
+    }
+
+    // 4. CALCULATE FINAL SCORE (Code Math)
+    const analysis = calculateDeterministicScore(result.data, job.requirements);
+    analysis.summary = result.data.summary;
+    analysis.provider = result.provider;
+
+    // 5. SAVE TO APPLICATION
+    const application = await Application.findById(applicationId);
+    if (application) {
+      application.aiAnalysis = [analysis, ...(application.aiAnalysis || [])];
+      await application.save();
+    }
+
+    res.json({ success: true, analysis });
+
+  } catch (err) {
+    console.error("V3_ENGINE_ERROR:", err.message);
+    res.status(500).json({ message: "Entity extraction failed.", detail: err.message });
+  }
+});
 module.exports = router;
+
+
+
+
+
+// ============================================================================
+// 🎯 DETERMINISTIC SCORING ENGINE
+// ============================================================================
+// function calculateDeterministicScore(extractedData, resumeZones, jobRequirements) {
+//   const score = { 
+//     skillScore: 0, 
+//     expScore: 0, 
+//     linkScore: 0, 
+//     integrityScore: SCORING_CONFIG.BASE_INTEGRITY 
+//   };
+
+//   const normalizedReqs = jobRequirements
+//     .map(req => normalizeSkill(req))
+//     .filter(Boolean);
+
+//   const skillsFromExp = extractedData.experience?.length > 0 
+//     ? extractedData.experience.map(s => normalizeSkill(s)) 
+//     : extractSkillsFromText(resumeZones.experienceZone);
+
+//   const skillsGeneral = extractedData.generalSkills?.length > 0
+//     ? extractedData.generalSkills.map(s => normalizeSkill(s))
+//     : extractSkillsFromText(resumeZones.generalZone);
+
+//   const skillsFromList = (extractedData.skillsList || []).map(s => normalizeSkill(s));
+
+//   let totalWeight = 0;
+//   let matchedWeight = 0;
+//   const matchedSkills = [];
+
+//   normalizedReqs.forEach((reqSkill) => {
+//     const weight = getSkillWeight(reqSkill);
+//     totalWeight += weight;
+
+//     if (skillsFromExp.includes(reqSkill)) {
+//       matchedWeight += weight * 1.5;
+//       matchedSkills.push(reqSkill);
+//     } else if (skillsFromList.includes(reqSkill)) {
+//       matchedWeight += weight * 1.2;
+//       matchedSkills.push(reqSkill);
+//     } else if (skillsGeneral.includes(reqSkill)) {
+//       matchedWeight += weight * 1.0;
+//       matchedSkills.push(reqSkill);
+//     }
+//   });
+
+//   const maxPossibleWeight = totalWeight * 1.5;
+//   score.skillScore = maxPossibleWeight > 0 
+//     ? Math.round((matchedWeight / maxPossibleWeight) * SCORING_CONFIG.MAX_SKILL_SCORE)
+//     : 0;
+
+//   const months = extractedData.totalMonths || 0;
+//   if (months >= 60) score.expScore = 20; 
+//   else if (months >= 36) score.expScore = 15;
+//   else if (months >= 12) score.expScore = 10;
+//   else if (months > 0) score.expScore = 5;
+
+//   const links = resumeZones.fullText.match(/(https?:\/\/[^\s]+)/g) || [];
+//   const uniqueLinks = [...new Set(links.filter(link => 
+//     SCORING_CONFIG.TRUSTED_DOMAINS.some(domain => link.includes(domain))
+//   ))];
+
+//   if (uniqueLinks.length >= 3) score.linkScore = 10;
+//   else if (uniqueLinks.length >= 2) score.linkScore = 7;
+//   else if (uniqueLinks.length >= 1) score.linkScore = 5;
+
+//   score.integrityScore = 10; 
+
+//   const finalScore = Math.min(100, 
+//     score.skillScore + score.expScore + score.linkScore + score.integrityScore
+//   );
+
+//   return {
+//     matchScore: finalScore,
+//     matchedSkills: [...new Set(matchedSkills)],
+//     missingRequiredSkills: normalizedReqs.filter(r => !matchedSkills.includes(r)),
+//     professionalMonths: months,
+//     breakdown: score,
+//     experienceLevel: months >= 36 ? "Experienced" : months >= 12 ? "Intermediate" : "Junior",
+//     linkedProfiles: uniqueLinks.length
+//   };
+// }

@@ -9441,24 +9441,27 @@ const normalizeSkill = (rawSkill) => {
   return clean; 
 };
 
-/**
- * 🔍 EXTRACT SKILLS: Fixed with Safe Regex logic
- */
+// Replace extractSkillsFromText in backend/utils/skillMap.js
 const extractSkillsFromText = (text) => {
   if (!text) return [];
-  const lowerText = text.toLowerCase();
+  // 🚀 Normalize text: Remove extra spaces and common tech separators
+  const lowerText = text.toLowerCase().replace(/[\/\(\)]/g, ' '); 
   const foundSkills = new Set();
 
   for (const [key, data] of Object.entries(globalSkillMap)) {
+    // 🚀 NEW: Create a Tech-Flexible Regex
+    // This looks for the skill followed by a non-alphanumeric character or end of string
     const safeCanonical = escapeRegex(data.canonical);
-    const skillRegex = new RegExp(`\\b${safeCanonical}\\b`, 'i');
-    
-    let matched = skillRegex.test(lowerText);
+    const techRegex = new RegExp(`(?:^|[^a-z0-9])${safeCanonical}(?=[^a-z0-9]|$)`, 'i');
 
+    let matched = techRegex.test(lowerText);
+    
+    // Check Synonyms with the same tech-flexible logic
     if (!matched && data.synonyms) {
-      matched = data.synonyms.some(syn => 
-        new RegExp(`\\b${escapeRegex(syn)}\\b`, 'i').test(lowerText)
-      );
+      matched = data.synonyms.some(syn => {
+        const safeSyn = escapeRegex(syn);
+        return new RegExp(`(?:^|[^a-z0-9])${safeSyn}(?=[^a-z0-9]|$)`, 'i').test(lowerText);
+      });
     }
 
     if (matched) foundSkills.add(data.canonical);

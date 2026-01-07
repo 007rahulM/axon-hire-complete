@@ -54,18 +54,27 @@ const applicationSchema = new Schema(
       default: Date.now,
     },
 
-    aiAnalysis: [
-     {
-      matchScore: { type: Number },
-      experienceRelevance: { type: String },
-      summary: { type: String },
-      matchedSkills: [String],        // Unique list of matches
-      missingRequiredSkills: [String], // Unique list of gaps
-      totalMonths: { type: Number },   // Verified Professional Duration
-      provider: { type: String },      // "Gemini", "Groq", etc.
-      analyzedAt: { type: Date, default: Date.now }
+  aiAnalysis: {
+      type: [
+        {
+          matchScore: { type: Number },
+          score: { type: Number }, // 🚀 Add this to support both keys
+          experienceRelevance: { type: String },
+          summary: { type: String },
+          matchedSkills: [String],
+          missingRequiredSkills: [String],
+          totalMonths: { type: Number },
+          professionalMonths: { type: Number }, // 🚀 Add this to match V3
+          uniqueLinksFound: { type: Number }, // 🚀 Add this for Portfolio sync
+          provider: { type: String },
+          metadata: { type: Object }, // 🚀 Ensure metadata is stored
+          breakdown: { type: Object }, // 🚀 Store the 60/30/10 math
+          analyzedAt: { type: Date, default: Date.now }
+        },
+      ],
+      default: [],
+      select: true, // 👈 🚀 FORCE Mongoose to always include this in results
     },
-    ],
   },
   {
     timestamps: true,

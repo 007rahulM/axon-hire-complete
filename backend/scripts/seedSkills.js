@@ -1,35 +1,38 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
+const fs = require("fs"); // Added to read the file
 const Skill = require("../models/Skill");
-const { skillMap } = require("../utils/skillMap");
 
-// This tells Node to look for .env in the root folder specifically
+// Path setup
 const envPath = path.resolve(__dirname, "../.env");
+const jsonPath = path.resolve(__dirname, "./skills.json"); // Path to your json data
 dotenv.config({ path: envPath });
 
 const migrateSkills = async () => {
   try {
-    // Log the path for debugging so you can see exactly where it is looking
-    console.log("📂 Searching for .env at:", envPath);
-    
-    if (!process.env.MONGO_URI) {
-        throw new Error("MONGO_URI is still undefined. Please check if the .env file exists in the root folder.");
-    }
-
     await mongoose.connect(process.env.MONGO_URI);
     console.log("📡 Connected to MongoDB...");
 
-    const skillsToInsert = Object.keys(skillMap).map(key => ({
-      ...skillMap[key],
-      canonical: skillMap[key].canonical || key,
+    // --- ADD THIS SECTION TO CLEAR OLD DATA ---
+    // console.log("🗑️ Clearing existing skills to ensure a fresh start...");
+    // await Skill.deleteMany({}); 
+    // ------------------------------------------
+
+    const rawData = fs.readFileSync(jsonPath, "utf-8");
+    const skillsArray = JSON.parse(rawData);
+
+    const skillsToInsert = skillsArray.map(item => ({
+      canonical: item.canonical.toLowerCase(), // 
+      synonyms: item.synonyms, // 
+      category: item.category, // 
       source: "system",
       isApproved: true 
     }));
 
     await Skill.insertMany(skillsToInsert, { ordered: false });
     
-    console.log("✅ Database Brain Initialized: 500+ Skills Migrated.");
+    console.log(`✅ Success: ${skillsToInsert.length} Skills Migrated.`);
     process.exit(0);
   } catch (err) {
     if (err.code === 11000) {

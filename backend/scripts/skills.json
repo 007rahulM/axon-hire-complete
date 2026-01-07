@@ -1,0 +1,5162 @@
+[
+  {
+    "canonical": "javascript",
+    "synonyms": ["JS", "ES6", "ES2015", "ES2020", "ECMAScript", "Vanilla JS"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "typescript",
+    "synonyms": ["TS", "TypeScript"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "python",
+    "synonyms": ["Python3", "Python 3", "py"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "java",
+    "synonyms": ["Java SE", "Java EE", "Jakarta EE"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "csharp",
+    "synonyms": ["C#", "C Sharp", ".NET", "dotnet"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "go",
+    "synonyms": ["Golang", "Go lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "rust",
+    "synonyms": ["Rust lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "php",
+    "synonyms": ["PHP7", "PHP8"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "ruby",
+    "synonyms": ["Ruby lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "swift",
+    "synonyms": ["Swift UI", "SwiftUI"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "kotlin",
+    "synonyms": ["Kotlin JVM"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "scala",
+    "synonyms": ["Scala lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "r",
+    "synonyms": ["R language", "R programming"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "cpp",
+    "synonyms": ["C++", "CPP", "C plus plus"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "c",
+    "synonyms": ["C language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "dart",
+    "synonyms": ["Dart lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "elixir",
+    "synonyms": ["Elixir lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "clojure",
+    "synonyms": ["Clojure lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "haskell",
+    "synonyms": ["Haskell lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "perl",
+    "synonyms": ["Perl5"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "react",
+    "synonyms": ["React.js", "ReactJS", "React Native"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "vue",
+    "synonyms": ["Vue.js", "VueJS", "Vue3"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "angular",
+    "synonyms": ["Angular2+", "AngularJS", "Angular.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nextjs",
+    "synonyms": ["Next.js", "Next", "NextJS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nuxt",
+    "synonyms": ["Nuxt.js", "NuxtJS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "svelte",
+    "synonyms": ["Svelte.js", "SvelteKit"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "remix",
+    "synonyms": ["Remix.run"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "html",
+    "synonyms": ["HTML5", "HTML/CSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "css",
+    "synonyms": ["CSS3", "Cascading Style Sheets"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "sass",
+    "synonyms": ["SCSS", "Sass/SCSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "less",
+    "synonyms": ["LESS CSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "tailwind",
+    "synonyms": ["Tailwind CSS", "TailwindCSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "bootstrap",
+    "synonyms": ["Bootstrap CSS", "Bootstrap 5"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "material-ui",
+    "synonyms": ["MUI", "Material UI", "Material Design"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "chakra-ui",
+    "synonyms": ["Chakra UI"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "styled-components",
+    "synonyms": ["Styled Components", "CSS-in-JS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "webpack",
+    "synonyms": ["Webpack5"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "vite",
+    "synonyms": ["Vite.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "babel",
+    "synonyms": ["Babel.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "redux",
+    "synonyms": ["Redux Toolkit", "React Redux"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "mobx",
+    "synonyms": ["MobX"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "zustand",
+    "synonyms": ["Zustand state"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "graphql",
+    "synonyms": ["GraphQL API", "Apollo GraphQL"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "jest",
+    "synonyms": ["Jest testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "cypress",
+    "synonyms": ["Cypress.io", "Cypress testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "playwright",
+    "synonyms": ["Playwright testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "storybook",
+    "synonyms": ["Storybook.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nodejs",
+    "synonyms": ["Node.js", "Node", "NodeJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "express",
+    "synonyms": ["Express.js", "ExpressJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "nestjs",
+    "synonyms": ["Nest.js", "NestJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fastify",
+    "synonyms": ["Fastify.js"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "django",
+    "synonyms": ["Django framework", "Django REST"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "flask",
+    "synonyms": ["Flask framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fastapi",
+    "synonyms": ["FastAPI"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "spring",
+    "synonyms": ["Spring Boot", "Spring Framework", "Spring MVC"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "spring-boot",
+    "synonyms": ["SpringBoot"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "rails",
+    "synonyms": ["Ruby on Rails", "RoR"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "laravel",
+    "synonyms": ["Laravel PHP"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "symfony",
+    "synonyms": ["Symfony PHP"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "aspnet",
+    "synonyms": ["ASP.NET", "ASP.NET Core", ".NET Core"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "gin",
+    "synonyms": ["Gin framework", "Gin Go"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fiber",
+    "synonyms": ["Fiber Go"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "phoenix",
+    "synonyms": ["Phoenix framework", "Phoenix Elixir"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "restful-api",
+    "synonyms": ["REST API", "RESTful", "REST"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "grpc",
+    "synonyms": ["gRPC", "Google RPC"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "websockets",
+    "synonyms": ["WebSocket", "Socket.io"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "microservices",
+    "synonyms": ["Microservice architecture", "MSA"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "serverless",
+    "synonyms": ["Serverless architecture", "FaaS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "oauth",
+    "synonyms": ["OAuth2", "OAuth 2.0"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "jwt",
+    "synonyms": ["JSON Web Token", "JWT auth"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "mysql",
+    "synonyms": ["MySQL database"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "postgresql",
+    "synonyms": ["PostgreSQL", "Postgres", "psql"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "mongodb",
+    "synonyms": ["Mongo", "MongoDB Atlas"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "redis",
+    "synonyms": ["Redis cache", "Redis DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "elasticsearch",
+    "synonyms": ["Elastic", "ElasticSearch"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "dynamodb",
+    "synonyms": ["DynamoDB", "AWS DynamoDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "cassandra",
+    "synonyms": ["Apache Cassandra"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "mariadb",
+    "synonyms": ["MariaDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "oracle",
+    "synonyms": ["Oracle DB", "Oracle Database"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "sqlserver",
+    "synonyms": ["SQL Server", "Microsoft SQL Server", "MSSQL"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "sqlite",
+    "synonyms": ["SQLite3"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "firebase",
+    "synonyms": ["Firebase Realtime DB", "Firestore"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "neo4j",
+    "synonyms": ["Neo4j graph DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "couchdb",
+    "synonyms": ["Apache CouchDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "influxdb",
+    "synonyms": ["InfluxDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "cockroachdb",
+    "synonyms": ["CockroachDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "supabase",
+    "synonyms": ["Supabase DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "planetscale",
+    "synonyms": ["PlanetScale"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "aws",
+    "synonyms": ["Amazon Web Services", "AWS Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "azure",
+    "synonyms": ["Microsoft Azure", "Azure Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "gcp",
+    "synonyms": ["Google Cloud Platform", "Google Cloud", "GCP"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "docker",
+    "synonyms": ["Docker containers", "Containerization"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "kubernetes",
+    "synonyms": ["K8s", "k8s", "Container orchestration"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "terraform",
+    "synonyms": ["Terraform IaC"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ansible",
+    "synonyms": ["Ansible automation"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "jenkins",
+    "synonyms": ["Jenkins CI/CD"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "gitlab-ci",
+    "synonyms": ["GitLab CI/CD", "GitLab pipelines"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "github-actions",
+    "synonyms": ["GitHub Actions", "GHA"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "circleci",
+    "synonyms": ["Circle CI"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "travisci",
+    "synonyms": ["Travis CI"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "nginx",
+    "synonyms": ["Nginx server"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "apache",
+    "synonyms": ["Apache HTTP Server", "Apache Web Server"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "prometheus",
+    "synonyms": ["Prometheus monitoring"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "grafana",
+    "synonyms": ["Grafana dashboards"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "datadog",
+    "synonyms": ["Datadog monitoring"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "newrelic",
+    "synonyms": ["New Relic"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "splunk",
+    "synonyms": ["Splunk logging"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "elk-stack",
+    "synonyms": ["ELK", "Elasticsearch Logstash Kibana"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudformation",
+    "synonyms": ["AWS CloudFormation"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudwatch",
+    "synonyms": ["AWS CloudWatch"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ec2",
+    "synonyms": ["AWS EC2", "Elastic Compute Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "s3",
+    "synonyms": ["AWS S3", "Simple Storage Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "lambda",
+    "synonyms": ["AWS Lambda"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ecs",
+    "synonyms": ["AWS ECS", "Elastic Container Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "eks",
+    "synonyms": ["AWS EKS", "Elastic Kubernetes Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "rds",
+    "synonyms": ["AWS RDS", "Relational Database Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "route53",
+    "synonyms": ["AWS Route 53"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudfront",
+    "synonyms": ["AWS CloudFront", "CDN"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "vpc",
+    "synonyms": ["Virtual Private Cloud", "AWS VPC"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "iam",
+    "synonyms": ["AWS IAM", "Identity Access Management"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "machine-learning",
+    "synonyms": ["ML", "Machine Learning"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "deep-learning",
+    "synonyms": ["DL", "Deep Learning", "Neural Networks"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "tensorflow",
+    "synonyms": ["TensorFlow", "TF"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pytorch",
+    "synonyms": ["PyTorch"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "keras",
+    "synonyms": ["Keras framework"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "scikit-learn",
+    "synonyms": ["sklearn", "scikit learn"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pandas",
+    "synonyms": ["Pandas library"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "numpy",
+    "synonyms": ["NumPy"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "jupyter",
+    "synonyms": ["Jupyter Notebook", "Jupyter Lab"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "matplotlib",
+    "synonyms": ["Matplotlib plotting"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "seaborn",
+    "synonyms": ["Seaborn visualization"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "nlp",
+    "synonyms": ["Natural Language Processing", "NLP"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "computer-vision",
+    "synonyms": ["CV", "Computer Vision"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "opencv",
+    "synonyms": ["OpenCV"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "spacy",
+    "synonyms": ["spaCy"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "huggingface",
+    "synonyms": ["Hugging Face", "Transformers"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "llm",
+    "synonyms": ["Large Language Models", "LLMs"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "generative-ai",
+    "synonyms": ["GenAI", "Generative AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "langchain",
+    "synonyms": ["LangChain"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "spark",
+    "synonyms": ["Apache Spark", "PySpark"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "hadoop",
+    "synonyms": ["Apache Hadoop"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "airflow",
+    "synonyms": ["Apache Airflow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dbt",
+    "synonyms": ["dbt data build tool"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "tableau",
+    "synonyms": ["Tableau Desktop", "Tableau Server"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "powerbi",
+    "synonyms": ["Power BI", "Microsoft Power BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "looker",
+    "synonyms": ["Looker BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "snowflake",
+    "synonyms": ["Snowflake DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "databricks",
+    "synonyms": ["Databricks platform"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "sagemaker",
+    "synonyms": ["AWS SageMaker"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mlflow",
+    "synonyms": ["MLflow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "git",
+    "synonyms": ["Version control", "Git VCS"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "github",
+    "synonyms": ["GitHub"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "gitlab",
+    "synonyms": ["GitLab"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "bitbucket",
+    "synonyms": ["Bitbucket"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "jira",
+    "synonyms": ["Jira Software", "Atlassian Jira"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "confluence",
+    "synonyms": ["Atlassian Confluence"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "slack",
+    "synonyms": ["Slack communication"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "vscode",
+    "synonyms": ["Visual Studio Code", "VS Code"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "intellij",
+    "synonyms": ["IntelliJ IDEA"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "eclipse",
+    "synonyms": ["Eclipse IDE"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "vim",
+    "synonyms": ["Vi", "Vim editor"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "postman",
+    "synonyms": ["Postman API"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "insomnia",
+    "synonyms": ["Insomnia REST"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "figma",
+    "synonyms": ["Figma design"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "sketch",
+    "synonyms": ["Sketch app"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "adobe-xd",
+    "synonyms": ["Adobe XD", "XD"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "npm",
+    "synonyms": ["npm package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "yarn",
+    "synonyms": ["Yarn package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "pnpm",
+    "synonyms": ["pnpm package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "maven",
+    "synonyms": ["Apache Maven"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "gradle",
+    "synonyms": ["Gradle build"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "pip",
+    "synonyms": ["pip Python"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "agile",
+    "synonyms": ["Agile methodology", "Agile development"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "scrum",
+    "synonyms": ["Scrum framework"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "kanban",
+    "synonyms": ["Kanban method"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "waterfall",
+    "synonyms": ["Waterfall methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "lean",
+    "synonyms": ["Lean methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "six-sigma",
+    "synonyms": ["Six Sigma", "Lean Six Sigma"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "pmp",
+    "synonyms": ["Project Management Professional", "PMP certification"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "prince2",
+    "synonyms": ["PRINCE2 methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "asana",
+    "synonyms": ["Asana tool"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "trello",
+    "synonyms": ["Trello boards"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "monday",
+    "synonyms": ["Monday.com"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "clickup",
+    "synonyms": ["ClickUp"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "notion",
+    "synonyms": ["Notion workspace"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "stakeholder-management",
+    "synonyms": ["Stakeholder engagement"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "risk-management",
+    "synonyms": ["Risk assessment"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "budget-management",
+    "synonyms": ["Financial planning", "Budget planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "roadmapping",
+    "synonyms": ["Product roadmap", "Roadmap planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "resource-allocation",
+    "synonyms": ["Resource planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "cybersecurity",
+    "synonyms": ["Information security", "InfoSec"],
+    "category": "Security"
+  },
+  {
+    "canonical": "penetration-testing",
+    "synonyms": ["Pen testing", "Ethical hacking"],
+    "category": "Security"
+  },
+  {
+    "canonical": "owasp",
+    "synonyms": ["OWASP Top 10"],
+    "category": "Security"
+  },
+  {
+    "canonical": "soc",
+    "synonyms": ["Security Operations Center"],
+    "category": "Security"
+  },
+  {
+    "canonical": "siem",
+    "synonyms": ["Security Information Event Management"],
+    "category": "Security"
+  },
+  {
+    "canonical": "ssl-tls",
+    "synonyms": ["SSL/TLS", "TLS certificates"],
+    "category": "Security"
+  },
+  {
+    "canonical": "encryption",
+    "synonyms": ["Data encryption", "Cryptography"],
+    "category": "Security"
+  },
+  {
+    "canonical": "vulnerability-assessment",
+    "synonyms": ["Vuln scanning"],
+    "category": "Security"
+  },
+  {
+    "canonical": "incident-response",
+    "synonyms": ["Security incident response"],
+    "category": "Security"
+  },
+  {
+    "canonical": "threat-modeling",
+    "synonyms": ["Threat analysis"],
+    "category": "Security"
+  },
+  {
+    "canonical": "compliance",
+    "synonyms": ["Regulatory compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "gdpr",
+    "synonyms": ["GDPR compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "hipaa",
+    "synonyms": ["HIPAA compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "pci-dss",
+    "synonyms": ["PCI DSS"],
+    "category": "Security"
+  },
+  {
+    "canonical": "iso27001",
+    "synonyms": ["ISO 27001"],
+    "category": "Security"
+  },
+  {
+    "canonical": "soc2",
+    "synonyms": ["SOC 2 compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "zero-trust",
+    "synonyms": ["Zero trust architecture"],
+    "category": "Security"
+  },
+  {
+    "canonical": "ios-development",
+    "synonyms": ["iOS", "iPhone development"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "android-development",
+    "synonyms": ["Android", "Android Studio"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "react-native",
+    "synonyms": ["React Native", "RN"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "flutter",
+    "synonyms": ["Flutter framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "xamarin",
+    "synonyms": ["Xamarin framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "ionic",
+    "synonyms": ["Ionic framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "cordova",
+    "synonyms": ["Apache Cordova", "PhoneGap"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "swiftui",
+    "synonyms": ["SwiftUI framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "jetpack-compose",
+    "synonyms": ["Jetpack Compose", "Compose"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "mobile-ui-design",
+    "synonyms": ["Mobile UX", "App design"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "app-store-optimization",
+    "synonyms": ["ASO", "App Store SEO"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "push-notifications",
+    "synonyms": ["Mobile notifications", "FCM", "APNS"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "mobile-analytics",
+    "synonyms": ["App analytics", "Mobile tracking"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "communication",
+    "synonyms": ["Verbal communication", "Written communication"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "leadership",
+    "synonyms": ["Team leadership", "People management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "problem-solving",
+    "synonyms": ["Critical thinking", "Analytical thinking"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "teamwork",
+    "synonyms": ["Collaboration", "Team player"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "time-management",
+    "synonyms": ["Time prioritization", "Task management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "adaptability",
+    "synonyms": ["Flexibility", "Change management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "creativity",
+    "synonyms": ["Innovation", "Creative thinking"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "emotional-intelligence",
+    "synonyms": ["EQ", "Empathy"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "conflict-resolution",
+    "synonyms": ["Mediation", "Dispute resolution"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "presentation-skills",
+    "synonyms": ["Public speaking", "Presenting"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "negotiation",
+    "synonyms": ["Negotiating", "Deal making"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "active-listening",
+    "synonyms": ["Listening skills", "Attentive listening"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "decision-making",
+    "synonyms": ["Strategic decisions", "Judgment"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "mentoring",
+    "synonyms": ["Coaching", "Mentorship"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "work-ethic",
+    "synonyms": ["Professionalism", "Dedication"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "attention-to-detail",
+    "synonyms": ["Detail-oriented", "Thoroughness"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "self-motivation",
+    "synonyms": ["Self-driven", "Initiative"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "customer-service",
+    "synonyms": ["Client service", "Customer support"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "networking",
+    "synonyms": ["Professional networking", "Relationship building"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "cultural-awareness",
+    "synonyms": ["Cross-cultural communication", "Diversity awareness"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "ui-design",
+    "synonyms": ["User Interface design", "UI/UX"],
+    "category": "Design"
+  },
+  {
+    "canonical": "ux-design",
+    "synonyms": ["User Experience design", "UX research"],
+    "category": "Design"
+  },
+  {
+    "canonical": "graphic-design",
+    "synonyms": ["Visual design", "Graphics"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-photoshop",
+    "synonyms": ["Photoshop", "PS"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-illustrator",
+    "synonyms": ["Illustrator", "AI"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-indesign",
+    "synonyms": ["InDesign"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-after-effects",
+    "synonyms": ["After Effects", "AE"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-premiere",
+    "synonyms": ["Premiere Pro", "Premiere"],
+    "category": "Design"
+  },
+  {
+    "canonical": "wireframing",
+    "synonyms": ["Wireframes", "Mockups"],
+    "category": "Design"
+  },
+  {
+    "canonical": "prototyping",
+    "synonyms": ["Interactive prototypes", "Prototype design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "design-systems",
+    "synonyms": ["Component libraries", "Design tokens"],
+    "category": "Design"
+  },
+  {
+    "canonical": "user-research",
+    "synonyms": ["UX research", "User testing"],
+    "category": "Design"
+  },
+  {
+    "canonical": "information-architecture",
+    "synonyms": ["IA", "Site mapping"],
+    "category": "Design"
+  },
+  {
+    "canonical": "accessibility-design",
+    "synonyms": ["A11y", "Accessible design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "branding",
+    "synonyms": ["Brand identity", "Brand design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "typography",
+    "synonyms": ["Font design", "Type design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "color-theory",
+    "synonyms": ["Color design", "Color palettes"],
+    "category": "Design"
+  },
+  {
+    "canonical": "illustration",
+    "synonyms": ["Digital illustration", "Drawing"],
+    "category": "Design"
+  },
+  {
+    "canonical": "3d-modeling",
+    "synonyms": ["3D design", "Modeling"],
+    "category": "Design"
+  },
+  {
+    "canonical": "blender",
+    "synonyms": ["Blender 3D"],
+    "category": "Design"
+  },
+  {
+    "canonical": "maya",
+    "synonyms": ["Autodesk Maya"],
+    "category": "Design"
+  },
+  {
+    "canonical": "3ds-max",
+    "synonyms": ["3ds Max", "Autodesk 3ds Max"],
+    "category": "Design"
+  },
+  {
+    "canonical": "cinema4d",
+    "synonyms": ["Cinema 4D", "C4D"],
+    "category": "Design"
+  },
+  {
+    "canonical": "qa-testing",
+    "synonyms": ["Quality Assurance", "Software testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "manual-testing",
+    "synonyms": ["Manual QA"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "automation-testing",
+    "synonyms": ["Test automation", "Automated testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "selenium",
+    "synonyms": ["Selenium WebDriver"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "appium",
+    "synonyms": ["Appium mobile testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "jmeter",
+    "synonyms": ["Apache JMeter", "Performance testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "loadrunner",
+    "synonyms": ["LoadRunner"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "test-driven-development",
+    "synonyms": ["TDD"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "behavior-driven-development",
+    "synonyms": ["BDD", "Cucumber"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "regression-testing",
+    "synonyms": ["Regression tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "integration-testing",
+    "synonyms": ["Integration tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "unit-testing",
+    "synonyms": ["Unit tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "api-testing",
+    "synonyms": ["API test automation"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "load-testing",
+    "synonyms": ["Performance testing", "Stress testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "security-testing",
+    "synonyms": ["Security QA"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "test-planning",
+    "synonyms": ["Test strategy", "QA planning"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "bug-tracking",
+    "synonyms": ["Defect tracking", "Issue tracking"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "blockchain",
+    "synonyms": ["Distributed ledger", "DLT"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ethereum",
+    "synonyms": ["ETH", "Ethereum blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "solidity",
+    "synonyms": ["Solidity programming"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "smart-contracts",
+    "synonyms": ["Smart contract development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "web3",
+    "synonyms": ["Web3.js", "Web 3.0"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "nft",
+    "synonyms": ["NFTs", "Non-fungible tokens"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "defi",
+    "synonyms": ["Decentralized Finance"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "hyperledger",
+    "synonyms": ["Hyperledger Fabric"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "cryptocurrency",
+    "synonyms": ["Crypto", "Digital currency"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "bitcoin",
+    "synonyms": ["BTC", "Bitcoin development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ipfs",
+    "synonyms": ["InterPlanetary File System"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "dao",
+    "synonyms": ["Decentralized Autonomous Organization", "DAOs"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "digital-marketing",
+    "synonyms": ["Online marketing", "Internet marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "seo",
+    "synonyms": ["Search Engine Optimization", "SEO marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "sem",
+    "synonyms": ["Search Engine Marketing", "Paid search"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "social-media-marketing",
+    "synonyms": ["SMM", "Social marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "content-marketing",
+    "synonyms": ["Content strategy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "email-marketing",
+    "synonyms": ["Email campaigns", "Newsletter marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "google-analytics",
+    "synonyms": ["GA", "GA4"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "google-ads",
+    "synonyms": ["Google AdWords", "PPC"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "facebook-ads",
+    "synonyms": ["Meta Ads", "FB advertising"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "linkedin-marketing",
+    "synonyms": ["LinkedIn ads", "LinkedIn campaigns"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "copywriting",
+    "synonyms": ["Marketing copy", "Ad copy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "brand-management",
+    "synonyms": ["Brand strategy", "Brand marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "market-research",
+    "synonyms": ["Market analysis", "Consumer research"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "marketing-automation",
+    "synonyms": ["Marketing ops", "Automation tools"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "hubspot",
+    "synonyms": ["HubSpot CRM"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "salesforce",
+    "synonyms": ["Salesforce CRM", "SFDC"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "crm",
+    "synonyms": ["Customer Relationship Management"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "sales-strategy",
+    "synonyms": ["Sales planning", "Revenue strategy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "b2b-sales",
+    "synonyms": ["Business to business sales", "Enterprise sales"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "b2c-sales",
+    "synonyms": ["Business to consumer sales", "Retail sales"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "account-management",
+    "synonyms": ["Client management", "Account executive"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "lead-generation",
+    "synonyms": ["Lead gen", "Prospecting"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "conversion-optimization",
+    "synonyms": ["CRO", "Conversion rate optimization"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "product-management",
+    "synonyms": ["Product manager", "PM"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-strategy",
+    "synonyms": ["Product roadmap", "Product vision"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-development",
+    "synonyms": ["Product lifecycle"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "user-stories",
+    "synonyms": ["Story writing", "Requirements gathering"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-analytics",
+    "synonyms": ["Product metrics", "Product data"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "a-b-testing",
+    "synonyms": ["A/B testing", "Split testing"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "feature-prioritization",
+    "synonyms": ["Backlog management"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "go-to-market",
+    "synonyms": ["GTM strategy", "Product launch"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "competitive-analysis",
+    "synonyms": ["Market analysis", "Competitor research"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "mvp-development",
+    "synonyms": ["Minimum viable product", "MVP"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "financial-analysis",
+    "synonyms": ["Financial modeling", "Finance"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "accounting",
+    "synonyms": ["Financial accounting", "Bookkeeping"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "financial-reporting",
+    "synonyms": ["Finance reports", "Financial statements"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "excel",
+    "synonyms": ["Microsoft Excel", "Spreadsheets"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "quickbooks",
+    "synonyms": ["QuickBooks accounting"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "sap",
+    "synonyms": ["SAP ERP", "SAP systems"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "erp",
+    "synonyms": ["Enterprise Resource Planning"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "forecasting",
+    "synonyms": ["Financial forecasting", "Budget forecasting"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "valuation",
+    "synonyms": ["Business valuation", "Asset valuation"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "investment-analysis",
+    "synonyms": ["Investment research", "Portfolio analysis"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "risk-analysis",
+    "synonyms": ["Risk assessment", "Financial risk"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "merger-acquisition",
+    "synonyms": ["M&A", "Mergers and acquisitions"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "taxation",
+    "synonyms": ["Tax planning", "Tax compliance"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "audit",
+    "synonyms": ["Auditing", "Financial audit"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "corporate-finance",
+    "synonyms": ["Corp finance", "Treasury"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "business-strategy",
+    "synonyms": ["Strategic planning", "Business planning"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "operations-management",
+    "synonyms": ["Operations", "Ops management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "supply-chain",
+    "synonyms": ["Supply chain management", "SCM"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "logistics",
+    "synonyms": ["Logistics management", "Distribution"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "procurement",
+    "synonyms": ["Purchasing", "Sourcing"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "inventory-management",
+    "synonyms": ["Stock management", "Inventory control"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "process-improvement",
+    "synonyms": ["Process optimization", "Continuous improvement"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "change-management",
+    "synonyms": ["Organizational change"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "business-development",
+    "synonyms": ["BD", "Biz dev"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "partnerships",
+    "synonyms": ["Strategic partnerships", "Alliance management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "contract-negotiation",
+    "synonyms": ["Contract management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "vendor-management",
+    "synonyms": ["Supplier management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "quality-management",
+    "synonyms": ["Quality control", "QMS"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "hr-management",
+    "synonyms": ["Human Resources", "People management"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "recruiting",
+    "synonyms": ["Recruitment", "Talent acquisition"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "onboarding",
+    "synonyms": ["Employee onboarding", "New hire training"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "performance-management",
+    "synonyms": ["Performance reviews", "Employee evaluation"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "compensation-benefits",
+    "synonyms": ["Comp and benefits", "Total rewards"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "employee-relations",
+    "synonyms": ["ER", "Labor relations"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "talent-development",
+    "synonyms": ["Learning and development", "L&D"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "hris",
+    "synonyms": ["HR Information Systems", "HR software"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "workday",
+    "synonyms": ["Workday HCM"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "adp",
+    "synonyms": ["ADP payroll"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "organizational-design",
+    "synonyms": ["Org design", "Organization structure"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "diversity-inclusion",
+    "synonyms": ["D&I", "DEI", "Diversity equity inclusion"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "employment-law",
+    "synonyms": ["Labor law", "HR compliance"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "technical-writing",
+    "synonyms": ["Documentation", "Tech writing"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "content-creation",
+    "synonyms": ["Content writing", "Content development"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "blogging",
+    "synonyms": ["Blog writing", "Article writing"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "editing",
+    "synonyms": ["Copy editing", "Proofreading"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "journalism",
+    "synonyms": ["News writing", "Reporting"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "grant-writing",
+    "synonyms": ["Grant proposals"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "seo-writing",
+    "synonyms": ["SEO content", "SEO copywriting"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "storytelling",
+    "synonyms": ["Narrative writing", "Story development"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "video-production",
+    "synonyms": ["Video editing", "Videography"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "photography",
+    "synonyms": ["Photo editing", "Professional photography"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "audio-production",
+    "synonyms": ["Sound design", "Audio editing"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "podcast-production",
+    "synonyms": ["Podcasting", "Podcast editing"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "final-cut-pro",
+    "synonyms": ["Final Cut", "FCP"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "davinci-resolve",
+    "synonyms": ["DaVinci Resolve", "Resolve"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "pro-tools",
+    "synonyms": ["Avid Pro Tools"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "legal-research",
+    "synonyms": ["Legal analysis", "Case research"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "contract-law",
+    "synonyms": ["Contracts", "Contract drafting"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "intellectual-property",
+    "synonyms": ["IP law", "Patent law"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "corporate-law",
+    "synonyms": ["Business law"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "litigation",
+    "synonyms": ["Trial law", "Court proceedings"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "compliance-law",
+    "synonyms": ["Regulatory compliance", "Legal compliance"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "data-privacy",
+    "synonyms": ["Privacy law", "Data protection"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "embedded-systems",
+    "synonyms": ["Embedded programming", "Embedded software"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "iot",
+    "synonyms": ["Internet of Things", "IoT development"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "arduino",
+    "synonyms": ["Arduino programming"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "raspberry-pi",
+    "synonyms": ["Raspberry Pi", "RPi"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "firmware",
+    "synonyms": ["Firmware development", "Embedded firmware"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "rtos",
+    "synonyms": ["Real-time operating systems", "Real-time OS"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "mqtt",
+    "synonyms": ["MQTT protocol"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "edge-computing",
+    "synonyms": ["Edge AI", "Edge processing"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "game-development",
+    "synonyms": ["Game design", "Game programming"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "unity",
+    "synonyms": ["Unity3D", "Unity engine"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "unreal-engine",
+    "synonyms": ["Unreal", "UE5", "UE4"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "godot",
+    "synonyms": ["Godot engine"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "game-design",
+    "synonyms": ["Level design", "Gameplay design"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "2d-animation",
+    "synonyms": ["2D art", "Sprite animation"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "3d-animation",
+    "synonyms": ["3D character animation"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "shader-programming",
+    "synonyms": ["Shaders", "GLSL", "HLSL"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "multiplayer-networking",
+    "synonyms": ["Network programming", "Online multiplayer"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "sql",
+    "synonyms": ["SQL queries", "Structured Query Language"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "nosql",
+    "synonyms": ["NoSQL databases"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "pl-sql",
+    "synonyms": ["PL/SQL", "Oracle PL/SQL"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "t-sql",
+    "synonyms": ["Transact-SQL", "T-SQL"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "javascript",
+    "synonyms": ["JS", "ES6", "ES2015", "ES2020", "ECMAScript", "Vanilla JS"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "typescript",
+    "synonyms": ["TS", "TypeScript"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "python",
+    "synonyms": ["Python3", "Python 3", "py"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "java",
+    "synonyms": ["Java SE", "Java EE", "Jakarta EE"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "csharp",
+    "synonyms": ["C#", "C Sharp", ".NET", "dotnet"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "go",
+    "synonyms": ["Golang", "Go lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "rust",
+    "synonyms": ["Rust lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "php",
+    "synonyms": ["PHP7", "PHP8"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "ruby",
+    "synonyms": ["Ruby lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "swift",
+    "synonyms": ["Swift UI", "SwiftUI"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "kotlin",
+    "synonyms": ["Kotlin JVM"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "scala",
+    "synonyms": ["Scala lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "r",
+    "synonyms": ["R language", "R programming"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "cpp",
+    "synonyms": ["C++", "CPP", "C plus plus"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "c",
+    "synonyms": ["C language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "dart",
+    "synonyms": ["Dart lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "elixir",
+    "synonyms": ["Elixir lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "clojure",
+    "synonyms": ["Clojure lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "haskell",
+    "synonyms": ["Haskell lang"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "perl",
+    "synonyms": ["Perl5"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "react",
+    "synonyms": ["React.js", "ReactJS", "React Native"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "vue",
+    "synonyms": ["Vue.js", "VueJS", "Vue3"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "angular",
+    "synonyms": ["Angular2+", "AngularJS", "Angular.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nextjs",
+    "synonyms": ["Next.js", "Next", "NextJS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nuxt",
+    "synonyms": ["Nuxt.js", "NuxtJS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "svelte",
+    "synonyms": ["Svelte.js", "SvelteKit"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "remix",
+    "synonyms": ["Remix.run"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "html",
+    "synonyms": ["HTML5", "HTML/CSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "css",
+    "synonyms": ["CSS3", "Cascading Style Sheets"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "sass",
+    "synonyms": ["SCSS", "Sass/SCSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "less",
+    "synonyms": ["LESS CSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "tailwind",
+    "synonyms": ["Tailwind CSS", "TailwindCSS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "bootstrap",
+    "synonyms": ["Bootstrap CSS", "Bootstrap 5"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "material-ui",
+    "synonyms": ["MUI", "Material UI", "Material Design"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "chakra-ui",
+    "synonyms": ["Chakra UI"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "styled-components",
+    "synonyms": ["Styled Components", "CSS-in-JS"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "webpack",
+    "synonyms": ["Webpack5"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "vite",
+    "synonyms": ["Vite.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "babel",
+    "synonyms": ["Babel.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "redux",
+    "synonyms": ["Redux Toolkit", "React Redux"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "mobx",
+    "synonyms": ["MobX"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "zustand",
+    "synonyms": ["Zustand state"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "graphql",
+    "synonyms": ["GraphQL API", "Apollo GraphQL"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "jest",
+    "synonyms": ["Jest testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "cypress",
+    "synonyms": ["Cypress.io", "Cypress testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "playwright",
+    "synonyms": ["Playwright testing"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "storybook",
+    "synonyms": ["Storybook.js"],
+    "category": "Frontend Development"
+  },
+  {
+    "canonical": "nodejs",
+    "synonyms": ["Node.js", "Node", "NodeJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "express",
+    "synonyms": ["Express.js", "ExpressJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "nestjs",
+    "synonyms": ["Nest.js", "NestJS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fastify",
+    "synonyms": ["Fastify.js"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "django",
+    "synonyms": ["Django framework", "Django REST"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "flask",
+    "synonyms": ["Flask framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fastapi",
+    "synonyms": ["FastAPI"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "spring",
+    "synonyms": ["Spring Boot", "Spring Framework", "Spring MVC"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "spring-boot",
+    "synonyms": ["SpringBoot"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "rails",
+    "synonyms": ["Ruby on Rails", "RoR"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "laravel",
+    "synonyms": ["Laravel PHP"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "symfony",
+    "synonyms": ["Symfony PHP"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "aspnet",
+    "synonyms": ["ASP.NET", "ASP.NET Core", ".NET Core"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "gin",
+    "synonyms": ["Gin framework", "Gin Go"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fiber",
+    "synonyms": ["Fiber Go"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "phoenix",
+    "synonyms": ["Phoenix framework", "Phoenix Elixir"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "restful-api",
+    "synonyms": ["REST API", "RESTful", "REST"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "grpc",
+    "synonyms": ["gRPC", "Google RPC"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "websockets",
+    "synonyms": ["WebSocket", "Socket.io"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "microservices",
+    "synonyms": ["Microservice architecture", "MSA"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "serverless",
+    "synonyms": ["Serverless architecture", "FaaS"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "oauth",
+    "synonyms": ["OAuth2", "OAuth 2.0"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "jwt",
+    "synonyms": ["JSON Web Token", "JWT auth"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "mysql",
+    "synonyms": ["MySQL database"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "postgresql",
+    "synonyms": ["PostgreSQL", "Postgres", "psql"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "mongodb",
+    "synonyms": ["Mongo", "MongoDB Atlas"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "redis",
+    "synonyms": ["Redis cache", "Redis DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "elasticsearch",
+    "synonyms": ["Elastic", "ElasticSearch"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "dynamodb",
+    "synonyms": ["DynamoDB", "AWS DynamoDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "cassandra",
+    "synonyms": ["Apache Cassandra"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "mariadb",
+    "synonyms": ["MariaDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "oracle",
+    "synonyms": ["Oracle DB", "Oracle Database"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "sqlserver",
+    "synonyms": ["SQL Server", "Microsoft SQL Server", "MSSQL"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "sqlite",
+    "synonyms": ["SQLite3"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "firebase",
+    "synonyms": ["Firebase Realtime DB", "Firestore"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "neo4j",
+    "synonyms": ["Neo4j graph DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "couchdb",
+    "synonyms": ["Apache CouchDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "influxdb",
+    "synonyms": ["InfluxDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "cockroachdb",
+    "synonyms": ["CockroachDB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "supabase",
+    "synonyms": ["Supabase DB"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "planetscale",
+    "synonyms": ["PlanetScale"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "aws",
+    "synonyms": ["Amazon Web Services", "AWS Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "azure",
+    "synonyms": ["Microsoft Azure", "Azure Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "gcp",
+    "synonyms": ["Google Cloud Platform", "Google Cloud", "GCP"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "docker",
+    "synonyms": ["Docker containers", "Containerization"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "kubernetes",
+    "synonyms": ["K8s", "k8s", "Container orchestration"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "terraform",
+    "synonyms": ["Terraform IaC"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ansible",
+    "synonyms": ["Ansible automation"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "jenkins",
+    "synonyms": ["Jenkins CI/CD"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "gitlab-ci",
+    "synonyms": ["GitLab CI/CD", "GitLab pipelines"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "github-actions",
+    "synonyms": ["GitHub Actions", "GHA"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "circleci",
+    "synonyms": ["Circle CI"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "travisci",
+    "synonyms": ["Travis CI"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "nginx",
+    "synonyms": ["Nginx server"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "apache",
+    "synonyms": ["Apache HTTP Server", "Apache Web Server"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "prometheus",
+    "synonyms": ["Prometheus monitoring"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "grafana",
+    "synonyms": ["Grafana dashboards"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "datadog",
+    "synonyms": ["Datadog monitoring"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "newrelic",
+    "synonyms": ["New Relic"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "splunk",
+    "synonyms": ["Splunk logging"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "elk-stack",
+    "synonyms": ["ELK", "Elasticsearch Logstash Kibana"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudformation",
+    "synonyms": ["AWS CloudFormation"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudwatch",
+    "synonyms": ["AWS CloudWatch"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ec2",
+    "synonyms": ["AWS EC2", "Elastic Compute Cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "s3",
+    "synonyms": ["AWS S3", "Simple Storage Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "lambda",
+    "synonyms": ["AWS Lambda"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ecs",
+    "synonyms": ["AWS ECS", "Elastic Container Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "eks",
+    "synonyms": ["AWS EKS", "Elastic Kubernetes Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "rds",
+    "synonyms": ["AWS RDS", "Relational Database Service"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "route53",
+    "synonyms": ["AWS Route 53"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudfront",
+    "synonyms": ["AWS CloudFront", "CDN"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "vpc",
+    "synonyms": ["Virtual Private Cloud", "AWS VPC"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "iam",
+    "synonyms": ["AWS IAM", "Identity Access Management"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "machine-learning",
+    "synonyms": ["ML", "Machine Learning"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "deep-learning",
+    "synonyms": ["DL", "Deep Learning", "Neural Networks"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "tensorflow",
+    "synonyms": ["TensorFlow", "TF"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pytorch",
+    "synonyms": ["PyTorch"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "keras",
+    "synonyms": ["Keras framework"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "scikit-learn",
+    "synonyms": ["sklearn", "scikit learn"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pandas",
+    "synonyms": ["Pandas library"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "numpy",
+    "synonyms": ["NumPy"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "jupyter",
+    "synonyms": ["Jupyter Notebook", "Jupyter Lab"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "matplotlib",
+    "synonyms": ["Matplotlib plotting"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "seaborn",
+    "synonyms": ["Seaborn visualization"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "nlp",
+    "synonyms": ["Natural Language Processing", "NLP"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "computer-vision",
+    "synonyms": ["CV", "Computer Vision"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "opencv",
+    "synonyms": ["OpenCV"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "spacy",
+    "synonyms": ["spaCy"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "huggingface",
+    "synonyms": ["Hugging Face", "Transformers"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "llm",
+    "synonyms": ["Large Language Models", "LLMs"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "generative-ai",
+    "synonyms": ["GenAI", "Generative AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "langchain",
+    "synonyms": ["LangChain"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "spark",
+    "synonyms": ["Apache Spark", "PySpark"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "hadoop",
+    "synonyms": ["Apache Hadoop"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "airflow",
+    "synonyms": ["Apache Airflow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dbt",
+    "synonyms": ["dbt data build tool"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "tableau",
+    "synonyms": ["Tableau Desktop", "Tableau Server"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "powerbi",
+    "synonyms": ["Power BI", "Microsoft Power BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "looker",
+    "synonyms": ["Looker BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "snowflake",
+    "synonyms": ["Snowflake DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "databricks",
+    "synonyms": ["Databricks platform"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "sagemaker",
+    "synonyms": ["AWS SageMaker"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mlflow",
+    "synonyms": ["MLflow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "git",
+    "synonyms": ["Version control", "Git VCS"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "github",
+    "synonyms": ["GitHub"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "gitlab",
+    "synonyms": ["GitLab"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "bitbucket",
+    "synonyms": ["Bitbucket"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "jira",
+    "synonyms": ["Jira Software", "Atlassian Jira"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "confluence",
+    "synonyms": ["Atlassian Confluence"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "slack",
+    "synonyms": ["Slack communication"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "vscode",
+    "synonyms": ["Visual Studio Code", "VS Code"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "intellij",
+    "synonyms": ["IntelliJ IDEA"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "eclipse",
+    "synonyms": ["Eclipse IDE"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "vim",
+    "synonyms": ["Vi", "Vim editor"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "postman",
+    "synonyms": ["Postman API"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "insomnia",
+    "synonyms": ["Insomnia REST"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "figma",
+    "synonyms": ["Figma design"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "sketch",
+    "synonyms": ["Sketch app"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "adobe-xd",
+    "synonyms": ["Adobe XD", "XD"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "npm",
+    "synonyms": ["npm package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "yarn",
+    "synonyms": ["Yarn package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "pnpm",
+    "synonyms": ["pnpm package manager"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "maven",
+    "synonyms": ["Apache Maven"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "gradle",
+    "synonyms": ["Gradle build"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "pip",
+    "synonyms": ["pip Python"],
+    "category": "Development Tools"
+  },
+  {
+    "canonical": "agile",
+    "synonyms": ["Agile methodology", "Agile development"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "scrum",
+    "synonyms": ["Scrum framework"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "kanban",
+    "synonyms": ["Kanban method"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "waterfall",
+    "synonyms": ["Waterfall methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "lean",
+    "synonyms": ["Lean methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "six-sigma",
+    "synonyms": ["Six Sigma", "Lean Six Sigma"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "pmp",
+    "synonyms": ["Project Management Professional", "PMP certification"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "prince2",
+    "synonyms": ["PRINCE2 methodology"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "asana",
+    "synonyms": ["Asana tool"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "trello",
+    "synonyms": ["Trello boards"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "monday",
+    "synonyms": ["Monday.com"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "clickup",
+    "synonyms": ["ClickUp"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "notion",
+    "synonyms": ["Notion workspace"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "stakeholder-management",
+    "synonyms": ["Stakeholder engagement"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "risk-management",
+    "synonyms": ["Risk assessment"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "budget-management",
+    "synonyms": ["Financial planning", "Budget planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "roadmapping",
+    "synonyms": ["Product roadmap", "Roadmap planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "resource-allocation",
+    "synonyms": ["Resource planning"],
+    "category": "Project Management"
+  },
+  {
+    "canonical": "cybersecurity",
+    "synonyms": ["Information security", "InfoSec"],
+    "category": "Security"
+  },
+  {
+    "canonical": "penetration-testing",
+    "synonyms": ["Pen testing", "Ethical hacking"],
+    "category": "Security"
+  },
+  {
+    "canonical": "owasp",
+    "synonyms": ["OWASP Top 10"],
+    "category": "Security"
+  },
+  {
+    "canonical": "soc",
+    "synonyms": ["Security Operations Center"],
+    "category": "Security"
+  },
+  {
+    "canonical": "siem",
+    "synonyms": ["Security Information Event Management"],
+    "category": "Security"
+  },
+  {
+    "canonical": "ssl-tls",
+    "synonyms": ["SSL/TLS", "TLS certificates"],
+    "category": "Security"
+  },
+  {
+    "canonical": "encryption",
+    "synonyms": ["Data encryption", "Cryptography"],
+    "category": "Security"
+  },
+  {
+    "canonical": "vulnerability-assessment",
+    "synonyms": ["Vuln scanning"],
+    "category": "Security"
+  },
+  {
+    "canonical": "incident-response",
+    "synonyms": ["Security incident response"],
+    "category": "Security"
+  },
+  {
+    "canonical": "threat-modeling",
+    "synonyms": ["Threat analysis"],
+    "category": "Security"
+  },
+  {
+    "canonical": "compliance",
+    "synonyms": ["Regulatory compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "gdpr",
+    "synonyms": ["GDPR compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "hipaa",
+    "synonyms": ["HIPAA compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "pci-dss",
+    "synonyms": ["PCI DSS"],
+    "category": "Security"
+  },
+  {
+    "canonical": "iso27001",
+    "synonyms": ["ISO 27001"],
+    "category": "Security"
+  },
+  {
+    "canonical": "soc2",
+    "synonyms": ["SOC 2 compliance"],
+    "category": "Security"
+  },
+  {
+    "canonical": "zero-trust",
+    "synonyms": ["Zero trust architecture"],
+    "category": "Security"
+  },
+  {
+    "canonical": "ios-development",
+    "synonyms": ["iOS", "iPhone development"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "android-development",
+    "synonyms": ["Android", "Android Studio"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "react-native",
+    "synonyms": ["React Native", "RN"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "flutter",
+    "synonyms": ["Flutter framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "xamarin",
+    "synonyms": ["Xamarin framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "ionic",
+    "synonyms": ["Ionic framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "cordova",
+    "synonyms": ["Apache Cordova", "PhoneGap"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "swiftui",
+    "synonyms": ["SwiftUI framework"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "jetpack-compose",
+    "synonyms": ["Jetpack Compose", "Compose"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "mobile-ui-design",
+    "synonyms": ["Mobile UX", "App design"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "app-store-optimization",
+    "synonyms": ["ASO", "App Store SEO"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "push-notifications",
+    "synonyms": ["Mobile notifications", "FCM", "APNS"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "mobile-analytics",
+    "synonyms": ["App analytics", "Mobile tracking"],
+    "category": "Mobile Development"
+  },
+  {
+    "canonical": "communication",
+    "synonyms": ["Verbal communication", "Written communication"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "leadership",
+    "synonyms": ["Team leadership", "People management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "problem-solving",
+    "synonyms": ["Critical thinking", "Analytical thinking"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "teamwork",
+    "synonyms": ["Collaboration", "Team player"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "time-management",
+    "synonyms": ["Time prioritization", "Task management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "adaptability",
+    "synonyms": ["Flexibility", "Change management"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "creativity",
+    "synonyms": ["Innovation", "Creative thinking"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "emotional-intelligence",
+    "synonyms": ["EQ", "Empathy"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "conflict-resolution",
+    "synonyms": ["Mediation", "Dispute resolution"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "presentation-skills",
+    "synonyms": ["Public speaking", "Presenting"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "negotiation",
+    "synonyms": ["Negotiating", "Deal making"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "active-listening",
+    "synonyms": ["Listening skills", "Attentive listening"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "decision-making",
+    "synonyms": ["Strategic decisions", "Judgment"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "mentoring",
+    "synonyms": ["Coaching", "Mentorship"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "work-ethic",
+    "synonyms": ["Professionalism", "Dedication"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "attention-to-detail",
+    "synonyms": ["Detail-oriented", "Thoroughness"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "self-motivation",
+    "synonyms": ["Self-driven", "Initiative"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "customer-service",
+    "synonyms": ["Client service", "Customer support"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "networking",
+    "synonyms": ["Professional networking", "Relationship building"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "cultural-awareness",
+    "synonyms": ["Cross-cultural communication", "Diversity awareness"],
+    "category": "Soft Skills"
+  },
+  {
+    "canonical": "ui-design",
+    "synonyms": ["User Interface design", "UI/UX"],
+    "category": "Design"
+  },
+  {
+    "canonical": "ux-design",
+    "synonyms": ["User Experience design", "UX research"],
+    "category": "Design"
+  },
+  {
+    "canonical": "graphic-design",
+    "synonyms": ["Visual design", "Graphics"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-photoshop",
+    "synonyms": ["Photoshop", "PS"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-illustrator",
+    "synonyms": ["Illustrator", "AI"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-indesign",
+    "synonyms": ["InDesign"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-after-effects",
+    "synonyms": ["After Effects", "AE"],
+    "category": "Design"
+  },
+  {
+    "canonical": "adobe-premiere",
+    "synonyms": ["Premiere Pro", "Premiere"],
+    "category": "Design"
+  },
+  {
+    "canonical": "wireframing",
+    "synonyms": ["Wireframes", "Mockups"],
+    "category": "Design"
+  },
+  {
+    "canonical": "prototyping",
+    "synonyms": ["Interactive prototypes", "Prototype design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "design-systems",
+    "synonyms": ["Component libraries", "Design tokens"],
+    "category": "Design"
+  },
+  {
+    "canonical": "user-research",
+    "synonyms": ["UX research", "User testing"],
+    "category": "Design"
+  },
+  {
+    "canonical": "information-architecture",
+    "synonyms": ["IA", "Site mapping"],
+    "category": "Design"
+  },
+  {
+    "canonical": "accessibility-design",
+    "synonyms": ["A11y", "Accessible design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "branding",
+    "synonyms": ["Brand identity", "Brand design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "typography",
+    "synonyms": ["Font design", "Type design"],
+    "category": "Design"
+  },
+  {
+    "canonical": "color-theory",
+    "synonyms": ["Color design", "Color palettes"],
+    "category": "Design"
+  },
+  {
+    "canonical": "illustration",
+    "synonyms": ["Digital illustration", "Drawing"],
+    "category": "Design"
+  },
+  {
+    "canonical": "3d-modeling",
+    "synonyms": ["3D design", "Modeling"],
+    "category": "Design"
+  },
+  {
+    "canonical": "blender",
+    "synonyms": ["Blender 3D"],
+    "category": "Design"
+  },
+  {
+    "canonical": "maya",
+    "synonyms": ["Autodesk Maya"],
+    "category": "Design"
+  },
+  {
+    "canonical": "3ds-max",
+    "synonyms": ["3ds Max", "Autodesk 3ds Max"],
+    "category": "Design"
+  },
+  {
+    "canonical": "cinema4d",
+    "synonyms": ["Cinema 4D", "C4D"],
+    "category": "Design"
+  },
+  {
+    "canonical": "qa-testing",
+    "synonyms": ["Quality Assurance", "Software testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "manual-testing",
+    "synonyms": ["Manual QA"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "automation-testing",
+    "synonyms": ["Test automation", "Automated testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "selenium",
+    "synonyms": ["Selenium WebDriver"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "appium",
+    "synonyms": ["Appium mobile testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "jmeter",
+    "synonyms": ["Apache JMeter", "Performance testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "loadrunner",
+    "synonyms": ["LoadRunner"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "test-driven-development",
+    "synonyms": ["TDD"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "behavior-driven-development",
+    "synonyms": ["BDD", "Cucumber"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "regression-testing",
+    "synonyms": ["Regression tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "integration-testing",
+    "synonyms": ["Integration tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "unit-testing",
+    "synonyms": ["Unit tests"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "api-testing",
+    "synonyms": ["API test automation"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "load-testing",
+    "synonyms": ["Performance testing", "Stress testing"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "security-testing",
+    "synonyms": ["Security QA"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "test-planning",
+    "synonyms": ["Test strategy", "QA planning"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "bug-tracking",
+    "synonyms": ["Defect tracking", "Issue tracking"],
+    "category": "Quality Assurance"
+  },
+  {
+    "canonical": "blockchain",
+    "synonyms": ["Distributed ledger", "DLT"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ethereum",
+    "synonyms": ["ETH", "Ethereum blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "solidity",
+    "synonyms": ["Solidity programming"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "smart-contracts",
+    "synonyms": ["Smart contract development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "web3",
+    "synonyms": ["Web3.js", "Web 3.0"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "nft",
+    "synonyms": ["NFTs", "Non-fungible tokens"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "defi",
+    "synonyms": ["Decentralized Finance"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "hyperledger",
+    "synonyms": ["Hyperledger Fabric"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "cryptocurrency",
+    "synonyms": ["Crypto", "Digital currency"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "bitcoin",
+    "synonyms": ["BTC", "Bitcoin development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ipfs",
+    "synonyms": ["InterPlanetary File System"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "dao",
+    "synonyms": ["Decentralized Autonomous Organization", "DAOs"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "digital-marketing",
+    "synonyms": ["Online marketing", "Internet marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "seo",
+    "synonyms": ["Search Engine Optimization", "SEO marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "sem",
+    "synonyms": ["Search Engine Marketing", "Paid search"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "social-media-marketing",
+    "synonyms": ["SMM", "Social marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "content-marketing",
+    "synonyms": ["Content strategy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "email-marketing",
+    "synonyms": ["Email campaigns", "Newsletter marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "google-analytics",
+    "synonyms": ["GA", "GA4"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "google-ads",
+    "synonyms": ["Google AdWords", "PPC"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "facebook-ads",
+    "synonyms": ["Meta Ads", "FB advertising"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "linkedin-marketing",
+    "synonyms": ["LinkedIn ads", "LinkedIn campaigns"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "copywriting",
+    "synonyms": ["Marketing copy", "Ad copy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "brand-management",
+    "synonyms": ["Brand strategy", "Brand marketing"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "market-research",
+    "synonyms": ["Market analysis", "Consumer research"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "marketing-automation",
+    "synonyms": ["Marketing ops", "Automation tools"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "hubspot",
+    "synonyms": ["HubSpot CRM"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "salesforce",
+    "synonyms": ["Salesforce CRM", "SFDC"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "crm",
+    "synonyms": ["Customer Relationship Management"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "sales-strategy",
+    "synonyms": ["Sales planning", "Revenue strategy"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "b2b-sales",
+    "synonyms": ["Business to business sales", "Enterprise sales"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "b2c-sales",
+    "synonyms": ["Business to consumer sales", "Retail sales"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "account-management",
+    "synonyms": ["Client management", "Account executive"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "lead-generation",
+    "synonyms": ["Lead gen", "Prospecting"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "conversion-optimization",
+    "synonyms": ["CRO", "Conversion rate optimization"],
+    "category": "Marketing & Sales"
+  },
+  {
+    "canonical": "product-management",
+    "synonyms": ["Product manager", "PM"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-strategy",
+    "synonyms": ["Product roadmap", "Product vision"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-development",
+    "synonyms": ["Product lifecycle"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "user-stories",
+    "synonyms": ["Story writing", "Requirements gathering"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "product-analytics",
+    "synonyms": ["Product metrics", "Product data"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "a-b-testing",
+    "synonyms": ["A/B testing", "Split testing"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "feature-prioritization",
+    "synonyms": ["Backlog management"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "go-to-market",
+    "synonyms": ["GTM strategy", "Product launch"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "competitive-analysis",
+    "synonyms": ["Market analysis", "Competitor research"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "mvp-development",
+    "synonyms": ["Minimum viable product", "MVP"],
+    "category": "Product Management"
+  },
+  {
+    "canonical": "financial-analysis",
+    "synonyms": ["Financial modeling", "Finance"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "accounting",
+    "synonyms": ["Financial accounting", "Bookkeeping"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "financial-reporting",
+    "synonyms": ["Finance reports", "Financial statements"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "excel",
+    "synonyms": ["Microsoft Excel", "Spreadsheets"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "quickbooks",
+    "synonyms": ["QuickBooks accounting"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "sap",
+    "synonyms": ["SAP ERP", "SAP systems"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "erp",
+    "synonyms": ["Enterprise Resource Planning"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "forecasting",
+    "synonyms": ["Financial forecasting", "Budget forecasting"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "valuation",
+    "synonyms": ["Business valuation", "Asset valuation"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "investment-analysis",
+    "synonyms": ["Investment research", "Portfolio analysis"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "risk-analysis",
+    "synonyms": ["Risk assessment", "Financial risk"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "merger-acquisition",
+    "synonyms": ["M&A", "Mergers and acquisitions"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "taxation",
+    "synonyms": ["Tax planning", "Tax compliance"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "audit",
+    "synonyms": ["Auditing", "Financial audit"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "corporate-finance",
+    "synonyms": ["Corp finance", "Treasury"],
+    "category": "Business & Finance"
+  },
+  {
+    "canonical": "business-strategy",
+    "synonyms": ["Strategic planning", "Business planning"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "operations-management",
+    "synonyms": ["Operations", "Ops management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "supply-chain",
+    "synonyms": ["Supply chain management", "SCM"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "logistics",
+    "synonyms": ["Logistics management", "Distribution"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "procurement",
+    "synonyms": ["Purchasing", "Sourcing"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "inventory-management",
+    "synonyms": ["Stock management", "Inventory control"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "process-improvement",
+    "synonyms": ["Process optimization", "Continuous improvement"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "change-management",
+    "synonyms": ["Organizational change"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "business-development",
+    "synonyms": ["BD", "Biz dev"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "partnerships",
+    "synonyms": ["Strategic partnerships", "Alliance management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "contract-negotiation",
+    "synonyms": ["Contract management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "vendor-management",
+    "synonyms": ["Supplier management"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "quality-management",
+    "synonyms": ["Quality control", "QMS"],
+    "category": "Business & Operations"
+  },
+  {
+    "canonical": "hr-management",
+    "synonyms": ["Human Resources", "People management"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "recruiting",
+    "synonyms": ["Recruitment", "Talent acquisition"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "onboarding",
+    "synonyms": ["Employee onboarding", "New hire training"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "performance-management",
+    "synonyms": ["Performance reviews", "Employee evaluation"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "compensation-benefits",
+    "synonyms": ["Comp and benefits", "Total rewards"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "employee-relations",
+    "synonyms": ["ER", "Labor relations"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "talent-development",
+    "synonyms": ["Learning and development", "L&D"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "hris",
+    "synonyms": ["HR Information Systems", "HR software"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "workday",
+    "synonyms": ["Workday HCM"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "adp",
+    "synonyms": ["ADP payroll"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "organizational-design",
+    "synonyms": ["Org design", "Organization structure"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "diversity-inclusion",
+    "synonyms": ["D&I", "DEI", "Diversity equity inclusion"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "employment-law",
+    "synonyms": ["Labor law", "HR compliance"],
+    "category": "Human Resources"
+  },
+  {
+    "canonical": "technical-writing",
+    "synonyms": ["Documentation", "Tech writing"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "content-creation",
+    "synonyms": ["Content writing", "Content development"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "blogging",
+    "synonyms": ["Blog writing", "Article writing"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "editing",
+    "synonyms": ["Copy editing", "Proofreading"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "journalism",
+    "synonyms": ["News writing", "Reporting"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "grant-writing",
+    "synonyms": ["Grant proposals"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "seo-writing",
+    "synonyms": ["SEO content", "SEO copywriting"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "storytelling",
+    "synonyms": ["Narrative writing", "Story development"],
+    "category": "Writing & Content"
+  },
+  {
+    "canonical": "video-production",
+    "synonyms": ["Video editing", "Videography"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "photography",
+    "synonyms": ["Photo editing", "Professional photography"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "audio-production",
+    "synonyms": ["Sound design", "Audio editing"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "podcast-production",
+    "synonyms": ["Podcasting", "Podcast editing"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "final-cut-pro",
+    "synonyms": ["Final Cut", "FCP"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "davinci-resolve",
+    "synonyms": ["DaVinci Resolve", "Resolve"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "pro-tools",
+    "synonyms": ["Avid Pro Tools"],
+    "category": "Media & Production"
+  },
+  {
+    "canonical": "legal-research",
+    "synonyms": ["Legal analysis", "Case research"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "contract-law",
+    "synonyms": ["Contracts", "Contract drafting"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "intellectual-property",
+    "synonyms": ["IP law", "Patent law"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "corporate-law",
+    "synonyms": ["Business law"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "litigation",
+    "synonyms": ["Trial law", "Court proceedings"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "compliance-law",
+    "synonyms": ["Regulatory compliance", "Legal compliance"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "data-privacy",
+    "synonyms": ["Privacy law", "Data protection"],
+    "category": "Legal"
+  },
+  {
+    "canonical": "embedded-systems",
+    "synonyms": ["Embedded programming", "Embedded software"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "iot",
+    "synonyms": ["Internet of Things", "IoT development"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "arduino",
+    "synonyms": ["Arduino programming"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "raspberry-pi",
+    "synonyms": ["Raspberry Pi", "RPi"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "firmware",
+    "synonyms": ["Firmware development", "Embedded firmware"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "rtos",
+    "synonyms": ["Real-time operating systems", "Real-time OS"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "mqtt",
+    "synonyms": ["MQTT protocol"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "edge-computing",
+    "synonyms": ["Edge AI", "Edge processing"],
+    "category": "Embedded & IoT"
+  },
+  {
+    "canonical": "game-development",
+    "synonyms": ["Game design", "Game programming"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "unity",
+    "synonyms": ["Unity3D", "Unity engine"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "unreal-engine",
+    "synonyms": ["Unreal", "UE5", "UE4"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "godot",
+    "synonyms": ["Godot engine"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "game-design",
+    "synonyms": ["Level design", "Gameplay design"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "2d-animation",
+    "synonyms": ["2D art", "Sprite animation"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "3d-animation",
+    "synonyms": ["3D character animation"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "shader-programming",
+    "synonyms": ["Shaders", "GLSL", "HLSL"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "multiplayer-networking",
+    "synonyms": ["Network programming", "Online multiplayer"],
+    "category": "Game Development"
+  },
+  {
+    "canonical": "sql",
+    "synonyms": ["SQL queries", "Structured Query Language"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "nosql",
+    "synonyms": ["NoSQL databases"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "pl-sql",
+    "synonyms": ["PL/SQL", "Oracle PL/SQL"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "t-sql",
+    "synonyms": ["Transact-SQL", "T-SQL"],
+    "category": "Database & Query Languages"
+  },
+  {
+    "canonical": "bash",
+    "synonyms": ["Bash scripting", "Shell scripting"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "powershell",
+    "synonyms": ["PowerShell scripting", "PS"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "objective-c",
+    "synonyms": ["Objective C", "ObjC"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "lua",
+    "synonyms": ["Lua scripting"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "groovy",
+    "synonyms": ["Groovy language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "julia",
+    "synonyms": ["Julia language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "matlab",
+    "synonyms": ["MATLAB programming"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "fortran",
+    "synonyms": ["Fortran language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "cobol",
+    "synonyms": ["COBOL programming"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "assembly",
+    "synonyms": ["Assembly language", "ASM"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "vba",
+    "synonyms": ["Visual Basic for Applications", "VBA macros"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "visual-basic",
+    "synonyms": ["VB", "VB.NET"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "f-sharp",
+    "synonyms": ["F#", "FSharp"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "erlang",
+    "synonyms": ["Erlang language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "ocaml",
+    "synonyms": ["OCaml language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "prolog",
+    "synonyms": ["Prolog logic programming"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "lisp",
+    "synonyms": ["Common Lisp"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "scheme",
+    "synonyms": ["Scheme language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "racket",
+    "synonyms": ["Racket language"],
+    "category": "Programming Languages"
+  },
+  {
+    "canonical": "solr",
+    "synonyms": ["Apache Solr"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "memcached",
+    "synonyms": ["Memcache"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "rabbitmq",
+    "synonyms": ["RabbitMQ messaging"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "kafka",
+    "synonyms": ["Apache Kafka", "Kafka streaming"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "etcd",
+    "synonyms": ["etcd key-value store"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "consul",
+    "synonyms": ["HashiCorp Consul"],
+    "category": "Databases"
+  },
+  {
+    "canonical": "vault",
+    "synonyms": ["HashiCorp Vault"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "packer",
+    "synonyms": ["HashiCorp Packer"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "vagrant",
+    "synonyms": ["HashiCorp Vagrant"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "helm",
+    "synonyms": ["Kubernetes Helm"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "istio",
+    "synonyms": ["Istio service mesh"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "linkerd",
+    "synonyms": ["Linkerd service mesh"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "consul-connect",
+    "synonyms": ["Consul Connect"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "openshift",
+    "synonyms": ["Red Hat OpenShift"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "rancher",
+    "synonyms": ["Rancher Kubernetes"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "nomad",
+    "synonyms": ["HashiCorp Nomad"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "mesos",
+    "synonyms": ["Apache Mesos"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "swarm",
+    "synonyms": ["Docker Swarm"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "pulumi",
+    "synonyms": ["Pulumi IaC"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudflare",
+    "synonyms": ["Cloudflare CDN"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "fastly",
+    "synonyms": ["Fastly CDN"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "akamai",
+    "synonyms": ["Akamai CDN"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "vercel",
+    "synonyms": ["Vercel deployment"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "netlify",
+    "synonyms": ["Netlify hosting"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "heroku",
+    "synonyms": ["Heroku platform"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "digitalocean",
+    "synonyms": ["DigitalOcean", "DO"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "linode",
+    "synonyms": ["Linode cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "vultr",
+    "synonyms": ["Vultr cloud"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "render",
+    "synonyms": ["Render platform"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "railway",
+    "synonyms": ["Railway app"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "fly-io",
+    "synonyms": ["Fly.io"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cloudinary",
+    "synonyms": ["Cloudinary media"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "imgix",
+    "synonyms": ["Imgix image optimization"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "twilio",
+    "synonyms": ["Twilio API"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "sendgrid",
+    "synonyms": ["SendGrid email"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "stripe",
+    "synonyms": ["Stripe payments"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "paypal",
+    "synonyms": ["PayPal integration"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "braintree",
+    "synonyms": ["Braintree payments"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "square",
+    "synonyms": ["Square payments"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "auth0",
+    "synonyms": ["Auth0 authentication"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "okta",
+    "synonyms": ["Okta identity"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "cognito",
+    "synonyms": ["AWS Cognito"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "active-directory",
+    "synonyms": ["AD", "Microsoft AD"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "ldap",
+    "synonyms": ["LDAP protocol"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "saml",
+    "synonyms": ["SAML authentication"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "keycloak",
+    "synonyms": ["Keycloak SSO"],
+    "category": "Cloud & DevOps"
+  },
+  {
+    "canonical": "apache-nifi",
+    "synonyms": ["NiFi data flow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "talend",
+    "synonyms": ["Talend ETL"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "informatica",
+    "synonyms": ["Informatica PowerCenter"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "alteryx",
+    "synonyms": ["Alteryx analytics"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "knime",
+    "synonyms": ["KNIME analytics"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "rapidminer",
+    "synonyms": ["RapidMiner"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "sas",
+    "synonyms": ["SAS analytics", "SAS programming"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "spss",
+    "synonyms": ["IBM SPSS"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "stata",
+    "synonyms": ["Stata software"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "qlik",
+    "synonyms": ["Qlik Sense", "QlikView"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "domo",
+    "synonyms": ["Domo BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "sisense",
+    "synonyms": ["Sisense BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "thoughtspot",
+    "synonyms": ["ThoughtSpot analytics"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "metabase",
+    "synonyms": ["Metabase BI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "superset",
+    "synonyms": ["Apache Superset"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "redash",
+    "synonyms": ["Redash dashboards"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "prefect",
+    "synonyms": ["Prefect workflow"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dagster",
+    "synonyms": ["Dagster orchestration"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "great-expectations",
+    "synonyms": ["Great Expectations data quality"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "feast",
+    "synonyms": ["Feast feature store"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "kubeflow",
+    "synonyms": ["Kubeflow ML"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mlops",
+    "synonyms": ["MLOps practices"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dataops",
+    "synonyms": ["DataOps practices"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-beam",
+    "synonyms": ["Beam processing"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-flink",
+    "synonyms": ["Flink streaming"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-storm",
+    "synonyms": ["Storm processing"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-druid",
+    "synonyms": ["Druid database"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "clickhouse",
+    "synonyms": ["ClickHouse database"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "timescaledb",
+    "synonyms": ["TimescaleDB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "presto",
+    "synonyms": ["PrestoDB", "Presto SQL"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "trino",
+    "synonyms": ["Trino SQL"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dremio",
+    "synonyms": ["Dremio data lake"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "delta-lake",
+    "synonyms": ["Delta Lake storage"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-iceberg",
+    "synonyms": ["Iceberg table format"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "apache-hudi",
+    "synonyms": ["Hudi data lakes"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "xgboost",
+    "synonyms": ["XGBoost gradient boosting"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "lightgbm",
+    "synonyms": ["LightGBM"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "catboost",
+    "synonyms": ["CatBoost"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "h2o",
+    "synonyms": ["H2O.ai"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "rapids",
+    "synonyms": ["RAPIDS GPU acceleration"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dask",
+    "synonyms": ["Dask parallel computing"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "ray",
+    "synonyms": ["Ray distributed computing"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "modin",
+    "synonyms": ["Modin pandas"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "vaex",
+    "synonyms": ["Vaex dataframe"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "polars",
+    "synonyms": ["Polars dataframe"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "jax",
+    "synonyms": ["JAX framework"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mxnet",
+    "synonyms": ["Apache MXNet"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "caffe",
+    "synonyms": ["Caffe deep learning"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "theano",
+    "synonyms": ["Theano framework"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "chainer",
+    "synonyms": ["Chainer framework"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "fastai",
+    "synonyms": ["Fast.ai"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "detectron2",
+    "synonyms": ["Detectron2 CV"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "yolo",
+    "synonyms": ["YOLO object detection"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mask-rcnn",
+    "synonyms": ["Mask R-CNN"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "mediapipe",
+    "synonyms": ["MediaPipe ML"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "tesseract",
+    "synonyms": ["Tesseract OCR"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "nltk",
+    "synonyms": ["Natural Language Toolkit"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "gensim",
+    "synonyms": ["Gensim NLP"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "bert",
+    "synonyms": ["BERT model"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "gpt",
+    "synonyms": ["GPT models"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "stable-diffusion",
+    "synonyms": ["Stable Diffusion AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "midjourney",
+    "synonyms": ["Midjourney AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "dall-e",
+    "synonyms": ["DALL-E AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "whisper",
+    "synonyms": ["Whisper AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "reinforcement-learning",
+    "synonyms": ["RL", "Reinforcement learning"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "transfer-learning",
+    "synonyms": ["Transfer learning"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "federated-learning",
+    "synonyms": ["Federated ML"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "automl",
+    "synonyms": ["AutoML", "Automated ML"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "hyperparameter-tuning",
+    "synonyms": ["Hyperparameter optimization"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "model-deployment",
+    "synonyms": ["ML model deployment"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "model-monitoring",
+    "synonyms": ["ML monitoring"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "explainable-ai",
+    "synonyms": ["XAI", "Interpretable ML"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "time-series-forecasting",
+    "synonyms": ["Time series analysis"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "anomaly-detection",
+    "synonyms": ["Outlier detection"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "recommendation-systems",
+    "synonyms": ["Recommender systems"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "sentiment-analysis",
+    "synonyms": ["Opinion mining"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "named-entity-recognition",
+    "synonyms": ["NER", "Entity extraction"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "text-classification",
+    "synonyms": ["Document classification"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "topic-modeling",
+    "synonyms": ["Topic extraction"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "question-answering",
+    "synonyms": ["QA systems"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "chatbot-development",
+    "synonyms": ["Conversational AI"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "speech-recognition",
+    "synonyms": ["Speech to text", "ASR"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "text-to-speech",
+    "synonyms": ["TTS", "Speech synthesis"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "image-segmentation",
+    "synonyms": ["Semantic segmentation"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "object-detection",
+    "synonyms": ["Object recognition"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "face-recognition",
+    "synonyms": ["Facial recognition"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pose-estimation",
+    "synonyms": ["Human pose estimation"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "gan",
+    "synonyms": ["Generative Adversarial Networks", "GANs"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "vae",
+    "synonyms": ["Variational Autoencoders", "VAE"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "diffusion-models",
+    "synonyms": ["Diffusion modeling"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "attention-mechanisms",
+    "synonyms": ["Attention models"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "transformers",
+    "synonyms": ["Transformer architecture"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "prompt-engineering",
+    "synonyms": ["Prompt design"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "rag",
+    "synonyms": ["Retrieval Augmented Generation"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "vector-databases",
+    "synonyms": ["Vector search", "Embedding databases"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "pinecone",
+    "synonyms": ["Pinecone vector DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "weaviate",
+    "synonyms": ["Weaviate vector DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "milvus",
+    "synonyms": ["Milvus vector DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "qdrant",
+    "synonyms": ["Qdrant vector DB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "chroma",
+    "synonyms": ["ChromaDB"],
+    "category": "Data Science & AI"
+  },
+  {
+    "canonical": "solidity-security",
+    "synonyms": ["Smart contract auditing"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "web3-js",
+    "synonyms": ["Web3.js library"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ethers-js",
+    "synonyms": ["Ethers.js"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "truffle",
+    "synonyms": ["Truffle framework"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "hardhat",
+    "synonyms": ["Hardhat development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ganache",
+    "synonyms": ["Ganache blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "metamask",
+    "synonyms": ["MetaMask wallet"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "polygon",
+    "synonyms": ["Polygon network", "Matic"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "binance-smart-chain",
+    "synonyms": ["BSC", "BNB Chain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "avalanche",
+    "synonyms": ["Avalanche blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "solana",
+    "synonyms": ["Solana blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "cardano",
+    "synonyms": ["Cardano blockchain", "ADA"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "polkadot",
+    "synonyms": ["Polkadot network"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "cosmos",
+    "synonyms": ["Cosmos network"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "near",
+    "synonyms": ["NEAR Protocol"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "algorand",
+    "synonyms": ["Algorand blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "tezos",
+    "synonyms": ["Tezos blockchain"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "chainlink",
+    "synonyms": ["Chainlink oracles"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "the-graph",
+    "synonyms": ["The Graph protocol"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "opensea",
+    "synonyms": ["OpenSea NFT"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "uniswap",
+    "synonyms": ["Uniswap DEX"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "aave",
+    "synonyms": ["Aave protocol"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "compound",
+    "synonyms": ["Compound finance"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "maker",
+    "synonyms": ["MakerDAO"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "erc20",
+    "synonyms": ["ERC-20 tokens"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "erc721",
+    "synonyms": ["ERC-721 NFT"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "erc1155",
+    "synonyms": ["ERC-1155 multi-token"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "layer2",
+    "synonyms": ["Layer 2 scaling"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "optimism",
+    "synonyms": ["Optimism L2"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "arbitrum",
+    "synonyms": ["Arbitrum L2"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "zksync",
+    "synonyms": ["zkSync"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "starknet",
+    "synonyms": ["StarkNet"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "substrate",
+    "synonyms": ["Substrate framework"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "ink",
+    "synonyms": ["Ink! smart contracts"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "move",
+    "synonyms": ["Move language"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "rust-blockchain",
+    "synonyms": ["Rust blockchain development"],
+    "category": "Blockchain & Web3"
+  },
+  {
+    "canonical": "web-scraping",
+    "synonyms": ["Data scraping", "Web crawling"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "beautifulsoup",
+    "synonyms": ["Beautiful Soup"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "scrapy",
+    "synonyms": ["Scrapy framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "flask",
+    "synonyms": ["Flask web framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "django",
+    "synonyms": ["Django web framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "express",
+    "synonyms": ["Express.js", "Express framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "laravel",
+    "synonyms": ["Laravel web framework"],
+    "category": "Backend Development"
+  },
+  {
+    "canonical": "fastapi",
+    "synonyms": ["FastAPI web framework"],
+    "category": "Backend Development"
+  },  
+  {
+    "canonical": "spring-boot",
+    "synonyms": ["Spring Boot framework"],
+    "category": "Backend Development"
+  },  
+  {
+    "canonical": "tornado",
+    "synonyms": ["Tornado web framework"],
+    "category": "Backend Development"
+  },  
+  {
+    "canonical": "koa",
+    "synonyms": ["Koa.js", "Koa framework"],
+    "category": "Backend Development"
+  },  
+  {
+    "canonical": "hapi",
+    "synonyms": ["Hapi.js", "Hapi framework"],
+    "category": "Backend Development"
+  },  
+  {
+    "canonical": "sails-js",
+    "synonyms": ["Sails.js", "Sails framework"],
+    "category": "Backend Development"
+  }
+]

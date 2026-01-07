@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../api/axiosInstance";
 import * as XLSX from "xlsx"; 
 // --- DRAG & DROP IMPORTS ---
@@ -89,13 +89,18 @@ function RecruiterDashboard() {
     };
     fetchData();
   }, [activeTab]); 
+const getLatestAnalysis = (app) => {
+  if (!app || !app.aiAnalysis) return null;
+  const history = Array.isArray(app.aiAnalysis) ? app.aiAnalysis : [app.aiAnalysis];
+  
+  if (history.length === 0) return null;
 
-  // --- HELPERS ---
-  const getLatestAnalysis = (app) => {
-    if (app.aiAnalysis && Array.isArray(app.aiAnalysis) && app.aiAnalysis.length > 0) return app.aiAnalysis[0];
-    if (app.aiAnalysis && app.aiAnalysis.matchScore) return app.aiAnalysis;
-    return null;
-  };
+  // 🚀 SMART FIND: Look for the first item that actually has a score
+  const valid = history.find(h => (h.score !== undefined && h.score > 0) || (h.matchScore !== undefined && h.matchScore > 0));
+  
+  // Fallback to index 0 if no scores found (to show "0%" instead of "Analyze")
+  return valid || history[0];
+};
 
   const getUniqueJobTitles = () => {
     const titles = applications.map(app => app.jobId?.title).filter(Boolean);
@@ -193,10 +198,43 @@ function RecruiterDashboard() {
       }
   };
 
+  // 1. Add a 'fetching' ref at the top of your component to stop the loop
+const isFetching = useRef(false);
+
+useEffect(() => {
+    if (isFetching.current) return; // 🚀 STOP the loop here
+    
+    const fetchData = async () => {
+      isFetching.current = true;
+      setLoading(true);
+      try {
+          if (activeTab === "candidates") {
+              const res = await axiosInstance.get("/applications/recruiter");
+              setApplications(Array.isArray(res.data) ? res.data : []);
+          } else {
+              const res = await axiosInstance.get("/jobs/my-jobs");
+              setMyJobs(Array.isArray(res.data) ? res.data : []);
+          }
+      } catch (err) {
+          console.error("Load failed", err);
+          setError("Failed to load data.");
+      } finally {
+          setLoading(false);
+          isFetching.current = false; // 🚀 Unlock after finish
+      }
+    };
+    fetchData();
+}, [activeTab]);
+
 const performAnalysis = async (app, force = false, mode = "auto") => {
+    // 🚀 LOCK: Prevent duplicate requests from firing
+   if (analyzingId || currentBatchAppId) return null;
+    
     const latest = getLatestAnalysis(app);
     if (!force && latest && latest.metadata?.status === "SUCCESS") return latest;
     if (!app.resumeUrl || !app.jobId?._id) return null;
+
+    setAnalyzingId(app._id);
 
     try {
       const resumeUrl = app.resumeUrl.startsWith("http") ? app.resumeUrl : `${API_BASE_URL}${app.resumeUrl}`;
@@ -204,26 +242,40 @@ const performAnalysis = async (app, force = false, mode = "auto") => {
         resumeUrl, 
         jobId: app.jobId._id, 
         applicationId: app._id,
-        mode: mode // Sends 'auto', 'standard', or 'beta'
+        mode: mode 
       });
 
       if (res.data.success) {
         const newAnalysis = res.data.analysis;
-        // Update local state with the new score and breakdown [cite: 227]
+        
+        // 🚀 ATOMIC UPDATE: Put newest result at Index 0
         setApplications((prev) => prev.map((item) => {
             if (item._id === app._id) {
                const oldHistory = Array.isArray(item.aiAnalysis) ? item.aiAnalysis : [];
-               return { ...item, aiAnalysis: [newAnalysis, ...oldHistory] };
+               // Filter out any "Processing" or empty placeholders from this session
+               const cleanHistory = oldHistory.filter(h => h.matchScore > 0 || h.score > 0);
+               return { ...item, aiAnalysis: [newAnalysis, ...cleanHistory].slice(0, 5) };
             }
             return item;
         }));
-        return newAnalysis; 
+
+        // Force update the modal immediately
+        setCurrentModalApp(prev => {
+            if (prev?._id === app._id) {
+                const oldHistory = Array.isArray(prev.aiAnalysis) ? prev.aiAnalysis : [];
+                return { ...prev, aiAnalysis: [newAnalysis, ...oldHistory].slice(0, 5) };
+            }
+            return prev;
+        });
+
+        return newAnalysis;
       }
-    } catch (err) { 
+    } catch (err) {
       console.error("Analysis error:", err);
-      return null; 
+    } finally {
+      setAnalyzingId(null); // UNLOCK
     }
-};
+  };
 
   const handleSaveSkill = async (skillName) => {
     try {
@@ -339,51 +391,46 @@ const performAnalysis = async (app, force = false, mode = "auto") => {
   const uniqueJobTitles = getUniqueJobTitles();
   const activeApp = activeDragId ? applications.find(a => a._id === activeDragId) : null;
 
-// --- RENDER HELPERS ---
+// Replace your renderScoreIndicator helper (around line 1780)
 const renderScoreIndicator = (app) => {
   const latest = getLatestAnalysis(app);
   const isAnalyzing = analyzingId === app._id || currentBatchAppId === app._id;
-  const isFailed = latest?.metadata?.status === "FAIL" || latest?.metadata?.status === "FAILED";
 
   if (isAnalyzing) {
     return (
       <span className="text-indigo-400 font-bold text-xs flex items-center gap-2">
         <span className="animate-spin h-3 w-3 border-2 border-indigo-500 border-t-transparent rounded-full"></span> 
-        Analyzing...
+        Auditing...
       </span>
     );
   }
 
-  if (isFailed) {
-    return (
-      <button 
-        onClick={(e) => { e.stopPropagation(); handleIndividualAnalyze(app); }}
-        className="px-4 py-1.5 rounded-full font-bold text-xs border bg-red-500/10 text-red-400 border-red-500/20 flex items-center gap-2 hover:bg-red-500/20 transition-all"
-        title="AI Failed. Click to retry."
-      >
-        <RefreshIcon /> Retry
-      </button>
-    );
-  }
+  // 🚀 FIX: Check every possible score key used by V2 and V3
+  const scoreValue = latest?.score ?? latest?.matchScore;
 
-  if (latest && latest.matchScore != null) {
+  if (scoreValue !== undefined && scoreValue !== null) {
     return (
       <div className="flex flex-col items-start gap-1">
-        <button onClick={() => openDetails(app)} className={`px-4 py-1.5 rounded-full font-bold text-xs border flex items-center gap-2 ${latest.matchScore >= 70 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"}`}>
-            <span className={`w-2 h-2 rounded-full ${latest.matchScore >= 70 ? "bg-emerald-500" : "bg-yellow-500"}`}></span> 
-            {latest.matchScore}%
+        <button 
+          onClick={() => openDetails(app)} 
+          className={`px-4 py-1.5 rounded-full font-bold text-xs border flex items-center gap-2 transition-all hover:scale-105 ${
+            scoreValue >= 70 
+              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+              : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+          }`}
+        >
+          <span className={`w-2 h-2 rounded-full ${scoreValue >= 70 ? "bg-emerald-500" : "bg-yellow-500"}`}></span> 
+          {scoreValue}%
         </button>
-        {latest.metadata?.confidenceLabel && (
-            <span className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter opacity-80">
-                {latest.metadata.method === 'local' ? 'Standard' : 'AI'} • {latest.metadata.confidenceLabel.split(' ')[0]}
-            </span>
-        )}
       </div>
     );
   }
 
   return (
-    <button onClick={() => handleIndividualAnalyze(app)} className="px-4 py-2 rounded-lg text-xs font-bold border bg-slate-800 text-white border-slate-700 hover:bg-slate-700">
+    <button 
+      onClick={() => handleIndividualAnalyze(app)} 
+      className="px-4 py-2 rounded-lg text-xs font-bold border bg-slate-800 text-white border-slate-700 hover:bg-slate-700 transition-all active:scale-95"
+    >
       Analyze
     </button>
   );
@@ -627,96 +674,131 @@ const renderDiscoveredSkills = () => {
         )}
       </div>
 
+ {/* 🚀 REPLACEMENT MODAL START */}
       {showModal && currentModalApp && currentAnalysis && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
           <div className="bg-[#0f172a] border border-slate-700 rounded-2xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[95vh]">
+            
+            {/* 🚀 Header */}
             <div className="bg-[#020617] p-6 border-b border-slate-800 flex justify-between items-center shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full border border-slate-700 overflow-hidden bg-slate-800">
-                    {currentModalApp.applicantId?.profilePicture ? <img src={currentModalApp.applicantId.profilePicture.startsWith('http') ? currentModalApp.applicantId.profilePicture : `${API_BASE_URL}${currentModalApp.applicantId.profilePicture}`} alt="Avatar" className="w-full h-full object-cover"/> : <UserIcon />}
+                    {currentModalApp.applicantId?.profilePicture ? (
+                        <img src={currentModalApp.applicantId.profilePicture.startsWith('http') ? currentModalApp.applicantId.profilePicture : `${API_BASE_URL}${currentModalApp.applicantId.profilePicture}`} alt="Avatar" className="w-full h-full object-cover"/>
+                    ) : <UserIcon />}
                   </div>
-                  <div><h3 className="text-xl font-bold text-white">{currentModalApp.applicantId?.name}</h3><p className="text-xs text-slate-400 font-bold uppercase mt-1">Role: <span className="text-indigo-400">{currentModalApp.jobId?.title}</span></p></div>
+                  <div>
+                      <h3 className="text-xl font-bold text-white">{currentModalApp.applicantId?.name}</h3>
+                      <p className="text-xs text-slate-400 font-bold uppercase mt-1">Role: <span className="text-indigo-400">{currentModalApp.jobId?.title}</span></p>
+                  </div>
               </div>
-              <button onClick={() => setShowModal(false)} className="text-2xl text-slate-500 hover:text-white">&times;</button>
+              <button onClick={() => setShowModal(false)} className="text-2xl text-slate-500 hover:text-white transition-colors">&times;</button>
             </div>
             
+            {/* 🚀 Content */}
             <div className="p-6 md:p-8 space-y-8 bg-[#0f172a] overflow-y-auto custom-scrollbar">
-                {/* 🆕 Scoring Transparency Row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800"><p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Match Score</p><p className={`text-4xl font-black ${currentAnalysis.matchScore >= 80 ? "text-emerald-400" : "text-yellow-400"}`}>{currentAnalysis.matchScore}%</p></div>
-                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800"><p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Exp Level</p><p className="text-xl font-bold text-white mt-1">{currentAnalysis.experienceLevel || currentAnalysis.experienceRelevance || "N/A"}</p></div>
-                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800"><p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Duration</p><p className="text-xl font-bold text-white mt-1">{currentAnalysis.professionalMonths || 0} Mo</p></div>
-                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800"><p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Portfolio</p><p className="text-xl font-bold text-white mt-1">{currentAnalysis.linkedProfiles || currentAnalysis.uniqueLinksFound || 0} Links</p></div>
-                </div>
-
-                {/* 🆕 Confidence & Method Row */}
-                <div className="flex flex-wrap gap-3 items-center">
-                    {currentAnalysis.metadata?.confidenceLabel && (
-                        <div className={`px-4 py-2 rounded-lg border font-bold text-xs uppercase flex items-center gap-2 ${
-                            currentAnalysis.metadata.confidenceLabel.includes("High") ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                            currentAnalysis.metadata.confidenceLabel.includes("Medium") ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" :
-                            "bg-red-500/10 text-red-400 border-red-500/20"
-                        }`}>
-                            <SparklesIcon /> {currentAnalysis.metadata.confidenceLabel}
-                        </div>
-                    )}
-                    {currentAnalysis.metadata?.method && (
-                        <div className="px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-400 font-bold text-xs uppercase">
-                            Method: {currentAnalysis.metadata.method === 'local' ? 'Standard Keyword Match' : 'AI Contextual Analysis'}
-                        </div>
-                    )}
-                    {currentAnalysis.provider && (
-                         <div className="px-4 py-2 rounded-lg border border-slate-800 bg-slate-900/50 text-slate-500 font-bold text-[10px] uppercase">
-                            Provider: {currentAnalysis.provider}
-                        </div>
-                    )}
-                </div>
-
-                <div className="bg-indigo-900/10 p-5 rounded-xl border border-indigo-500/20"><h4 className="text-indigo-400 font-bold text-xs uppercase mb-2">AI Auditor Summary</h4><p className="text-slate-300 text-sm leading-relaxed">{currentAnalysis.summary}</p></div>
                 
-                {/* 🆕 Scoring Breakdown (Math Transparency) */}
-                <div className="bg-[#020617] p-5 rounded-xl border border-slate-800">
-                    <h4 className="text-slate-500 font-bold text-[10px] uppercase mb-4 tracking-widest">Scoring Math (Deterministic)</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div><p className="text-[9px] text-slate-600 font-bold mb-1">SKILLS MATCH</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.skillScore || 0}/60</div></div>
-                        <div><p className="text-[9px] text-slate-600 font-bold mb-1">EXPERIENCE TIER</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.expScore || 0}/20</div></div>
-                        <div><p className="text-[9px] text-slate-600 font-bold mb-1">LINK TIER</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.linkScore || 0}/10</div></div>
-                        <div><p className="text-[9px] text-slate-600 font-bold mb-1">SYSTEM INTEGRITY</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.integrityScore || 10}/10</div></div>
+                {/* 📊 Summary Stats Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Match Score</p>
+                        <p className={`text-4xl font-black ${ (currentAnalysis.score ?? currentAnalysis.matchScore) >= 70 ? "text-emerald-400" : "text-yellow-400"}`}>
+                            {currentAnalysis.score ?? currentAnalysis.matchScore ?? 0}%
+                        </p>
+                    </div>
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Exp Level</p>
+                        <p className="text-xl font-bold text-white mt-1">{currentAnalysis.experienceLevel || "N/A"}</p>
+                    </div>
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Duration</p>
+                        <p className="text-xl font-bold text-white mt-1">
+                            {currentAnalysis.professionalMonths ?? currentAnalysis.totalMonths ?? 0} Mo
+                        </p>
+                    </div>
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Portfolio</p>
+                        <p className="text-xl font-bold text-white mt-1">
+                            {currentAnalysis.uniqueLinksFound ?? currentAnalysis.linkedProfiles ?? 0} Links
+                        </p>
                     </div>
                 </div>
 
+                {/* 🏷️ Method Badge */}
+                <div className="flex flex-wrap gap-3 items-center">
+                    <div className={`px-4 py-2 rounded-lg border font-bold text-xs uppercase flex items-center gap-2 ${currentAnalysis.metadata?.method === 'ai' ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" : "bg-slate-800/50 text-slate-400 border-slate-700"}`}>
+                        {currentAnalysis.metadata?.method === 'ai' && <SparklesIcon />}
+                        Method: {currentAnalysis.metadata?.method === 'local' ? 'Standard Keyword Match' : 'AI Contextual Analysis'}
+                    </div>
+                </div>
+
+                {/* 🧠 AI Summary Card */}
+                <div className="bg-indigo-900/10 p-5 rounded-xl border border-indigo-500/20">
+                    <h4 className="text-indigo-400 font-bold text-xs uppercase mb-2 tracking-widest flex items-center gap-2">
+                        <SparklesIcon /> AI Hiring Recommendation
+                    </h4>
+                    <p className="text-slate-200 text-sm leading-relaxed italic font-medium">
+                        "{currentAnalysis.summary || "No detailed assessment generated for this candidate."}"
+                    </p>
+                </div>
+
+                {/* 🧮 Math Breakdown */}
+                <div className="bg-[#020617] p-5 rounded-xl border border-slate-800">
+                    <h4 className="text-slate-500 font-bold text-[10px] uppercase mb-4 tracking-widest">Deterministic Scoring Math</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Skills</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.skillScore || 0}/60</div></div>
+                        <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Experience</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.expScore || 0}/30</div></div>
+                        <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Integrity</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.integrityScore || 0}/10</div></div>
+                        <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">System</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">10/10</div></div>
+                    </div>
+                </div>
+
+                {/* 📄 PDF Link Card */}
                 {currentModalApp.resumeUrl && (
                 <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-slate-800 rounded-lg text-indigo-400 border border-slate-700"><FileIcon /></div>
                         <div><h4 className="text-white font-bold text-sm">Full Candidate Resume</h4><p className="text-slate-500 text-xs">Access original PDF for manual review.</p></div>
                     </div>
-                    <a href={currentModalApp.resumeUrl.startsWith("http") ? currentModalApp.resumeUrl : `${API_BASE_URL}${currentModalApp.resumeUrl}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition-colors">View PDF <ExternalLinkIcon /></a>
+                    <a href={currentModalApp.resumeUrl.startsWith("http") ? currentModalApp.resumeUrl : `${API_BASE_URL}${currentModalApp.resumeUrl}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg transition-all shadow-lg">View PDF <ExternalLinkIcon /></a>
                 </div>
                 )}
+
+                {/* ✅ Competency Grid */}
                 <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                        <h4 className="text-white font-bold text-sm mb-2">Matched Competencies</h4>
+                        <h4 className="text-white font-bold text-sm mb-2 uppercase tracking-wide">Matched Competencies</h4>
                         <div className="flex flex-wrap gap-2">
-                            {currentAnalysis.matchedSkills?.length > 0 ? currentAnalysis.matchedSkills.map((s, i) => <span key={i} className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded border border-emerald-500/20">{s}</span>) : <span className="text-slate-500 text-xs">None Detected</span>}
+                            {currentAnalysis.matchedSkills?.length > 0 ? 
+                                currentAnalysis.matchedSkills.map((s, i) => <span key={i} className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded border border-emerald-500/20">{s}</span>) 
+                                : <span className="text-slate-500 text-xs italic">None Detected</span>}
                         </div>
                     </div>
                     <div>
-                        <h4 className="text-white font-bold text-sm mb-2">Missing Skills</h4>
+                        <h4 className="text-white font-bold text-sm mb-2 uppercase tracking-wide">Missing Skills</h4>
                         <div className="flex flex-wrap gap-2">
-                            {currentAnalysis.missingRequiredSkills?.length > 0 ? currentAnalysis.missingRequiredSkills.map((s, i) => <span key={i} className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded border border-red-500/20">{s}</span>) : <span className="text-slate-500 text-xs">100% Skill Coverage</span>}
+                            {currentAnalysis.missingRequiredSkills?.length > 0 ? 
+                                currentAnalysis.missingRequiredSkills.map((s, i) => <span key={i} className="px-2.5 py-1 bg-red-500/10 text-red-400 text-xs font-bold rounded border border-red-500/20">{s}</span>) 
+                                : <span className="text-slate-500 text-xs italic">100% Skill Coverage</span>}
                         </div>
                     </div>
                 </div>
+
+                {/* 🧠 Discovered Skills Learning Loop (FIXES ESLINT ERROR) */}
                 {renderDiscoveredSkills()}
             </div>
+            
+            {/* 🚀 Sticky Footer */}
             <div className="p-6 bg-[#020617] border-t border-slate-800 flex justify-between items-center shrink-0 rounded-b-2xl">
-                <button onClick={handleReanalyzeFromModal} disabled={analyzingId === currentModalApp._id} className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-bold">{analyzingId === currentModalApp._id ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> : <RefreshIcon />} Force Re-audit</button>
-                <button onClick={() => setShowModal(false)} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-bold border border-slate-700">Done</button>
+                <button onClick={handleReanalyzeFromModal} disabled={analyzingId === currentModalApp._id} className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-bold transition-all">
+                    {analyzingId === currentModalApp._id ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> : <RefreshIcon />} Force Re-audit
+                </button>
+                <button onClick={() => setShowModal(false)} className="px-8 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-bold border border-slate-700 transition-all">Done</button>
             </div>
           </div>
         </div>
       )}
+      {/* 🚀 REPLACEMENT MODAL END */}
 
       <ScheduleModal isOpen={showScheduleModal} onClose={() => { setShowScheduleModal(false); setPendingDragItem(null); }} onSubmit={handleScheduleSubmit} candidateName={pendingDragItem?.applicantId?.name || "Candidate"} />
     </div>

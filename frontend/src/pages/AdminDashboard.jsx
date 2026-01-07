@@ -53,12 +53,7 @@ function AdminDashboard() {
   const [appStatusFilter, setAppStatusFilter] = useState("All");
 
   const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 20;
 
-const paginatedData = filteredData.slice(
-  (currentPage - 1) * itemsPerPage, 
-  currentPage * itemsPerPage
-);
 
 
 
@@ -168,7 +163,14 @@ const fetchData = async () => {
     return [];
   };
 
-  const filteredData = getFilteredData();
+const filteredData = getFilteredData();
+
+// --- MOVE THE PAGINATION LOGIC HERE ---
+const itemsPerPage = 20;
+const paginatedData = filteredData.slice(
+  (currentPage - 1) * itemsPerPage, 
+  currentPage * itemsPerPage
+);
 
   const growthData = [
     { name: 'Jan', users: 4 }, { name: 'Feb', users: 12 }, { name: 'Mar', users: 20 },

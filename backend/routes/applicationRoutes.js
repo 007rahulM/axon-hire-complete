@@ -1,211 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-// const verifytoken = require("../middleware/authMiddleware");
-// const Application = require("../models/Application");
-// const Job = require("../models/Job");
-// const User = require("../models/User");
-
-// const { sendApplicationEmail, sendStatusUpdateEmail } = require("../utils/emailService");
-
-// /*
-// @route POST /api/applications/:jobId/apply
-// apply for a job using the user's saved Master Resume (easy apply)
-// private - user must be logged in
-// */
-// router.post("/:jobId/apply", verifytoken, async (req, res) => {
-//   try {
-//     const jobId = req.params.jobId;
-//     const userId = req.user.id;
-
-//     // 1. Check if the job exists
-//     const job = await Job.findById(jobId);
-//     if (!job) {
-//       return res.status(404).json({ message: "Job not found" });
-//     }
-
-//     // 2. Check if the user has a resume uploaded
-//     const user = await User.findById(userId);
-//     if (!user.resumeUrl) {
-//       return res.status(400).json({ message: "No resume found. Please upload your resume to your profile first." });
-//     }
-
-//     // 3. Check for duplicate application
-//     const existingApplication = await Application.findOne({
-//       jobId: jobId,
-//       applicantId: userId
-//     });
-
-//     if (existingApplication) {
-//       return res.status(400).json({ message: "You have already applied for this job" });
-//     }
-
-//     // 4. Create the new application
-//     const newApplication = new Application({
-//       jobId: jobId,
-//       applicantId: userId,
-//       resumeUrl: user.resumeUrl,
-//       status: "Submitted"
-//     });
-
-//     await newApplication.save();
-//     await sendApplicationEmail(user, job.title, job.company);
-
-
-//     res.status(201).json({
-//       message: "Application submitted successfully",
-//       application: newApplication
-//     });
-//   } catch (err) {
-//     console.error("Application error:", err.message);
-//     res.status(500).json({ message: "Server error during application" });
-//   }
-// });
-
-// /*
-// @route GET /api/applications/recruiter
-// Get all applications for jobs posted by the logged-in recruiter
-// private - only recruiter can access
-// */
-// router.get("/recruiter", verifytoken, async (req, res) => {
-//   try {
-//     // 🎯 FIX: Use 'req.user.id' directly. 'userId' was not defined here.
-//     const jobs = await Job.find({ postedBy: req.user.id });
-
-//     // Extract just the IDs of those jobs
-//     const jobIds = jobs.map((job) => job._id);
-
-//     // Find applications that match those job Ids
-//     const applications = await Application.find({ jobId: { $in: jobIds } })
-//       .populate("applicantId", "name email") // get the candidate's name and email
-//       .populate("jobId", "title");   // get the job title
-
-//     // Send the list back to the frontend
-//     res.status(200).json(applications);
-
-//   } catch (err) {
-//     console.error("Error fetching applications:", err.message);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
-// /* @route GET /api/applications/my-applications
-// @desc Get all applications submitted by the logged-in candidate
-// @access Private (Candidate only)
-// */
-// // backend/routes/applicationRoutes.js
-
-// router.get("/my-applications", verifytoken, async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-
-//     const applications = await Application.find({ applicantId: userId })
-//       // 👇 UPDATE THIS LINE: Added "description" and "requirements"
-//       .populate("jobId", "title company location salary status description requirements") 
-//       .sort({ createdAt: -1 });
-
-//     res.status(200).json(applications);
-//   } catch (err) {
-//     console.error("Error fetching user applications:", err.message);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
-// /*
-// @route PATCH /api/applications/:id/status
-// @desc Update application status (Shortlisted, Rejected, etc.)
-// @access Private (Recruiter only)
-// */
-// router.patch("/:id/status", verifytoken, async (req, res) => {
-//   try {
-//     const { status } = req.body;
-//     const applicationId = req.params.id;
-
-//     // Validate status
-//     const validStatuses = ["Submitted", "Viewed", "Shortlisted", "Rejected"];
-//     if (!validStatuses.includes(status)) {
-//       return res.status(400).json({ message: "Invalid status value" });
-//     }
-
-//     // Update the application
-//     const updatedApp = await Application.findByIdAndUpdate(
-//       applicationId,
-//       { status: status },
-//       { new: true } // Return the updated document
-//    ).populate("applicantId").populate("jobId");
-
-//     if (!updatedApp) {
-//       return res.status(404).json({ message: "Application not found" });
-//     }
-
-//     // 👇 ADD THIS LINE (Send email if Shortlisted or Rejected)
-//     if (status === "Shortlisted" || status === "Rejected") {
-//         await sendStatusUpdateEmail(
-//             updatedApp.applicantId, 
-//             updatedApp.jobId.title, 
-//             status
-//         );
-//     }
-
-//     res.status(200).json({ 
-//       message: `Status updated to ${status}`, 
-//       application: updatedApp 
-//     });
-
-//   } catch (err) {
-//     console.error("Status update error:", err.message);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
-// // 👇 NEW ROUTE: Update Application Status (Drag & Drop)
-// // PUT /api/applications/:id/status
-// router.put("/:id/status", verifyToken, async (req, res) => {
-//   const { status } = req.body;
-//   const applicationId = req.params.id;
-
-//   try {
-//     // 1. Find the application
-//     const application = await Application.findById(applicationId).populate('jobId');
-//     if (!application) {
-//       return res.status(404).json({ message: "Application not found" });
-//     }
-
-//     // 2. Security Check: Ensure the logged-in user is the RECRUITER who posted the job
-//     if (application.jobId.postedBy.toString() !== req.user.id) {
-//       return res.status(403).json({ message: "Not authorized to manage this application" });
-//     }
-
-//     // 3. Update Status
-//     application.status = status;
-//     await application.save();
-
-//     res.json({ message: "Status updated", application });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// });
-
-// // 👇 NEW ROUTE: Get Applications for a Recruiter's Jobs (For the Board)
-// // GET /api/applications/recruiter
-// router.get("/recruiter/all", verifyToken, async (req, res) => {
-//     try {
-//         // 1. Find all jobs posted by this recruiter
-//         const jobs = await Job.find({ postedBy: req.user.id });
-//         const jobIds = jobs.map(job => job._id);
-
-//         // 2. Find all applications for those jobs
-//         const applications = await Application.find({ jobId: { $in: jobIds } })
-//             .populate("applicantId", "name email profilePicture title skills") // Get Rich Profile Data
-//             .populate("jobId", "title");
-
-//         res.json(applications);
-//     } catch (err) {
-//         res.status(500).json({ message: "Server Error" });
-//     }
-// });
-
-// module.exports = router;
 
 const express = require("express");
 const router = express.Router();
@@ -219,66 +11,103 @@ const { sendApplicationEmail, sendStatusUpdateEmail } = require("../utils/emailS
 /* @route POST /api/applications/:jobId/apply
   Apply for a job (Legacy - Easy Apply)
 */
+// ... existing imports
+const parseResumeFromUrl = require("../utils/resumeParser");
+const { calculateV3Score } = require("../utils/matchingEngine");
+const { calculateExperienceMonths } = require("../utils/durationMath");
+
+// ... existing imports (resumeParser, matchingEngine, durationMath, etc.)
+
 router.post("/:jobId/apply", verifyToken, async (req, res) => {
   try {
-    const jobId = req.params.jobId;
+    const { jobId } = req.params;
     const userId = req.user.id;
 
+    // 1. Fetch Job and User settings
     const job = await Job.findById(jobId);
     if (!job) return res.status(404).json({ message: "Job not found" });
 
     const user = await User.findById(userId);
-    if (!user.resumeUrl) {
-      return res.status(400).json({ message: "No resume found. Please upload to profile." });
+    if (!user.resumeUrl) return res.status(400).json({ message: "No resume found." });
+
+    const existingApplication = await Application.findOne({ jobId, applicantId: userId });
+    if (existingApplication) return res.status(400).json({ message: "Already applied" });
+
+    let aiAnalysisData = [];
+
+    // 🚀 LOGIC GATE: Only evaluate if recruiter enabled it
+    if (job.autoEvaluate) {
+      console.log(`🚀 Auto-Evaluating in ${job.evaluationMode} mode...`);
+      
+      const parsedData = await parseResumeFromUrl(user.resumeUrl);
+      const totalMonths = calculateExperienceMonths(parsedData.experienceZone);
+      
+      // We run the Deterministic Math regardless, but can tag the source
+      const analysis = calculateV3Score(
+        { skills: parsedData.skills, totalMonths, links: parsedData.links }, 
+        job.requirements || []
+      );
+
+      aiAnalysisData = [{
+        matchScore: analysis.score,
+        matchedSkills: analysis.matchedSkills,
+        missingRequiredSkills: analysis.missingSkills,
+        totalMonths: totalMonths,
+        uniqueLinksFound: analysis.uniqueLinksFound,
+        provider: job.evaluationMode === "ai" ? "AI-Fact-Extractor" : "Local-Deterministic",
+        breakdown: analysis.breakdown,
+        summary: `Auto-evaluated on application (${job.evaluationMode} mode).`
+      }];
     }
 
-    const existingApplication = await Application.findOne({ jobId: jobId, applicantId: userId });
-    if (existingApplication) {
-      return res.status(400).json({ message: "Already applied" });
-    }
-
+    // 2. Save Application
     const newApplication = new Application({
-      jobId: jobId,
+      jobId,
       applicantId: userId,
       resumeUrl: user.resumeUrl,
-      status: "Submitted"
+      status: "Submitted",
+      aiAnalysis: aiAnalysisData // Will be empty if autoEvaluate is OFF
     });
 
     await newApplication.save();
 
-    // 🔔 NOTIFICATION: Confirmation for Candidate
+    // 🔔 Notifications (Your original code)
     await Notification.create({
-        user: req.user.id,
+        user: userId,
         title: "Application Sent",
         message: `You successfully applied for ${job.title} at ${job.company}.`,
         type: "success",
         relatedLink: "/my-applications"
     });
     
-    // Email (Non-blocking)
     sendApplicationEmail(user, job.title, job.company).catch(e => console.log("Email fail:", e.message));
 
     res.status(201).json({ message: "Application submitted", application: newApplication });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("V3 Apply Error:", err);
+    res.status(500).json({ message: "Server error during application" });
   }
 });
-
 /* @route GET /api/applications/recruiter
   Get ALL applications for this recruiter
 */
+/* @route GET /api/applications/recruiter */
 router.get("/recruiter", verifyToken, async (req, res) => {
   try {
+    // Find jobs posted by this recruiter
     const jobs = await Job.find({ postedBy: req.user.id });
     const jobIds = jobs.map((job) => job._id);
 
+    // 🚀 FIX: Added .select("+aiAnalysis") to ensure scores are sent to frontend
     const applications = await Application.find({ jobId: { $in: jobIds } })
       .populate("applicantId", "name email profilePicture title skills")
-      .populate("jobId", "title");
+      .populate("jobId", "title company")
+      .select("+aiAnalysis") // 👈 This is the critical line
+      .sort({ createdAt: -1 });
 
     res.status(200).json(applications);
   } catch (err) {
+    console.error("Fetch Recruiter Apps Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -376,13 +205,20 @@ router.put("/:id/status", verifyToken, async (req, res) => {
 
 // Alias route
 router.get("/recruiter/all", verifyToken, async (req, res) => {
-    // Redirect logic to main handler
-    const jobs = await Job.find({ postedBy: req.user.id });
-    const jobIds = jobs.map((job) => job._id);
-    const applications = await Application.find({ jobId: { $in: jobIds } })
-      .populate("applicantId", "name email profilePicture title skills")
-      .populate("jobId", "title");
-    res.json(applications);
+    try {
+        const jobs = await Job.find({ postedBy: req.user.id });
+        const jobIds = jobs.map((job) => job._id);
+        
+        // 🚀 FIX: Sync this with the main recruiter route
+        const applications = await Application.find({ jobId: { $in: jobIds } })
+          .populate("applicantId", "name email profilePicture title skills")
+          .populate("jobId", "title company")
+          .select("+aiAnalysis"); // 👈 This ensures the "Done" state persists
+          
+        res.json(applications);
+    } catch (err) {
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 /* @route POST /api/applications/:id/schedule

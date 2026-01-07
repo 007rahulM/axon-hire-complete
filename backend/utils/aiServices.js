@@ -178,68 +178,110 @@ function cleanAndParseJSON(text) {
 // 🧠 FUNCTION 1: GENERATE JSON (Analysis & Questions)
 // 🎯 STRATEGY: OpenRouter (DeepSeek R1 Free) -> Groq -> Gemini
 // ============================================================================
-async function generateJSON(systemPrompt, userPrompt) {
+// async function generateJSON(systemPrompt, userPrompt) {
   
-  // 1️⃣ PRIORITY: OPENROUTER (DeepSeek R1 - FREE & SMART)
+//   // 1️⃣ PRIORITY: OPENROUTER (DeepSeek R1 - FREE & SMART)
+//   try {
+//     console.log("🤖 JSON Attempt 1: OpenRouter (DeepSeek R1 Free)...");
+//     const completion = await openai.chat.completions.create({
+//       model: "deepseek/deepseek-r1-0528:free", // ✅ The Truly Free Model
+//       messages: [
+//         { role: "system", content: systemPrompt + "\nIMPORTANT: Return strictly JSON only. No thinking trace." },
+//         { role: "user", content: userPrompt }
+//       ],
+//       temperature: 0, // 🔥 Strict Persistence
+//     });
+    
+//     const text = completion.choices[0]?.message?.content || "{}";
+//     console.log("✅ Success: Used OpenRouter");
+//     return { data: cleanAndParseJSON(text), provider: "OpenRouter (DeepSeek R1)" };
+
+//   } catch (err) {
+//     console.warn(`⚠️ OpenRouter Failed: ${err.message}`);
+//   }
+
+//   // 2️⃣ FALLBACK: GROQ (Llama 3.3 - FAST)
+//   try {
+//     console.log("⚡ JSON Attempt 2: Groq (Llama 3)...");
+//     const completion = await groq.chat.completions.create({
+//       model: "llama-3.3-0b-versatile",
+    
+
+//       temperature: 0, 
+//       messages: [
+//         { role: "system", content: systemPrompt + "\nIMPORTANT: Return RAW JSON only." },
+//         { role: "user", content: userPrompt }
+//       ]
+//     });
+
+//     const text = completion.choices[0]?.message?.content || "{}";
+//     console.log("✅ Success: Used Groq");
+//     return { data: cleanAndParseJSON(text), provider: "Groq" };
+
+//   } catch (err) {
+//     console.warn(`⚠️ Groq Failed: ${err.message}`);
+//   }
+
+//   // 3️⃣ LAST RESORT: GOOGLE GEMINI (Flash - RELIABLE)
+//   try {
+//     console.log("🔄 JSON Attempt 3: Gemini...");
+//     const model = genAI.getGenerativeModel({
+//       model: "gemini-2.5-flash", 
+//       systemInstruction: systemPrompt,
+//       generationConfig: { 
+//           temperature: 0, 
+//           responseMimeType: "application/json" 
+//       }
+//     });
+
+//     const result = await model.generateContent(userPrompt);
+//     return { data: cleanAndParseJSON(result.response.text()), provider: "Gemini" };
+
+//   } catch (err) {
+//     console.error(`❌ ALL JSON Services Failed: ${err.message}`);
+//     throw new Error("AI Services unavailable.");
+//   }
+// }
+
+async function generateJSON(systemPrompt, userPrompt) {
+  // 1️⃣ ATTEMPT 1: OpenRouter (DeepSeek R1)
   try {
-    console.log("🤖 JSON Attempt 1: OpenRouter (DeepSeek R1 Free)...");
+    console.log("🤖 Carousel Attempt 1: OpenRouter (DeepSeek)...");
     const completion = await openai.chat.completions.create({
-      model: "deepseek/deepseek-r1-0528:free", // ✅ The Truly Free Model
-      messages: [
-        { role: "system", content: systemPrompt + "\nIMPORTANT: Return strictly JSON only. No thinking trace." },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0, // 🔥 Strict Persistence
+      model: "deepseek/deepseek-r1:free",
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
+      temperature: 0.1,
+      response_format: { type: "json_object" }
     });
-    
-    const text = completion.choices[0]?.message?.content || "{}";
-    console.log("✅ Success: Used OpenRouter");
-    return { data: cleanAndParseJSON(text), provider: "OpenRouter (DeepSeek R1)" };
-
+    return { success: true, data: JSON.parse(completion.choices[0].message.content), provider: "DeepSeek" };
   } catch (err) {
-    console.warn(`⚠️ OpenRouter Failed: ${err.message}`);
+    console.warn(`⚠️ OpenRouter Carousel Failed: ${err.message}`);
   }
 
-  // 2️⃣ FALLBACK: GROQ (Llama 3.3 - FAST)
+  // 2️⃣ ATTEMPT 2: Groq (Llama 3.3)
   try {
-    console.log("⚡ JSON Attempt 2: Groq (Llama 3)...");
+    console.log("⚡ Carousel Attempt 2: Groq (Llama 3.3)...");
     const completion = await groq.chat.completions.create({
-      model: "llama-3.3-0b-versatile",
-    
-
-      temperature: 0, 
-      messages: [
-        { role: "system", content: systemPrompt + "\nIMPORTANT: Return RAW JSON only." },
-        { role: "user", content: userPrompt }
-      ]
+    model: "llama-3.3-70b-versatile",
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
+      temperature: 0,
+      response_format: { type: "json_object" }
     });
-
-    const text = completion.choices[0]?.message?.content || "{}";
-    console.log("✅ Success: Used Groq");
-    return { data: cleanAndParseJSON(text), provider: "Groq" };
-
+    return { success: true, data: JSON.parse(completion.choices[0].message.content), provider: "Groq" };
   } catch (err) {
-    console.warn(`⚠️ Groq Failed: ${err.message}`);
+    console.warn(`⚠️ Groq Carousel Failed: ${err.message}`);
   }
 
-  // 3️⃣ LAST RESORT: GOOGLE GEMINI (Flash - RELIABLE)
+  // 3️⃣ ATTEMPT 3: Google Gemini (1.5 Flash)
   try {
-    console.log("🔄 JSON Attempt 3: Gemini...");
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite", 
-      systemInstruction: systemPrompt,
-      generationConfig: { 
-          temperature: 0, 
-          responseMimeType: "application/json" 
-      }
-    });
-
-    const result = await model.generateContent(userPrompt);
-    return { data: cleanAndParseJSON(result.response.text()), provider: "Gemini" };
-
+    console.log("🔄 Carousel Attempt 3: Gemini...");
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(`${systemPrompt}\n\nUSER DATA: ${userPrompt}`);
+    const text = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
+    return { success: true, data: JSON.parse(text), provider: "Gemini" };
   } catch (err) {
-    console.error(`❌ ALL JSON Services Failed: ${err.message}`);
-    throw new Error("AI Services unavailable.");
+    console.error(`❌ CAROUSEL EXHAUSTED: All models failed.`);
+    return { success: false, error: "AI_CHAIN_FAILURE" };
   }
 }
 
@@ -299,28 +341,28 @@ async function generateStream(prompt, res) {
     res.end();
   }
 }
-// 🔥 FIX: Only ONE generateStream function
-async function generateStream(prompt, res) {
-    try {
-        const stream = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
-            messages: [{ role: "user", content: prompt }],
-            stream: true,
-        });
+// // 🔥 FIX: Only ONE generateStream function
+// async function generateStream(prompt, res) {
+//     try {
+//         const stream = await groq.chat.completions.create({
+//             model: "llama-3.3-70b-versatile",
+//             messages: [{ role: "user", content: prompt }],
+//             stream: true,
+//         });
 
-        for await (const chunk of stream) {
-            const content = chunk.choices[0]?.delta?.content || "";
-            if (content) {
-                res.write(content); // Sends data piece by piece
-            }
-        }
-        res.end(); // Tells the frontend we are finished
-    } catch (err) {
-        console.error("Stream Error:", err);
-        res.write("\n\n[System Error: AI service busy]");
-        res.end();
-    }
-}
+//         for await (const chunk of stream) {
+//             const content = chunk.choices[0]?.delta?.content || "";
+//             if (content) {
+//                 res.write(content); // Sends data piece by piece
+//             }
+//         }
+//         res.end(); // Tells the frontend we are finished
+//     } catch (err) {
+//         console.error("Stream Error:", err);
+//         res.write("\n\n[System Error: AI service busy]");
+//         res.end();
+//     }
+// }
 
 
 

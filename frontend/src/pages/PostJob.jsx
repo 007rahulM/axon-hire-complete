@@ -44,18 +44,18 @@ function PostJob() {
 
     const reqArray = requirements.split(",").map((s) => s.trim()).filter(s => s);
 
-    const jobData = { 
-      title, 
-      company, 
-      location, 
-      salary, 
-      description, 
-      requirements: reqArray,
-      deadline,
-      // 🚀 Sending the new choice fields to the backend 
-      autoEvaluate,
-      evaluationMode
-    };
+   // PostJob.jsx
+const jobData = { 
+  title, 
+  company, 
+  location, 
+  salary, 
+  description, 
+  requirements: reqArray,
+  deadline,
+  autoEvaluate,    // Ensure this is 'autoEvaluate', not 'atsEnabled'
+  evaluationMode   // Ensure this is 'evaluationMode'
+};
 
     try {
       await axiosInstance.post("/jobs", jobData);

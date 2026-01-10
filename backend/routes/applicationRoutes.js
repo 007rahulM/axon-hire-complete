@@ -18,6 +18,78 @@ const { calculateExperienceMonths } = require("../utils/durationMath");
 
 // ... existing imports (resumeParser, matchingEngine, durationMath, etc.)
 
+// router.post("/:jobId/apply", verifyToken, async (req, res) => {
+//   try {
+//     const { jobId } = req.params;
+//     const userId = req.user.id;
+
+//     // 1. Fetch Job and User settings
+//     const job = await Job.findById(jobId);
+//     if (!job) return res.status(404).json({ message: "Job not found" });
+
+//     const user = await User.findById(userId);
+//     if (!user.resumeUrl) return res.status(400).json({ message: "No resume found." });
+
+//     const existingApplication = await Application.findOne({ jobId, applicantId: userId });
+//     if (existingApplication) return res.status(400).json({ message: "Already applied" });
+
+//     let aiAnalysisData = [];
+
+//     // 🚀 LOGIC GATE: Only evaluate if recruiter enabled it
+//     if (job.autoEvaluate) {
+//       console.log(`🚀 Auto-Evaluating in ${job.evaluationMode} mode...`);
+      
+//       const parsedData = await parseResumeFromUrl(user.resumeUrl);
+//       const totalMonths = calculateExperienceMonths(parsedData.experienceZone);
+      
+//       // We run the Deterministic Math regardless, but can tag the source
+//       const analysis = calculateV3Score(
+//         { skills: parsedData.skills, totalMonths, links: parsedData.links }, 
+//         job.requirements || []
+//       );
+
+//       aiAnalysisData = [{
+//         matchScore: analysis.score,
+//         matchedSkills: analysis.matchedSkills,
+//         missingRequiredSkills: analysis.missingSkills,
+//         totalMonths: totalMonths,
+//         uniqueLinksFound: analysis.uniqueLinksFound,
+//         provider: job.evaluationMode === "ai" ? "AI-Fact-Extractor" : "Local-Deterministic",
+//         breakdown: analysis.breakdown,
+//         summary: `Auto-evaluated on application (${job.evaluationMode} mode).`
+//       }];
+//     }
+
+//     // 2. Save Application
+//     const newApplication = new Application({
+//       jobId,
+//       applicantId: userId,
+//       resumeUrl: user.resumeUrl,
+//       status: "Submitted",
+//       aiAnalysis: aiAnalysisData // Will be empty if autoEvaluate is OFF
+//     });
+
+//     await newApplication.save();
+
+//     // 🔔 Notifications (Your original code)
+//     await Notification.create({
+//         user: userId,
+//         title: "Application Sent",
+//         message: `You successfully applied for ${job.title} at ${job.company}.`,
+//         type: "success",
+//         relatedLink: "/my-applications"
+//     });
+    
+//     sendApplicationEmail(user, job.title, job.company).catch(e => console.log("Email fail:", e.message));
+
+//     res.status(201).json({ message: "Application submitted", application: newApplication });
+//   } catch (err) {
+//     console.error("V3 Apply Error:", err);
+//     res.status(500).json({ message: "Server error during application" });
+//   }
+// });
+
+//================================================================================================
 router.post("/:jobId/apply", verifyToken, async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -28,36 +100,54 @@ router.post("/:jobId/apply", verifyToken, async (req, res) => {
     if (!job) return res.status(404).json({ message: "Job not found" });
 
     const user = await User.findById(userId);
-    if (!user.resumeUrl) return res.status(400).json({ message: "No resume found." });
+    if (!user.resumeUrl) return res.status(400).json({ message: "No resume found in your profile." });
 
     const existingApplication = await Application.findOne({ jobId, applicantId: userId });
-    if (existingApplication) return res.status(400).json({ message: "Already applied" });
+    if (existingApplication) return res.status(400).json({ message: "You have already applied for this position." });
 
     let aiAnalysisData = [];
 
     // 🚀 LOGIC GATE: Only evaluate if recruiter enabled it
     if (job.autoEvaluate) {
-      console.log(`🚀 Auto-Evaluating in ${job.evaluationMode} mode...`);
-      
-      const parsedData = await parseResumeFromUrl(user.resumeUrl);
-      const totalMonths = calculateExperienceMonths(parsedData.experienceZone);
-      
-      // We run the Deterministic Math regardless, but can tag the source
-      const analysis = calculateV3Score(
-        { skills: parsedData.skills, totalMonths, links: parsedData.links }, 
-        job.requirements || []
-      );
+      try {
+        console.log(`🚀 Auto-Evaluating Application for Job: ${job.title} (${job.evaluationMode} mode)`);
+        
+        // A. Parse the resume content from URL
+        const parsedData = await parseResumeFromUrl(user.resumeUrl);
+        
+        // B. Calculate duration (Math)
+        const totalMonths = calculateExperienceMonths(parsedData.experienceZone || []);
+        
+        // C. Run the Matching Engine
+        const analysis = calculateV3Score(
+          { 
+            skills: parsedData.skills || [], 
+            totalMonths: totalMonths || 0, 
+            links: parsedData.links || [] 
+          }, 
+          job.requirements || []
+        );
 
-      aiAnalysisData = [{
-        matchScore: analysis.score,
-        matchedSkills: analysis.matchedSkills,
-        missingRequiredSkills: analysis.missingSkills,
-        totalMonths: totalMonths,
-        uniqueLinksFound: analysis.uniqueLinksFound,
-        provider: job.evaluationMode === "ai" ? "AI-Fact-Extractor" : "Local-Deterministic",
-        breakdown: analysis.breakdown,
-        summary: `Auto-evaluated on application (${job.evaluationMode} mode).`
-      }];
+        // D. STRUCTURE DATA FOR DASHBOARD V2/V3 COMPATIBILITY
+        aiAnalysisData = [{
+          score: analysis.score,           // Used by Dashboard V3
+          matchScore: analysis.score,      // Used by Dashboard V2
+          matchedSkills: analysis.matchedSkills || [],
+          missingRequiredSkills: analysis.missingSkills || [],
+          professionalMonths: totalMonths,
+          uniqueLinksFound: analysis.uniqueLinksFound || 0,
+          metadata: {
+            status: "SUCCESS",
+            method: job.evaluationMode === "ai" ? "ai" : "local",
+            timestamp: new Date(),
+            confidenceLabel: analysis.score > 70 ? "High Trust" : "Standard Trust"
+          },
+          summary: `Auto-Audit: Candidate matches ${analysis.score}% of the required skills.`
+        }];
+      } catch (evalError) {
+        console.error("Auto-Evaluation Step Failed:", evalError.message);
+        // We don't block the application if AI fails, we just save it as unscored
+      }
     }
 
     // 2. Save Application
@@ -66,12 +156,12 @@ router.post("/:jobId/apply", verifyToken, async (req, res) => {
       applicantId: userId,
       resumeUrl: user.resumeUrl,
       status: "Submitted",
-      aiAnalysis: aiAnalysisData // Will be empty if autoEvaluate is OFF
+      aiAnalysis: aiAnalysisData 
     });
 
     await newApplication.save();
 
-    // 🔔 Notifications (Your original code)
+    // 🔔 Send Notification (Bell Icon)
     await Notification.create({
         user: userId,
         title: "Application Sent",
@@ -80,32 +170,70 @@ router.post("/:jobId/apply", verifyToken, async (req, res) => {
         relatedLink: "/my-applications"
     });
     
+    // 📧 Send Confirmation Email
     sendApplicationEmail(user, job.title, job.company).catch(e => console.log("Email fail:", e.message));
 
-    res.status(201).json({ message: "Application submitted", application: newApplication });
+    res.status(201).json({ 
+      success: true, 
+      message: "Application submitted successfully", 
+      application: newApplication 
+    });
+
   } catch (err) {
-    console.error("V3 Apply Error:", err);
-    res.status(500).json({ message: "Server error during application" });
+    console.error("V3 Apply Route Error:", err);
+    res.status(500).json({ message: "Server error during application process" });
   }
 });
+//==============================================================================
 /* @route GET /api/applications/recruiter
   Get ALL applications for this recruiter
 */
 /* @route GET /api/applications/recruiter */
+// router.get("/recruiter", verifyToken, async (req, res) => {
+//   try {
+//     // Find jobs posted by this recruiter
+//     const jobs = await Job.find({ postedBy: req.user.id });
+//     const jobIds = jobs.map((job) => job._id);
+
+//     // 🚀 FIX: Added .select("+aiAnalysis") to ensure scores are sent to frontend
+//     const applications = await Application.find({ jobId: { $in: jobIds } })
+//       .populate("applicantId", "name email profilePicture title skills")
+//       .populate("jobId", "title company")
+//       .select("+aiAnalysis") // 👈 This is the critical line
+//       .sort({ createdAt: -1 });
+
+//     res.status(200).json(applications);
+//   } catch (err) {
+//     console.error("Fetch Recruiter Apps Error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+/* @route GET /api/applications/recruiter */
 router.get("/recruiter", verifyToken, async (req, res) => {
   try {
-    // Find jobs posted by this recruiter
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20; // Default to 20 leads
+    const skip = (page - 1) * limit;
+
     const jobs = await Job.find({ postedBy: req.user.id });
     const jobIds = jobs.map((job) => job._id);
 
-    // 🚀 FIX: Added .select("+aiAnalysis") to ensure scores are sent to frontend
+    const totalApplications = await Application.countDocuments({ jobId: { $in: jobIds } });
+
     const applications = await Application.find({ jobId: { $in: jobIds } })
       .populate("applicantId", "name email profilePicture title skills")
       .populate("jobId", "title company")
-      .select("+aiAnalysis") // 👈 This is the critical line
-      .sort({ createdAt: -1 });
+      .select("+aiAnalysis")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res.status(200).json(applications);
+    res.status(200).json({
+      applications,
+      hasMore: skip + applications.length < totalApplications,
+      total: totalApplications
+    });
   } catch (err) {
     console.error("Fetch Recruiter Apps Error:", err);
     res.status(500).json({ message: "Server error" });

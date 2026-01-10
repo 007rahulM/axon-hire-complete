@@ -15,7 +15,7 @@ import AIBot from "./pages/AIBot";//import the AIbot page
 
 import RegisterRecruiter  from "./pages/RegisterRecruiter"; //import the register recuiter page 
 
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/ADminDashboard";
 
 import MyApplications from "./pages/MyApplications";
 //import our security guards 

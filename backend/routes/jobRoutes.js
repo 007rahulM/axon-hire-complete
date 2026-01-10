@@ -55,7 +55,7 @@ router.get("/my-jobs", verifyToken, async (req, res) => {
 */
 router.post("/", [verifyToken, adminMiddleware], async (req, res) => {
   try {
-    const { title, company, location, salary, description, requirements, deadline } = req.body;
+    const { title, company, location, salary, description, requirements, deadline ,autoEvaluate, evaluationMode} = req.body;
 
     if (!title || !company || !location || !salary || !description || !requirements) {
       return res.status(400).json({ message: "Please provide all fields" });
@@ -66,7 +66,9 @@ router.post("/", [verifyToken, adminMiddleware], async (req, res) => {
       requirements: requirements || [],
       atsEnabled: requirements?.length > 0,
       deadline, // Saved to DB
-      postedBy: req.user.id
+      postedBy: req.user.id,
+      autoEvaluate: autoEvaluate === true, // 👈 FORCE BOOLEAN CHECK
+      evaluationMode: evaluationMode || "local"
     });
 
     const savedJob = await newJob.save();

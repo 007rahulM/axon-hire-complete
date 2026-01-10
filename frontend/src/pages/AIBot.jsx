@@ -179,7 +179,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import axiosInstance from "../api/axiosInstance";
-import ReactMarkdown from "react-markdown"; 
+import ReactMarkdown from "react-markdown";
+import { API_BASE_URL } from "../api/config"; 
 import { 
   Bot, Terminal, Zap, Code, FileText, 
   Play, StopCircle, Sparkles, Copy, Check, CheckCircle2 // 👈 Added this
@@ -215,7 +216,9 @@ function AIBot() {
     if (deliveryMode === "stream") {
       abortControllerRef.current = new AbortController();
       try {
-        const response = await fetch("http://localhost:5000/api/ai/generate-questions-stream", {
+        // const response = await fetch("http://localhost:5000/api/ai/generate-questions-stream", {
+        const response = await fetch(`${API_BASE_URL}/ai/generate-questions-stream`, {
+
           method: "POST",
           headers: {
             "Content-Type": "application/json",

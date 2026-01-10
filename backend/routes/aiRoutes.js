@@ -71,94 +71,249 @@ function calculateDeterministicScore(extractedData, jobRequirements) {
 }
 
 
-async function analyzeWithAI(resumeText, jobId, jobTitle) {
-const systemPrompt = `
-    You are an expert ATS Auditor. Analyze the resume for the role of: "${jobTitle}".
+// async function analyzeWithAI(resumeText, jobId, jobTitle) {
+// const systemPrompt = `
+//     You are an expert ATS Auditor. Analyze the resume for the role of: "${jobTitle}".
     
-    INSTRUCTIONS:
-    1. Extract every technical skill mentioned.
-    2. For each skill, determine its technical category (e.g., "Frontend", "Backend", "Database", "DevOps", "Tools").
+//     INSTRUCTIONS:
+//     1. Extract every technical skill mentioned.
+//     2. For each skill, determine its technical category (e.g., "Frontend", "Backend", "Database", "DevOps", "Tools").
     
-    OUTPUT VALID JSON ONLY:
-    {
-      "skillsBySection": {
-        "experience": [{"name": "skill", "category": "type"}],
-        "skillsList": [{"name": "skill", "category": "type"}],
-        "generalSkills": [{"name": "skill", "category": "type"}]
-      },
-      "totalMonths": 0,
-      "summary": "2-sentence professional assessment."
-    }
-  `;
-  try {
-    const result = await generateJSON(systemPrompt, `Resume text:\n${resumeText.substring(0, 8000)}`);
+//     OUTPUT VALID JSON ONLY:
+//     {
+//       "skillsBySection": {
+//         "experience": [{"name": "skill", "category": "type"}],
+//         "skillsList": [{"name": "skill", "category": "type"}],
+//         "generalSkills": [{"name": "skill", "category": "type"}]
+//       },
+//       "totalMonths": 0,
+//       "summary": "2-sentence professional assessment."
+//     }
+//   `;
+//   try {
+//     const result = await generateJSON(systemPrompt, `Resume text:\n${resumeText.substring(0, 8000)}`);
     
-    if (!result.data || !result.data.skillsBySection) {
-      return { success: false, reason: "INVALID_AI_RESPONSE" };
-    }
-    // Return original data + the AI's summary [cite: 90, 93]
-    return { success: true, data: result.data, provider: result.provider };
-  } catch (error) {
-    return { success: false, reason: "AI_ERROR", error: error.message };
-  }
-}
+//     if (!result.data || !result.data.skillsBySection) {
+//       return { success: false, reason: "INVALID_AI_RESPONSE" };
+//     }
+//     // Return original data + the AI's summary [cite: 90, 93]
+//     return { success: true, data: result.data, provider: result.provider };
+//   } catch (error) {
+//     return { success: false, reason: "AI_ERROR", error: error.message };
+//   }
+// }
 
-// ============================================================================
-// 🎯 RESTORED LEGACY CONFIDENCE SCORING
-// ============================================================================
-function calculateConfidence(analysis, extractionMethod) {
-  let confidence = 0.5; // Base confidence [cite: 95]
+// // ============================================================================
+// // 🎯 RESTORED LEGACY CONFIDENCE SCORING
+// // ============================================================================
+// function calculateConfidence(analysis, extractionMethod) {
+//   let confidence = 0.5; // Base confidence [cite: 95]
 
-  // Add confidence based on matched skills [cite: 96]
-  if (analysis.matchedSkills.length >= 3) confidence += 0.15;
-  else if (analysis.matchedSkills.length >= 1) confidence += 0.1;
+//   // Add confidence based on matched skills [cite: 96]
+//   if (analysis.matchedSkills.length >= 3) confidence += 0.15;
+//   else if (analysis.matchedSkills.length >= 1) confidence += 0.1;
 
-  // Add confidence based on professional experience [cite: 97]
-  if (analysis.professionalMonths >= 12) confidence += 0.15;
-  else if (analysis.professionalMonths > 0) confidence += 0.08;
+//   // Add confidence based on professional experience [cite: 97]
+//   if (analysis.professionalMonths >= 12) confidence += 0.15;
+//   else if (analysis.professionalMonths > 0) confidence += 0.08;
 
-  // Add confidence based on linked profiles [cite: 98]
-  if (analysis.linkedProfiles >= 2) confidence += 0.1;
-  else if (analysis.linkedProfiles >= 1) confidence += 0.05;
+//   // Add confidence based on linked profiles [cite: 98]
+//   if (analysis.linkedProfiles >= 2) confidence += 0.1;
+//   else if (analysis.linkedProfiles >= 1) confidence += 0.05;
 
-  // ⚖️ FAIRNESS FIX: Use 0.08 boost for both methods to keep scoring balanced
-  // This replaces the old +0.1 for AI and +0.05 for Local
-  confidence += 0.08; 
+//   // ⚖️ FAIRNESS FIX: Use 0.08 boost for both methods to keep scoring balanced
+//   // This replaces the old +0.1 for AI and +0.05 for Local
+//   confidence += 0.08; 
 
-  return Math.min(1, confidence); 
-}
+//   return Math.min(1, confidence); 
+// }
 
-// ============================================================================
-// 🚨 RESTORED LEGACY EDGE CASE HANDLERS
-// ============================================================================
-function handleEdgeCases(resumeText, extractionResult, jobId) {
-  const warnings = [];
-  const errors = [];
+// // ============================================================================
+// // 🚨 RESTORED LEGACY EDGE CASE HANDLERS
+// // ============================================================================
+// function handleEdgeCases(resumeText, extractionResult, jobId) {
+//   const warnings = [];
+//   const errors = [];
 
-  if (resumeText.length < MIN_RESUME_LENGTH) {
-    errors.push("Resume content too short (possibly corrupted or invalid PDF)");
-    return { valid: false, warnings, errors };
-  }
+//   if (resumeText.length < MIN_RESUME_LENGTH) {
+//     errors.push("Resume content too short (possibly corrupted or invalid PDF)");
+//     return { valid: false, warnings, errors };
+//   }
 
-  // Edge Case 2: No skills detected
-  if (extractionResult.data.skillsBySection.experience.length === 0 &&
-      extractionResult.data.skillsBySection.skillsList.length === 0 &&
-      extractionResult.data.skillsBySection.generalSkills.length === 0) {
-    warnings.push("No technical skills detected in resume (possible edge case)");
-  }
+//   // Edge Case 2: No skills detected
+//   if (extractionResult.data.skillsBySection.experience.length === 0 &&
+//       extractionResult.data.skillsBySection.skillsList.length === 0 &&
+//       extractionResult.data.skillsBySection.generalSkills.length === 0) {
+//     warnings.push("No technical skills detected in resume (possible edge case)");
+//   }
 
-  // Edge Case 3: No experience duration
-  if (extractionResult.data.totalMonths === 0 || extractionResult.data.totalMonths === undefined) {
-    warnings.push("No professional experience duration found (may be fresher or parsing issue)");
-  }
+//   // Edge Case 3: No experience duration
+//   if (extractionResult.data.totalMonths === 0 || extractionResult.data.totalMonths === undefined) {
+//     warnings.push("No professional experience duration found (may be fresher or parsing issue)");
+//   }
 
-  // Edge Case 4: Unrealistic score check
-  if (extractionResult.score && extractionResult.score < 10 && extractionResult.data.skillsBySection.experience.length > 5) {
-    warnings.push("Low match score despite multiple skills detected (possible skill name mismatch)");
-  }
+//   // Edge Case 4: Unrealistic score check
+//   if (extractionResult.score && extractionResult.score < 10 && extractionResult.data.skillsBySection.experience.length > 5) {
+//     warnings.push("Low match score despite multiple skills detected (possible skill name mismatch)");
+//   }
 
-  return { valid: true, warnings, errors };
-}
+//   return { valid: true, warnings, errors };
+// }
+
+
+
+// ////////////////////////////////////////////////////////////////////////////////////////
+// //=================================================================================
+// //🔄 MAIN ANALYSIS ORCHESTRATOR (V3 TEACHER-STUDENT)//
+// // ============================================================================
+// async function performAnalysis(resumeUrl, jobId, mode = "auto") {
+//   try {
+//     console.log(`\n--- ANALYSIS START | MODE: ${mode.toUpperCase()} ---`);
+    
+//     const resumeData = await parseResumeFromUrl(resumeUrl);
+//     const job = await Job.findById(jobId);
+//     if (!job) throw new Error("JOB_NOT_FOUND");
+
+//     console.log(`Resume Parsed: ${resumeData.fullText.length} chars.`);
+
+//     let extractedFacts = null;
+//     let providerName = "Local-V3";
+
+//     // 1. AI EXTRACTION PHASE (Try Carousel for Beta/Auto)
+//     if (mode === "beta" || mode === "auto") {
+//    // Inside performAnalysis in aiRoutes.js
+// // const systemPrompt = `
+// //   ACT AS: A Strict ATS Fact Extractor.
+// //   TASK: Extract ONLY raw data points from the resume text.
+  
+// //   STRICT RULES:
+// //   1. "skills": Extract every technical tool/language.
+// //   2. "totalMonths": Extract ONLY professional WORK/INTERNSHIP experience months. 
+// //      - CRITICAL: DO NOT count Education dates (e.g., BCA, PUC, SSLC) as work experience.
+// //   3. "links": Extract ONLY links to GitHub, Vercel, Netlify, or Portfolios. 
+// //      - CRITICAL: DO NOT include emails or university homepages.
+// //   4. "learningDiscovery": Identify all technical terms and 3 synonyms each and in this formt {
+// //     "canonical": "linkedin-marketing",
+// //     "synonyms": ["LinkedIn ads", "LinkedIn campaigns"],
+// //     "category": "Marketing & Sales"
+// //   }
+  
+// //   RETURN VALID JSON ONLY: { "skills": [], "totalMonths": 0, "links": [], "summary": "", "learningDiscovery": [] }
+// // `;
+
+// const systemPrompt = `
+// ACT AS: Resume Skills Extractor for ATS System.
+
+// TASK: Extract skills from resume and discover new technical terms.
+
+// INPUT: Resume text for role "${job.title}"
+
+// OUTPUT RULES:
+// 1. "skills": Array of ALL technical skills/tools found (e.g., ["React", "Python", "Docker"])
+// 2. "totalMonths": ONLY professional work experience months (IGNORE education dates)
+// 3. "links": ONLY GitHub, portfolio, or project links (NO emails, NO universities)
+// 4. "summary": One sentence about candidate fit
+// 5. "learningDiscovery": NEW/RARE technical terms found that might be:
+//    - Synonyms of known skills (e.g., "Express.js" for "Node.js")
+//    - New frameworks/tools (e.g., "Zustand", "Bun", "Hono")
+//    - Specialized skills (e.g., "WebGL", "Three.js")
+
+// FORMAT FOR learningDiscovery:
+// [
+//   {
+//     "canonical": "zustand",
+//     "synonyms": ["Zustand", "zustand state management"],
+//     "category": "Frontend"
+//   },
+//   {
+//     "canonical": "express-js",
+//     "synonyms": ["Express.js", "Express", "ExpressJS"],
+//     "category": "Backend"
+//   }
+// ]
+
+// RETURN VALID JSON ONLY (no markdown, no code fences):
+// {
+//   "skills": [],
+//   "totalMonths": 0,
+//   "links": [],
+//   "summary": "",
+//   "learningDiscovery": []
+// }
+// `;
+
+//       console.log(`AI Chain: Attempting extraction...`);
+//       const aiResult = await generateJSON(systemPrompt, `RESUME TEXT:\n${resumeData.fullText.substring(0, 10000)}`);
+      
+//       if (aiResult.success) {
+//         extractedFacts = aiResult.data;
+//         providerName = aiResult.provider;
+//         // 🚀 NEW DEBUG LINES: See the raw AI output in console
+//     console.log(`📝 AI SUMMARY: ${extractedFacts.summary}`);
+//     console.log(`🛠️ AI DISCOVERY: Found ${extractedFacts.learningDiscovery?.length || 0} terms.`);
+//         console.log(`AI Success via ${providerName}`);
+//       } else if (mode === "beta") {
+//         // STRICT BETA: Return error instead of falling back to 10% score
+//         console.error("BETA ERROR: AI Carousel exhausted.");
+//         return { 
+//           success: false, 
+//           error: "STRICT_BETA_FAILED", 
+//           detail: "Beta Mode requires high-fidelity AI which is currently unavailable." 
+//         };
+//       }
+//     }
+
+//     // 2. FALLBACK PHASE (Auto Fallback or Standard Mode)
+//     if (!extractedFacts) {
+//       console.log(`Fallback: Using Local ZMath & Keyword Mapping.`);
+//       extractedFacts = {
+//         skills: resumeData.skills,
+//         totalMonths: calculateExperienceMonths(resumeData.experienceZone),
+//         summary: mode === "standard" ? "Standard zonal analysis complete." : "Local fallback used (AI Rate Limited)."
+//       };
+//     }
+
+//     // 3. SCORING PHASE (Deterministic 60/30/10)
+//     const finalAnalysis = calculateV3Score({ 
+//       skills: extractedFacts.skills || [], 
+//       totalMonths: Number(extractedFacts.totalMonths) || 0,
+//       links: resumeData.links || [] 
+//     }, job.requirements || []);
+
+//     // 4. CONSOLE DEBUGGING
+//     console.log(`\n--- [V3 SCORECARD: ${job.title}] ---`);
+//     console.table({
+//       "Result Method": providerName.includes("Local") ? "LOCAL" : "AI",
+//       "Provider": providerName,
+//       "Match Score": `${finalAnalysis.score}%`
+//     });
+//     console.log(`MATCHED: ${finalAnalysis.matchedSkills.join(", ")}`);
+//     console.log(`------------------------------------\n`);
+
+//  return {
+//       success: true,
+//       analysis: {
+//         ...finalAnalysis,
+//         // 🚀 FORCE SYNC: Ensure both keys exist so UI always finds the number
+//         matchScore: finalAnalysis.score, 
+//         score: finalAnalysis.score,
+//         summary: extractedFacts.summary,
+//         metadata: { 
+//           provider: providerName, 
+//           status: "SUCCESS", 
+//           timestamp: new Date(),
+//           method: providerName.includes("Local") ? "local" : "ai" 
+//         }
+//       }
+//     };
+//   } catch (error) {
+//     console.error(`ORCHESTRATOR ERROR: ${error.message}`);
+//     return { success: false, error: error.message };
+//   }
+// }
+//============================================================================
+//============================================================================
+
 //🔄 MAIN ANALYSIS ORCHESTRATOR (V3 TEACHER-STUDENT)//
 // ============================================================================
 async function performAnalysis(resumeUrl, jobId, mode = "auto") {
@@ -176,24 +331,47 @@ async function performAnalysis(resumeUrl, jobId, mode = "auto") {
 
     // 1. AI EXTRACTION PHASE (Try Carousel for Beta/Auto)
     if (mode === "beta" || mode === "auto") {
-   // Inside performAnalysis in aiRoutes.js
-const systemPrompt = `
-  ACT AS: A Strict ATS Fact Extractor.
-  TASK: Extract ONLY raw data points from the resume text.
-  
-  STRICT RULES:
-  1. "skills": Extract every technical tool/language.
-  2. "totalMonths": Extract ONLY professional WORK/INTERNSHIP experience months. 
-     - CRITICAL: DO NOT count Education dates (e.g., BCA, PUC, SSLC) as work experience.
-  3. "links": Extract ONLY links to GitHub, Vercel, Netlify, or Portfolios. 
-     - CRITICAL: DO NOT include emails or university homepages.
-  4. "learningDiscovery": Identify all technical terms and 3 synonyms each and in this formt u shuld send example to send format {
-    "canonical": "linkedin-marketing",
-    "synonyms": ["LinkedIn ads", "LinkedIn campaigns"],
-    "category": "Marketing & Sales"
-  },.
-  
-  RETURN VALID JSON ONLY: { "skills": [], "totalMonths": 0, "links": [], "summary": "", "learningDiscovery": [] }
+      
+      // ✅ FIXED PROMPT (No more typos or invalid JSON)
+      const systemPrompt = `
+ACT AS: Resume Skills Extractor for ATS System.
+
+TASK: Extract skills from resume and discover new technical terms.
+
+INPUT: Resume text for role "${job.title}"
+
+OUTPUT RULES:
+1. "skills": Array of ALL technical skills/tools found (e.g., ["React", "Python", "Docker"])
+2. "totalMonths": ONLY professional work experience months (IGNORE education dates)
+3. "links": ONLY GitHub, portfolio, or project links (NO emails, NO universities)
+4. "summary": One sentence about candidate fit
+5. "learningDiscovery": NEW/RARE technical terms found that might be:
+   - Synonyms of known skills (e.g., "Express.js" for "Node.js")
+   - New frameworks/tools (e.g., "Zustand", "Bun", "Hono")
+   - Specialized skills (e.g., "WebGL", "Three.js")
+
+FORMAT FOR learningDiscovery:
+[
+  {
+    "canonical": "zustand",
+    "synonyms": ["Zustand", "zustand state management"],
+    "category": "Frontend"
+  },
+  {
+    "canonical": "express-js",
+    "synonyms": ["Express.js", "Express", "ExpressJS"],
+    "category": "Backend"
+  }
+]
+
+RETURN VALID JSON ONLY (no markdown, no code fences):
+{
+  "skills": [],
+  "totalMonths": 0,
+  "links": [],
+  "summary": "",
+  "learningDiscovery": []
+}
 `;
 
       console.log(`AI Chain: Attempting extraction...`);
@@ -202,12 +380,74 @@ const systemPrompt = `
       if (aiResult.success) {
         extractedFacts = aiResult.data;
         providerName = aiResult.provider;
-        // 🚀 NEW DEBUG LINES: See the raw AI output in console
-    console.log(`📝 AI SUMMARY: ${extractedFacts.summary}`);
-    console.log(`🛠️ AI DISCOVERY: Found ${extractedFacts.learningDiscovery?.length || 0} terms.`);
+        
+        // 🚀 DEBUG: See what AI returned
+        console.log(`📝 AI SUMMARY: ${extractedFacts.summary}`);
+        console.log(`🛠️ AI DISCOVERY: Found ${extractedFacts.learningDiscovery?.length || 0} terms.`);
         console.log(`AI Success via ${providerName}`);
+        
+        // ============================================================
+        // 🧠 LEARNING LOOP - ADD THIS SECTION HERE!
+        // ============================================================
+        const discovery = extractedFacts.learningDiscovery || [];
+        
+        if (discovery.length > 0) {
+          console.log(`\n🧠 LEARNING LOOP ACTIVATED: Processing ${discovery.length} new skills...`);
+          
+          try {
+            // Build bulk operations for MongoDB
+            const bulkOps = discovery.map(item => ({
+              updateOne: {
+                filter: { 
+                  canonical: item.canonical.toLowerCase().trim() 
+                },
+                update: { 
+                  $set: { 
+                    isApproved: true,
+                    category: item.category || "technical-skills" 
+                  }, 
+                  $addToSet: { 
+                    synonyms: { 
+                      $each: (item.synonyms || []).map(s => s.toLowerCase().trim()) 
+                    } 
+                  },
+                  $setOnInsert: { 
+                    weight: 1.0,
+                    createdAt: new Date()
+                  }
+                },
+                upsert: true
+              }
+            }));
+            
+            // Save to database
+            const result = await Skill.bulkWrite(bulkOps);
+            console.log(`✅ Saved ${result.upsertedCount} new skills, updated ${result.modifiedCount} existing skills`);
+            
+            // 🚀 THROTTLED CACHE REFRESH (max once per 30 seconds)
+            if (!global.lastCacheRefresh || Date.now() - global.lastCacheRefresh > 30000) {
+              console.log(`🔄 Refreshing skill cache...`);
+              await refreshSkillCache();
+              global.lastCacheRefresh = Date.now();
+              console.log(`✅ Skill map updated!`);
+            } else {
+              console.log(`⏭️ Skipping cache refresh (throttled)`);
+            }
+            
+          } catch (saveError) {
+            console.error(`❌ Learning loop failed:`, saveError.message);
+            // Don't throw - learning failure shouldn't break analysis
+          }
+        } else {
+          console.log(`ℹ️ No new skills discovered in this resume.`);
+        }
+        
+        // 🗑️ REMOVE learningDiscovery from response (don't send to frontend)
+        delete extractedFacts.learningDiscovery;
+        // ============================================================
+        
       } else if (mode === "beta") {
-        // STRICT BETA: Return error instead of falling back to 10% score
+        // STRICT BETA: Return error instead of falling back
         console.error("BETA ERROR: AI Carousel exhausted.");
         return { 
           success: false, 
@@ -244,7 +484,7 @@ const systemPrompt = `
     console.log(`MATCHED: ${finalAnalysis.matchedSkills.join(", ")}`);
     console.log(`------------------------------------\n`);
 
- return {
+    return {
       success: true,
       analysis: {
         ...finalAnalysis,
@@ -265,6 +505,11 @@ const systemPrompt = `
     return { success: false, error: error.message };
   }
 }
+
+
+
+
+
 // ============================================================================
 // 🌐 MAIN ROUTE: POST /api/ai/analyze
 // ============================================================================
@@ -277,33 +522,33 @@ router.post("/analyze", verifyToken, async (req, res) => {
       const application = await Application.findById(applicationId);
       if (!application) return res.status(404).json({ success: false, error: "App not found" });
 
-      // 🧠 OPTIMIZED LEARNING LOOP
-      const discovery = result.analysis.learningDiscovery || [];
-      if (discovery.length > 0) {
-        // Run updates in background so the user doesn't wait
-        const bulkOps = discovery.map(item => ({
-          updateOne: {
-            filter: { canonical: item.canonical.toLowerCase().trim() },
-            update: { 
-              $set: { isApproved: true }, 
-              $addToSet: { synonyms: { $each: (item.synonyms || []).map(s => s.toLowerCase().trim()) } },
-              $setOnInsert: { weight: 1.0 }
-            },
-            upsert: true
-          }
-        }));
+      // // 🧠 OPTIMIZED LEARNING LOOP
+      // const discovery = result.analysis.learningDiscovery || [];
+      // if (discovery.length > 0) {
+      //   // Run updates in background so the user doesn't wait
+      //   const bulkOps = discovery.map(item => ({
+      //     updateOne: {
+      //       filter: { canonical: item.canonical.toLowerCase().trim() },
+      //       update: { 
+      //         $set: { isApproved: true }, 
+      //         $addToSet: { synonyms: { $each: (item.synonyms || []).map(s => s.toLowerCase().trim()) } },
+      //         $setOnInsert: { weight: 1.0 }
+      //       },
+      //       upsert: true
+      //     }
+      //   }));
         
-        await Skill.bulkWrite(bulkOps).catch(e => console.error("Bulk save failed"));
+      //   await Skill.bulkWrite(bulkOps).catch(e => console.error("Bulk save failed"));
         
-        // 🚀 CRITICAL: Throttle the cache refresh. 
-        // Only refresh if it's been more than 30 seconds since the last one.
-        if (!global.lastCacheRefresh || Date.now() - global.lastCacheRefresh > 30000) {
-            await refreshSkillCache();
-            global.lastCacheRefresh = Date.now();
-        }
-      }
+      //   // 🚀 CRITICAL: Throttle the cache refresh. 
+      //   // Only refresh if it's been more than 30 seconds since the last one.
+      //   if (!global.lastCacheRefresh || Date.now() - global.lastCacheRefresh > 30000) {
+      //       await refreshSkillCache();
+      //       global.lastCacheRefresh = Date.now();
+      //   }
+      // }
 
-      delete result.analysis.learningDiscovery;
+      // delete result.analysis.learningDiscovery;
       application.aiAnalysis = [result.analysis, ...(application.aiAnalysis || [])];
       await application.save();
     }
@@ -520,23 +765,85 @@ router.post("/analyze-v3", verifyToken, async (req, res) => {
     const resumeData = await parseResumeFromUrl(resumeUrl);
 
     // 2. ENTITY EXTRACTION PROMPT
-    const systemPrompt = `
-      ACT AS: A JSON Entity Extractor.
-      TASK: Convert resume text into a strict data object.
+    // const systemPrompt = `
+    //   ACT AS: A JSON Entity Extractor.
+    //   TASK: Convert resume text into a strict data object.
       
-      RULES:
-      1. Extract all technical skills.
-      2. Identify "experience" (found in job descriptions), "skillsList" (found in tools sections), and "generalSkills" (rest).
-      3. Calculate total professional months (IGNORE education dates).
-      4. RETURN ONLY JSON.
+    //   RULES:
+    //   1. Extract all technical skills.
+    //   2. Identify "experience" (found in job descriptions), "skillsList" (found in tools sections), and "generalSkills" (rest).
+    //   3. Calculate total professional months (IGNORE education dates).
+    //   4. RETURN ONLY JSON.
 
-      SCHEMA:
-      {
-        "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
-        "totalMonths": 0,
-        "summary": "1 sentence fit assessment."
-      }
-    `;
+    //   SCHEMA:
+    //   {
+    //     "skillsBySection": { "experience": [], "skillsList": [], "generalSkills": [] },
+    //     "totalMonths": 0,
+    //     "summary": "1 sentence fit assessment."
+    //   }
+    // `;
+
+    const systemPrompt = `
+ACT AS: A strict resume JSON parser for an ATS system.
+
+OBJECTIVE:
+Parse resume text into a structured JSON object with ZERO assumptions.
+
+SECTION DETECTION RULES:
+First, identify resume sections using headings or semantic meaning.
+Common section names include but are not limited to:
+- EXPERIENCE / WORK EXPERIENCE / PROFESSIONAL EXPERIENCE
+- PROJECTS
+- ACHIEVEMENTS / ACCOMPLISHMENTS
+- SKILLS / TECHNICAL SKILLS / TOOLS
+- EDUCATION (IGNORE COMPLETELY)
+- CERTIFICATIONS (IGNORE DATES)
+- SUMMARY / PROFILE (IGNORE FOR DATES)
+
+IMPORTANT:
+If a section is not clearly identifiable, DO NOT infer.
+
+DATE CALCULATION RULES:
+- Calculate total professional months using ONLY date ranges found inside EXPERIENCE sections.
+- IGNORE ALL dates found in:
+  - EDUCATION
+  - CERTIFICATIONS
+  - PROJECTS
+  - ACHIEVEMENTS
+- If experience dates overlap, do NOT double count.
+- If no valid experience dates exist, return totalMonths = 0.
+
+LINK EXTRACTION RULES:
+- Extract links ONLY if they appear inside:
+  - PROJECTS
+  - ACHIEVEMENTS
+- Ignore links found in EDUCATION, CERTIFICATIONS, or headers/footers.
+- Accept only valid URLs (GitHub, portfolio, live demo, etc).
+
+SKILL EXTRACTION RULES:
+- experience: skills explicitly used in job descriptions.
+- skillsList: skills/tools listed under SKILLS or TOOLS sections.
+- generalSkills: remaining technical skills found elsewhere EXCEPT education.
+- Do NOT invent or normalize skills beyond what is explicitly written.
+
+STRICT OUTPUT RULES:
+- Return ONLY valid JSON.
+- Do NOT include explanations or extra text.
+- Do NOT hallucinate missing fields.
+- If data is missing, use empty arrays or 0.
+
+SCHEMA:
+{
+  "skillsBySection": {
+    "experience": [],
+    "skillsList": [],
+    "generalSkills": []
+  },
+  "projectLinks": [],
+  "totalMonths": 0,
+  "summary": "1 sentence fit assessment based strictly on experience and skills."
+}
+`;
 
     const result = await generateJSON(systemPrompt, `RESUME TEXT:\n${resumeData.fullText}`);
 
@@ -591,88 +898,3 @@ router.post("/analyze-v3", verifyToken, async (req, res) => {
 });
 module.exports = router;
 
-
-
-
-
-// ============================================================================
-// 🎯 DETERMINISTIC SCORING ENGINE
-// ============================================================================
-// function calculateDeterministicScore(extractedData, resumeZones, jobRequirements) {
-//   const score = { 
-//     skillScore: 0, 
-//     expScore: 0, 
-//     linkScore: 0, 
-//     integrityScore: SCORING_CONFIG.BASE_INTEGRITY 
-//   };
-
-//   const normalizedReqs = jobRequirements
-//     .map(req => normalizeSkill(req))
-//     .filter(Boolean);
-
-//   const skillsFromExp = extractedData.experience?.length > 0 
-//     ? extractedData.experience.map(s => normalizeSkill(s)) 
-//     : extractSkillsFromText(resumeZones.experienceZone);
-
-//   const skillsGeneral = extractedData.generalSkills?.length > 0
-//     ? extractedData.generalSkills.map(s => normalizeSkill(s))
-//     : extractSkillsFromText(resumeZones.generalZone);
-
-//   const skillsFromList = (extractedData.skillsList || []).map(s => normalizeSkill(s));
-
-//   let totalWeight = 0;
-//   let matchedWeight = 0;
-//   const matchedSkills = [];
-
-//   normalizedReqs.forEach((reqSkill) => {
-//     const weight = getSkillWeight(reqSkill);
-//     totalWeight += weight;
-
-//     if (skillsFromExp.includes(reqSkill)) {
-//       matchedWeight += weight * 1.5;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsFromList.includes(reqSkill)) {
-//       matchedWeight += weight * 1.2;
-//       matchedSkills.push(reqSkill);
-//     } else if (skillsGeneral.includes(reqSkill)) {
-//       matchedWeight += weight * 1.0;
-//       matchedSkills.push(reqSkill);
-//     }
-//   });
-
-//   const maxPossibleWeight = totalWeight * 1.5;
-//   score.skillScore = maxPossibleWeight > 0 
-//     ? Math.round((matchedWeight / maxPossibleWeight) * SCORING_CONFIG.MAX_SKILL_SCORE)
-//     : 0;
-
-//   const months = extractedData.totalMonths || 0;
-//   if (months >= 60) score.expScore = 20; 
-//   else if (months >= 36) score.expScore = 15;
-//   else if (months >= 12) score.expScore = 10;
-//   else if (months > 0) score.expScore = 5;
-
-//   const links = resumeZones.fullText.match(/(https?:\/\/[^\s]+)/g) || [];
-//   const uniqueLinks = [...new Set(links.filter(link => 
-//     SCORING_CONFIG.TRUSTED_DOMAINS.some(domain => link.includes(domain))
-//   ))];
-
-//   if (uniqueLinks.length >= 3) score.linkScore = 10;
-//   else if (uniqueLinks.length >= 2) score.linkScore = 7;
-//   else if (uniqueLinks.length >= 1) score.linkScore = 5;
-
-//   score.integrityScore = 10; 
-
-//   const finalScore = Math.min(100, 
-//     score.skillScore + score.expScore + score.linkScore + score.integrityScore
-//   );
-
-//   return {
-//     matchScore: finalScore,
-//     matchedSkills: [...new Set(matchedSkills)],
-//     missingRequiredSkills: normalizedReqs.filter(r => !matchedSkills.includes(r)),
-//     professionalMonths: months,
-//     breakdown: score,
-//     experienceLevel: months >= 36 ? "Experienced" : months >= 12 ? "Intermediate" : "Junior",
-//     linkedProfiles: uniqueLinks.length
-//   };
-// }

@@ -216,17 +216,17 @@ function Home() {
         
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-800 bg-slate-900/50 text-slate-300 text-sm font-bold uppercase tracking-widest mb-8 hover:bg-slate-800 transition-colors cursor-default">
             <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-            Axon OS v1.0
+            Axon is Live
         </div>
 
         <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
            The Neural Network <br />
            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 animate-gradient bg-[length:200%_auto]">
-               For Hiring.
+               For Hiring
            </span>
         </h1>
         <p className="text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-           Axon isn't just a job board. It's an intelligence layer that sits between candidates and recruiters, filtering the signal from the noise.
+           Axon isn't just a job board. It's an intelligence layer that sits between candidates and recruiters, filtering the signal from the noise
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center gap-6">
@@ -247,7 +247,7 @@ function Home() {
              <div className="space-y-6">
                  <h2 className="text-4xl md:text-5xl font-bold">Signal vs. Noise.</h2>
                  <p className="text-slate-400 text-lg leading-relaxed">
-                     90% of a recruiter's time is spent sifting through noise—bad formats, irrelevant skills, and bias. Axon filters this out instantly, leaving only the pure signal: <strong>Talent.</strong>
+                     90% of a recruiter's time is spent sifting through noise—bad formats, irrelevant skills, and bias. Axon filters this out instantly, leaving only the pure signal: <strong>Talent</strong>
                  </p>
              </div>
              <div className="perspective-1000"><SignalDemo /></div>
@@ -258,9 +258,9 @@ function Home() {
               <div className="order-2 md:order-1 perspective-1000"><DigitizerDemo /></div>
               <div className="order-1 md:order-2 space-y-6">
                   <div className="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-indigo-500/30 text-xl">1</div>
-                  <h2 className="text-4xl md:text-5xl font-bold">Smart Ingestion.</h2>
+                  <h2 className="text-4xl md:text-5xl font-bold">Smart Ingestion</h2>
                   <p className="text-slate-400 text-lg leading-relaxed">
-                      We treat resumes as raw data input. Our engine scans PDFs and converts them into structured digital profiles in milliseconds.
+                      We treat resumes as raw data input. Our engine scans PDFs and converts them into structured digital profiles in milliseconds
                   </p>
               </div>
           </div>
@@ -269,9 +269,9 @@ function Home() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
               <div className="order-2 md:order-1 space-y-6">
                   <div className="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-purple-500/30 text-xl">2</div>
-                  <h2 className="text-4xl md:text-5xl font-bold">Neural Matching.</h2>
+                  <h2 className="text-4xl md:text-5xl font-bold">Neural Matching</h2>
                   <p className="text-slate-400 text-lg leading-relaxed">
-                      Keywords aren't enough. We calculate the semantic distance between a candidate's history and your job requirements. A match is only made when the connection is strong.
+                      Keywords aren't enough  We calculate the semantic distance between a candidate's history and your job requirements  A match is only made when the connection is strong
                   </p>
               </div>
               <div className="order-1 md:order-2 perspective-1000"><SynapseDemo /></div>
@@ -282,9 +282,9 @@ function Home() {
              <div className="order-2 md:order-1 perspective-1000"><LeaderboardDemo /></div>
              <div className="order-1 md:order-2 space-y-6">
                  <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-emerald-500/30 text-xl">3</div>
-                 <h2 className="text-4xl md:text-5xl font-bold">Dynamic Ranking.</h2>
+                 <h2 className="text-4xl md:text-5xl font-bold">Dynamic Ranking</h2>
                  <p className="text-slate-400 text-lg leading-relaxed">
-                     Stop sorting by "Date Applied." Axon delivers a live, score-weighted leaderboard. The best candidates float to the top automatically.
+                     Stop sorting by "Date Applied " Axon delivers a live, score-weighted leaderboard  The best candidates float to the top automatically
                  </p>
              </div>
           </div>
@@ -295,10 +295,10 @@ function Home() {
       <footer className="py-12 border-t border-slate-800 bg-[#010409] text-center">
          <div className="flex items-center justify-center gap-2 mb-4">
              <Cpu className="text-indigo-500 w-6 h-6" />
-             <span className="text-white font-bold text-xl tracking-tight">Axon.</span>
+             <span className="text-white font-bold text-xl tracking-tight">Axon</span>
          </div>
-         <p className="text-slate-600 text-sm">System Status: Operational.</p>
-         <p className="text-slate-700 text-xs mt-2">© 2024 Axon Intelligence Layer.</p>
+         <p className="text-slate-600 text-sm">System Status: Operational</p>
+         <p className="text-slate-700 text-xs mt-2">© 2026 Axon Intelligence Layer</p>
       </footer>
 
     </div>
@@ -306,3 +306,528 @@ function Home() {
 }
 
 export default Home;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { Menu, X, ArrowRight, Cpu, Activity, Brain, Zap, Shield, TrendingUp, BarChart3 } from "lucide-react";
+
+// // Interactive Demo: Signal vs Noise
+// const SignalDemo = () => {
+//   const [filter, setFilter] = useState(false);
+
+//   return (
+//     <div className="w-full h-[300px] bg-slate-900 border border-slate-800 rounded-3xl relative overflow-hidden flex flex-col items-center justify-center group hover:border-indigo-500/30 transition-all cursor-pointer"
+//          onClick={() => setFilter(!filter)}>
+//       <div className="absolute top-4 right-4 z-20">
+//         <button 
+//           onClick={(e) => {
+//             e.stopPropagation();
+//             setFilter(!filter);
+//           }}
+//           className={`text-xs font-bold px-3 py-1 rounded-full border transition-all ${filter ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-slate-800 text-slate-400 border-slate-700'}`}
+//         >
+//           {filter ? "AI Filter: ON" : "AI Filter: OFF"}
+//         </button>
+//       </div>
+
+//       <div className="relative w-full h-full flex items-center justify-center">
+//         <div className={`absolute inset-0 transition-opacity duration-1000 ${filter ? 'opacity-10' : 'opacity-100'}`}>
+//           {[...Array(15)].map((_, i) => (
+//             <div key={i} className="absolute text-[8px] text-slate-600 font-mono"
+//               style={{
+//                 top: `${Math.random() * 100}%`,
+//                 left: `${Math.random() * 100}%`,
+//               }}>
+//               {['bias', 'clutter', 'noise', 'format', 'typo'][i % 5]}
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className={`transition-all duration-1000 transform ${filter ? 'scale-110 opacity-100 blur-0' : 'scale-90 opacity-50 blur-sm'}`}>
+//           <div className="flex items-center gap-4">
+//             <div className="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center shadow-[0_0_30px_#818cf8]">
+//               <Cpu className="text-white w-6 h-6" />
+//             </div>
+//             <div>
+//               <div className="h-2 w-24 bg-slate-700 rounded mb-2 overflow-hidden">
+//                 <div className={`h-full bg-white transition-all duration-1000 ${filter ? 'w-full' : 'w-1/3'}`}></div>
+//               </div>
+//               <div className="text-xs font-bold text-white tracking-widest uppercase">Pure Signal</div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+      
+//       <p className="absolute bottom-6 text-slate-500 text-xs animate-pulse">
+//         {filter ? "✓ Only qualified candidates remain" : "Click to activate AI filter"}
+//       </p>
+//     </div>
+//   );
+// };
+
+// // Interactive Demo: The Digitizer
+// const DigitizerDemo = () => {
+//   const [scan, setScan] = useState(false);
+
+//   const toggle = () => {
+//     if (scan) return;
+//     setScan(true);
+//     setTimeout(() => setScan(false), 3000);
+//   };
+
+//   return (
+//     <div onClick={toggle} className="w-full h-[300px] bg-slate-900 border border-slate-800 rounded-3xl relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-indigo-500/30 transition-all">
+      
+//       <div className={`w-32 h-44 bg-slate-800 border border-slate-700 rounded-lg p-3 relative transition-all duration-1000 ${scan ? 'scale-90 opacity-50' : 'scale-100 opacity-100'}`}>
+//         <div className="w-8 h-8 bg-slate-600 rounded-full mb-3"></div>
+//         <div className="h-2 w-full bg-slate-600 rounded mb-2"></div>
+//         <div className="h-2 w-2/3 bg-slate-600 rounded mb-4"></div>
+//         <div className="h-1 w-full bg-slate-700 rounded mb-1"></div>
+//         <div className="h-1 w-full bg-slate-700 rounded mb-1"></div>
+        
+//         <div className={`absolute left-0 w-full h-1 bg-indigo-400 shadow-[0_0_15px_indigo] transition-all duration-[3s] ease-linear ${scan ? 'top-[100%] opacity-100' : 'top-0 opacity-0'}`}></div>
+//       </div>
+
+//       <div className={`absolute inset-0 flex flex-col items-center justify-center gap-2 transition-all duration-500 ${scan ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+//         <div className="bg-slate-900/90 backdrop-blur border border-indigo-500/50 p-2 rounded text-xs font-mono text-indigo-300 shadow-xl">
+//           Experience: 5 Years
+//         </div>
+//         <div className="bg-slate-900/90 backdrop-blur border border-purple-500/50 p-2 rounded text-xs font-mono text-purple-300 shadow-xl ml-12">
+//           Skills: React, Node
+//         </div>
+//         <div className="bg-slate-900/90 backdrop-blur border border-emerald-500/50 p-2 rounded text-xs font-mono text-emerald-300 shadow-xl mr-12">
+//           Education: Masters
+//         </div>
+//       </div>
+
+//       {!scan && <div className="absolute bottom-6 text-xs text-slate-500 animate-pulse">Click to Digitize</div>}
+//     </div>
+//   );
+// };
+
+// // Interactive Demo: The Synapse
+// const SynapseDemo = () => {
+//   const [match, setMatch] = useState(false);
+
+//   return (
+//     <div 
+//       onMouseEnter={() => setMatch(true)} 
+//       onMouseLeave={() => setMatch(false)}
+//       className="w-full h-[300px] bg-slate-900 border border-slate-800 rounded-3xl relative overflow-hidden flex flex-col items-center justify-center cursor-crosshair group hover:border-purple-500/30 transition-all"
+//     >
+//       <div className="flex w-full max-w-sm justify-between items-center px-8 relative">
+//         <div className="z-10 flex flex-col items-center gap-2">
+//           <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all duration-500 ${match ? 'border-purple-500 bg-purple-500/10 shadow-[0_0_20px_#a855f7]' : 'border-slate-700 bg-slate-800'}`}>
+//             <span className="text-[10px] font-bold text-white">JOB</span>
+//           </div>
+//         </div>
+
+//         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-12">
+//           <div className="h-0.5 w-full bg-slate-800 relative overflow-hidden">
+//             <div className={`absolute top-0 left-0 bottom-0 bg-white w-1/2 blur-[2px] transition-all duration-500 ${match ? 'translate-x-full opacity-100' : '-translate-x-full opacity-0'}`}></div>
+//           </div>
+//         </div>
+
+//         <div className="z-10 flex flex-col items-center gap-2">
+//           <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all duration-500 delay-100 ${match ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_#6366f1]' : 'border-slate-700 bg-slate-800'}`}>
+//             <span className="text-[10px] font-bold text-white">CV</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className={`mt-8 px-4 py-1 rounded-full text-xs font-bold transition-all duration-500 ${match ? 'bg-white text-slate-900 scale-110' : 'bg-slate-800 text-slate-500 scale-100'}`}>
+//         {match ? "NEURAL MATCH ✓" : "Hover to Connect"}
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Interactive Demo: Leaderboard
+// const LeaderboardDemo = () => {
+//   const [candidates, setCandidates] = useState([
+//     { id: 1, name: "A. Smith", score: 85 },
+//     { id: 2, name: "B. Jones", score: 92 },
+//     { id: 3, name: "C. Lee", score: 64 },
+//   ]);
+
+//   const shuffle = () => {
+//     const newCandidates = candidates.map(c => ({
+//       ...c,
+//       score: Math.floor(Math.random() * (99 - 60) + 60)
+//     })).sort((a, b) => b.score - a.score);
+//     setCandidates(newCandidates);
+//   };
+
+//   return (
+//     <div className="w-full h-[300px] bg-slate-900 border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col group hover:border-emerald-500/30 transition-all">
+//       <div className="flex justify-between items-center mb-6">
+//         <div className="flex items-center gap-2">
+//           <Activity className="text-emerald-500 w-4 h-4" />
+//           <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Live Ranking</span>
+//         </div>
+//         <button onClick={shuffle} className="text-[10px] bg-slate-800 hover:bg-slate-700 text-white px-2 py-1 rounded transition-colors">
+//           Shuffle
+//         </button>
+//       </div>
+
+//       <div className="flex-1 space-y-3 relative">
+//         {candidates.map((c, index) => (
+//           <div 
+//             key={c.id}
+//             className="w-full p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-between transition-all duration-500 absolute"
+//             style={{ top: `${index * 60}px`, left: 0, right: 0 }}
+//           >
+//             <div className="flex items-center gap-3">
+//               <div className="text-slate-500 font-mono text-xs w-4">0{index + 1}</div>
+//               <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">
+//                 {c.name.charAt(0)}
+//               </div>
+//               <span className="text-sm text-slate-300 font-bold">{c.name}</span>
+//             </div>
+//             <div className={`text-xs font-bold px-2 py-1 rounded ${index === 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
+//               {c.score}%
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// // Scroll-triggered animation wrapper
+// const ScrollReveal = ({ children, className = "" }) => {
+//   const [isVisible, setIsVisible] = useState(false);
+//   const ref = React.useRef(null);
+
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       ([entry]) => {
+//         if (entry.isIntersecting) {
+//           setIsVisible(true);
+//           observer.unobserve(entry.target);
+//         }
+//       },
+//       { threshold: 0.1 }
+//     );
+
+//     if (ref.current) observer.observe(ref.current);
+//     return () => observer.disconnect();
+//   }, []);
+
+//   return (
+//     <div
+//       ref={ref}
+//       className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${className}`}
+//     >
+//       {children}
+//     </div>
+//   );
+// };
+
+// // Feature Card
+// const FeatureCard = ({ icon: Icon, title, description }) => (
+//   <div className="p-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 transition-all hover:border-indigo-500/40">
+//     <Icon className="w-8 h-8 mb-4 text-indigo-400" />
+//     <h3 className="text-lg font-bold mb-2">{title}</h3>
+//     <p className="text-slate-400 text-sm">{description}</p>
+//   </div>
+// );
+
+// // Main Home Component
+// export default function Home() {
+//   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+//   return (
+//     <div className="min-h-screen bg-[#020617] text-white font-sans overflow-x-hidden selection:bg-indigo-500/30">
+      
+//       {/* Animated Background */}
+//       <div className="fixed inset-0 -z-10">
+//         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-indigo-600/20 rounded-full blur-3xl opacity-20" />
+//         <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-purple-600/20 rounded-full blur-3xl opacity-20" />
+//       </div>
+
+//       {/* Navbar */}
+//       <header className="sticky top-0 z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
+//         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+//           <div className="flex items-center gap-3">
+//             <Cpu className="text-indigo-500 w-6 h-6" />
+//             <span className="text-xl font-black tracking-tight">Axon.</span>
+//           </div>
+          
+//           <nav className="hidden md:flex items-center gap-8">
+//             {["Features", "How It Works", "Pricing"].map((item) => (
+//               <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-sm font-medium text-slate-300 hover:text-indigo-400 transition-colors">
+//                 {item}
+//               </a>
+//             ))}
+//           </nav>
+          
+//           <div className="hidden md:flex gap-3">
+//             <button className="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 transition-colors">
+//               Sign In
+//             </button>
+//             <button className="px-6 py-2 bg-white text-slate-900 font-bold rounded-lg hover:bg-slate-100 transition-all text-sm flex items-center gap-2">
+//               Get Started <ArrowRight size={16} />
+//             </button>
+//           </div>
+
+//           {/* Mobile Menu Button */}
+//           <button 
+//             onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+//             className="md:hidden text-white"
+//           >
+//             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+//           </button>
+//         </div>
+
+//         {/* Mobile Menu */}
+//         {mobileMenuOpen && (
+//           <div className="md:hidden bg-black/80 backdrop-blur-md border-b border-white/10 p-6 space-y-4">
+//             {["Features", "How It Works", "Pricing"].map((item) => (
+//               <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="block text-sm font-medium text-slate-300 hover:text-white transition-colors">
+//                 {item}
+//               </a>
+//             ))}
+//             <div className="flex flex-col gap-3 pt-4">
+//               <button className="w-full px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">
+//                 Sign In
+//               </button>
+//               <button className="w-full px-6 py-2 bg-white text-slate-900 font-bold rounded-lg hover:bg-slate-100 transition-all text-sm flex items-center justify-center gap-2">
+//                 Get Started <ArrowRight size={16} />
+//               </button>
+//             </div>
+//           </div>
+//         )}
+//       </header>
+
+//       {/* Hero Section */}
+//       <section className="relative pt-32 pb-24 px-6 text-center max-w-6xl mx-auto">
+//         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-800 bg-slate-900/50 text-slate-300 text-sm font-bold uppercase tracking-widest mb-8 hover:bg-slate-800 transition-colors cursor-default">
+//           <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+//           Axon OS v1.0
+//         </div>
+
+//         <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 leading-[1.1]">
+//           The Neural Network <br />
+//           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400">
+//             For Hiring.
+//           </span>
+//         </h1>
+
+//         <p className="text-lg md:text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+//           Axon isn't just a job board. It's an intelligence layer that sits between candidates and recruiters, filtering the signal from the noise with AI-powered precision.
+//         </p>
+        
+//         <button className="px-10 py-5 bg-white text-slate-900 font-bold rounded-full text-lg hover:bg-slate-100 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto">
+//           Initialize System <ArrowRight size={20} />
+//         </button>
+//       </section>
+
+//       {/* Stats Section */}
+//       <section className="max-w-7xl mx-auto px-6 py-20 border-y border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8">
+//         {[
+//           { number: "500K+", label: "Evaluations Done" },
+//           { number: "10K+", label: "Matched Pairs" },
+//           { number: "95%", label: "Accuracy Rate" },
+//           { number: "24/7", label: "AI Available" }
+//         ].map((stat, i) => (
+//           <ScrollReveal key={i}>
+//             <div className="text-center">
+//               <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-2">
+//                 {stat.number}
+//               </div>
+//               <div className="text-slate-400 text-sm uppercase tracking-widest">{stat.label}</div>
+//             </div>
+//           </ScrollReveal>
+//         ))}
+//       </section>
+
+//       {/* Interactive Storyboard */}
+//       <div className="max-w-7xl mx-auto px-6 py-24 space-y-32">
+        
+//         {/* Story 1: Signal vs Noise */}
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-2 gap-16 items-center">
+//             <div className="space-y-6">
+//               <div className="inline-block w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-indigo-500/30 text-xl">0</div>
+//               <h2 className="text-4xl md:text-5xl font-bold">Signal vs. Noise.</h2>
+//               <p className="text-slate-400 text-lg leading-relaxed">
+//                 90% of a recruiter's time is spent sifting through noise—bad formats, irrelevant skills, and bias. Axon filters this out instantly, leaving only the pure signal: <strong>Talent.</strong>
+//               </p>
+//               <p className="text-slate-500 text-sm">💡 <strong>Tip:</strong> Click the button in the demo to see how our AI filter works in real-time.</p>
+//             </div>
+//             <SignalDemo />
+//           </div>
+//         </ScrollReveal>
+
+//         {/* Story 2: Smart Ingestion */}
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-2 gap-16 items-center">
+//             <div className="order-2 md:order-1">
+//               <DigitizerDemo />
+//             </div>
+//             <div className="order-1 md:order-2 space-y-6">
+//               <div className="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-indigo-500/30 text-xl">1</div>
+//               <h2 className="text-4xl md:text-5xl font-bold">Smart Ingestion.</h2>
+//               <p className="text-slate-400 text-lg leading-relaxed">
+//                 We treat resumes as raw data input. Our engine scans PDFs and converts them into structured digital profiles in milliseconds, extracting key information automatically.
+//               </p>
+//               <p className="text-slate-500 text-sm">💡 <strong>Tip:</strong> Click the resume card to see data extraction in action.</p>
+//             </div>
+//           </div>
+//         </ScrollReveal>
+
+//         {/* Story 3: Neural Matching */}
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-2 gap-16 items-center">
+//             <div className="space-y-6">
+//               <div className="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-purple-500/30 text-xl">2</div>
+//               <h2 className="text-4xl md:text-5xl font-bold">Neural Matching.</h2>
+//               <p className="text-slate-400 text-lg leading-relaxed">
+//                 Keywords aren't enough. We calculate the semantic distance between a candidate's history and your job requirements using advanced AI algorithms. A match is only made when the connection is strong.
+//               </p>
+//               <p className="text-slate-500 text-sm">💡 <strong>Tip:</strong> Hover over the demo to see the neural connection activate.</p>
+//             </div>
+//             <SynapseDemo />
+//           </div>
+//         </ScrollReveal>
+
+//         {/* Story 4: Dynamic Ranking */}
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-2 gap-16 items-center">
+//             <div className="order-2 md:order-1">
+//               <LeaderboardDemo />
+//             </div>
+//             <div className="order-1 md:order-2 space-y-6">
+//               <div className="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-white font-bold border border-emerald-500/30 text-xl">3</div>
+//               <h2 className="text-4xl md:text-5xl font-bold">Dynamic Ranking.</h2>
+//               <p className="text-slate-400 text-lg leading-relaxed">
+//                 Stop sorting by "Date Applied." Axon delivers a live, score-weighted leaderboard. The best candidates automatically float to the top based on their match quality.
+//               </p>
+//               <p className="text-slate-500 text-sm">💡 <strong>Tip:</strong> Click the Shuffle button to see candidates re-rank dynamically.</p>
+//             </div>
+//           </div>
+//         </ScrollReveal>
+
+//       </div>
+
+//       {/* Features Section */}
+//       <section id="features" className="max-w-7xl mx-auto px-6 py-24 border-t border-white/10">
+//         <ScrollReveal className="text-center mb-20">
+//           <h2 className="text-5xl md:text-6xl font-black mb-4">Powerful Features</h2>
+//           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+//             Everything you need to build world-class teams with AI intelligence
+//           </p>
+//         </ScrollReveal>
+
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-3 gap-6">
+//             <FeatureCard icon={Brain} title="AI Interview Bot" description="Practice unlimited interviews with intelligent AI that simulates real technical conversations and provides detailed feedback." />
+//             <FeatureCard icon={BarChart3} title="Smart Analytics" description="Real-time insights into hiring metrics, candidate quality scores, and performance trends." />
+//             <FeatureCard icon={Zap} title="Instant Screening" description="Automated resume parsing and skill matching in milliseconds." />
+//             <FeatureCard icon={Shield} title="Secure Data" description="Enterprise-grade security with encrypted storage and GDPR compliance." />
+//             <FeatureCard icon={TrendingUp} title="Growth Metrics" description="Track hiring performance and build analytics dashboards for your team." />
+//             <FeatureCard icon={Activity} title="Live Updates" description="Real-time candidate tracking and instant notifications." />
+//           </div>
+//         </ScrollReveal>
+//       </section>
+
+//       {/* How It Works Section */}
+//       <section id="how-it-works" className="max-w-7xl mx-auto px-6 py-24 border-t border-white/10">
+//         <ScrollReveal className="text-center mb-20">
+//           <h2 className="text-5xl md:text-6xl font-black">How It Works</h2>
+//         </ScrollReveal>
+
+//         <ScrollReveal>
+//           <div className="grid md:grid-cols-3 gap-12">
+//             {[
+//               { number: "1", title: "Upload", description: "Post jobs or import candidate profiles to the system" },
+//               { number: "2", title: "AI Analyzes", description: "Automated screening with semantic skill matching" },
+//               { number: "3", title: "Get Results", description: "AI-scored candidates ranked by compatibility" }
+//             ].map((step, i) => (
+//               <div key={i} className="relative group">
+//                 <div className="text-7xl font-black text-white/5 mb-4 group-hover:text-white/10 transition-colors">{step.number}</div>
+//                 <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
+//                 <p className="text-slate-400">{step.description}</p>
+//                 {i < 2 && <ArrowRight className="hidden md:block absolute -right-8 top-8 text-indigo-500/30 w-8 h-8" />}
+//               </div>
+//             ))}
+//           </div>
+//         </ScrollReveal>
+//       </section>
+
+//       {/* CTA Section */}
+//       <section className="max-w-7xl mx-auto px-6 py-24 border-t border-white/10 text-center">
+//         <ScrollReveal className="space-y-8">
+//           <h2 className="text-5xl md:text-6xl font-black">Ready to Transform Your Hiring?</h2>
+//           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+//             Join thousands of companies using Axon to build exceptional teams with AI intelligence.
+//           </p>
+//           <button className="px-10 py-5 bg-white text-slate-900 font-bold rounded-full text-lg hover:bg-slate-100 transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto">
+//             Start Free Trial <ArrowRight size={20} />
+//           </button>
+//         </ScrollReveal>
+//       </section>
+
+//       {/* Footer */}
+//       <footer className="py-12 border-t border-slate-800 bg-[#010409]">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="grid md:grid-cols-4 gap-12 mb-12">
+//             <div>
+//               <div className="flex items-center gap-2 mb-4">
+//                 <Cpu className="text-indigo-500 w-6 h-6" />
+//                 <span className="text-white font-black text-xl">Axon.</span>
+//               </div>
+//               <p className="text-slate-500 text-sm">Neural network for modern hiring</p>
+//             </div>
+//             {[
+//               { title: "Product", links: ["Features", "Pricing", "Security"] },
+//               { title: "Company", links: ["About", "Blog", "Careers"] },
+//               { title: "Legal", links: ["Privacy", "Terms", "Contact"] }
+//             ].map((col, i) => (
+//               <div key={i}>
+//                 <h4 className="font-bold mb-4 text-sm uppercase text-slate-300">{col.title}</h4>
+//                 <ul className="space-y-2">
+//                   {col.links.map((link) => (
+//                     <li key={link}><a href="#" className="text-sm text-slate-500 hover:text-white transition-colors">{link}</a></li>
+//                   ))}
+//                 </ul>
+//               </div>
+//             ))}
+//           </div>
+//           <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-600">
+//             <p>© 2024 AXON. All rights reserved.</p>
+//             <p>System Status: <span className="text-emerald-400 font-semibold">Operational</span></p>
+//           </div>
+//         </div>
+//       </footer>
+
+//     </div>
+//   );
+// }

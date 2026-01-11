@@ -217,7 +217,7 @@ function AIBot() {
       abortControllerRef.current = new AbortController();
       try {
         // const response = await fetch("http://localhost:5000/api/ai/generate-questions-stream", {
-        const response = await fetch(`${API_BASE_URL}/ai/generate-questions-stream`, {
+        const response = await fetch(`${API_BASE_URL}/api/ai/generate-questions-stream`, {
 
           method: "POST",
           headers: {

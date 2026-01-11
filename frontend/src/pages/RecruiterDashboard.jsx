@@ -2585,15 +2585,51 @@ function RecruiterDashboard() {
                     </p>
                 </div>
 
-                <div className="bg-[#020617] p-5 rounded-xl border border-slate-800">
+                {/* <div className="bg-[#020617] p-5 rounded-xl border border-slate-800">
                     <h4 className="text-slate-500 font-bold text-[10px] uppercase mb-4 tracking-widest">Deterministic Scoring Math</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Skills</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.skillScore || 0}/60</div></div>
                         <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Experience</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.expScore || 0}/30</div></div>
                         <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">Integrity</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">{currentAnalysis.breakdown?.integrityScore || 0}/10</div></div>
-                        <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">System</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">10/10</div></div>
-                    </div>
-                </div>
+                        {/* <div><p className="text-[9px] text-slate-600 font-bold mb-1 uppercase">System</p><div className="bg-slate-900 border border-slate-800 p-2 rounded text-sm font-bold text-indigo-400">10/10</div></div> */}
+                    {/* </div> */}
+                {/* </div> */} 
+
+
+                <div className="bg-[#020617] p-4 rounded-xl border border-slate-800/50 shadow-inner">
+  <div className="flex items-center gap-2 mb-3">
+    <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
+    <h4 className="text-slate-500 font-bold text-[9px] uppercase tracking-[0.2em]"> Deterministic Engine</h4>
+  </div>
+
+  <div className="grid grid-cols-3 gap-2">
+    {/* Skills */}
+    <div className="bg-slate-900/50 border border-slate-800 p-2 rounded-lg flex flex-col items-center">
+      <p className="text-[12px] text-slate-600 font-bold uppercase mb-1">Skills</p>
+      <div className="text-xsl font-mono font-black text-indigo-400">
+        {currentAnalysis.breakdown?.skillScore || 0}<span className="text-[15px] opacity-40 ml-0.5">/60</span>
+      </div>
+    </div>
+
+    {/* Experience */}
+    <div className="bg-slate-900/50 border border-slate-800 p-2 rounded-lg flex flex-col items-center">
+      <p className="text-[12px] text-slate-500 font-bold uppercase mb-1">Exp</p>
+      <div className="text-xsl font-mono font-black text-indigo-400">
+        {currentAnalysis.breakdown?.expScore || 0}<span className="text-[15px] opacity-40 ml-0.5">/30</span>
+      </div>
+    </div>
+
+    {/* Integrity - Fix the key to integrityScore */}
+    <div className="bg-slate-900/50 border border-slate-800 p-2 rounded-lg flex flex-col items-center">
+      <p className="text-[12px] text-slate-500 font-bold uppercase mb-1">Links</p>
+      <div className="text-xsl font-mono font-black text-emerald-400">
+        {currentAnalysis.breakdown?.integrityScore || 0}<span className="text-[15px] opacity-40 ml-0.5">/10</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+                
 
                 {currentModalApp.resumeUrl && (
                 <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center justify-between">

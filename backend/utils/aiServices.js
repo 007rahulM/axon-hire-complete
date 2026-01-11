@@ -56,7 +56,7 @@ async function generateJSON(systemPrompt, userPrompt) {
   try {
     console.log("🤖 Carousel Attempt 1: OpenRouter (DeepSeek)...");
     const completion = await openai.chat.completions.create({
-      model:  "meta-llama/llama-3.3-70b-instruct:free",
+      model: "mistralai/mistral-7b-instruct:free",
       messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
       temperature: 0.1,
       response_format: { type: "json_object" }

@@ -478,7 +478,7 @@ function AIBot() {
                       ))}
                     </div>
                   </section>
-                  <section>
+                  {/* <section>
                     <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-6"><span className="p-2 rounded-lg bg-pink-500/10 text-pink-500"><Code size={20} /></span>Implementation</h3>
                     <div className="bg-[#020617] rounded-2xl border border-slate-800 overflow-hidden shadow-inner">
                       <div className="flex gap-2 px-4 py-3 bg-[#0f172a] border-b border-slate-800">
@@ -488,7 +488,28 @@ function AIBot() {
                       </div>
                       <pre className="p-6 overflow-x-auto text-sm font-mono text-indigo-100/90 leading-loose">{jsonOutput.codeSolution}</pre>
                     </div>
-                  </section>
+                  </section> */}
+
+                  <section>
+  <h3 className="text-2xl font-bold text-white flex items-center gap-3 mb-6">
+    <span className="p-2 rounded-lg bg-pink-500/10 text-pink-500"><Code size={20} /></span>
+    Implementation
+  </h3>
+  <div className="bg-[#020617] rounded-2xl border border-slate-800 overflow-hidden shadow-inner">
+    {/* Terminal Header */}
+    <div className="flex gap-2 px-4 py-3 bg-[#0f172a] border-b border-slate-800">
+      <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+      <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+      <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+    </div>
+    {/* Using ReactMarkdown to make it look "Very Good" and grow naturally */}
+    <div className="p-6 text-sm font-mono text-indigo-100/90">
+      <ReactMarkdown>
+        {`\`\`\`javascript\n${jsonOutput.codeSolution}\n\`\`\``}
+      </ReactMarkdown>
+    </div>
+  </div>
+</section>
                 </div>
               </div>
             )}

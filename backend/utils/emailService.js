@@ -185,6 +185,38 @@ const sendInterviewEmail = async (user, jobTitle, company, details) => {
   await sendEmail(user.email, subject, html);
 };
 
+// backend/utils/emailService.js
+
+// ... existing code ...
+
+// --- 📧 6. ADMIN FEEDBACK EMAIL ---
+const sendFeedbackEmail = async (userEmail, userName, category, message) => {
+  const subject = `New User Feedback: ${category}`;
+  const adminEmail = process.env.EMAIL_USER; // Sends to yourself
+
+  const body = `
+    <div class="status-box">
+      <h3 style="margin: 0 0 10px 0; color: #4f46e5;">📩 New Feedback Received</h3>
+      <p><strong>From:</strong> ${userName} (${userEmail})</p>
+      <p><strong>Category:</strong> ${category}</p>
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+      <p style="white-space: pre-wrap;">${message}</p>
+    </div>
+  `;
+
+  const html = createTemplate("Feedback Received", body, null, null);
+  await sendEmail(adminEmail, subject, html);
+};
+
+// Update exports at the bottom
+module.exports = { 
+    sendWelcomeEmail, 
+    sendApplicationEmail, 
+    sendStatusUpdateEmail, 
+    sendOtpEmail, 
+    sendInterviewEmail,
+    sendFeedbackEmail // 👈 Add this
+};
 
 // Don't forget to add it to exports!
-module.exports = { sendWelcomeEmail, sendApplicationEmail, sendStatusUpdateEmail, sendOtpEmail, sendInterviewEmail };
+module.exports = { sendWelcomeEmail, sendApplicationEmail, sendStatusUpdateEmail, sendOtpEmail, sendInterviewEmail ,sendFeedbackEmail};

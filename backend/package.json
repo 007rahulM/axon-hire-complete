@@ -15,6 +15,7 @@
     "@react-oauth/google": "^0.13.4",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
+    "canvas": "^3.2.1",
     "cloudinary": "^1.41.3",
     "cohere-ai": "^7.20.0",
     "cors": "^2.8.5",

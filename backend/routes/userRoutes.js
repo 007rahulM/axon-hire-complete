@@ -142,6 +142,8 @@ const upload = require("../middleware/uploadMiddleware"); // LEGACY: CLOUDINARY 
 const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
+const { sendFeedbackEmail } = require("../utils/emailService");
+
 
 // --- CLOUDINARY CONFIGURATION FOR AVATARS ---
 // We assume you have the same packages installed as your legacy uploader:
@@ -320,5 +322,25 @@ router.get("/saved-jobs", verifyToken, async (req, res) => {
   }
 });
 
+// ==========================================
+// 📩 USER FEEDBACK ROUTE
+// ==========================================
+router.post("/feedback", verifyToken, async (req, res) => {
+  try {
+    const { category, message } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!message) return res.status(400).json({ message: "Message is required" });
+
+    // Send the email to you (the admin)
+    await sendFeedbackEmail(user.email, user.name, category, message);
+
+    res.json({ success: true, message: "Feedback sent successfully! Thank you." });
+  } catch (err) {
+    console.error("Feedback Error:", err);
+    res.status(500).json({ message: "Failed to send feedback" });
+  }
+});
 
 module.exports = router;

@@ -24,6 +24,8 @@ import AdminRoute from "./routes/AdminRoute";//import the admin route security
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import SavedJobs from "./pages/SavedJobs"; // 👈 IMPORT THIS
 
+import Feedback from "./pages/Feedback";
+
 /*
 // function App() {
 //   //state for tracking login
@@ -128,6 +130,8 @@ function App(){
      <Route path="/ai-bot" element={<AIBot/>}/>
      <Route path="/my-applications" element={<MyApplications/>}/>
     <Route path="/post-job" element={<AdminPostJob />} />
+
+    <Route path="/feedback" element={<Feedback/>}/>
 
     </Route>
 

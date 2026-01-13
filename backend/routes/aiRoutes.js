@@ -330,7 +330,8 @@ async function performAnalysis(resumeUrl, jobId, mode = "auto") {
     let providerName = "Local-V3";
 
     // 1. AI EXTRACTION PHASE (Try Carousel for Beta/Auto)
-    if (mode === "beta" || mode === "auto") {
+    // if (mode === "beta" || mode === "auto") {
+    if (mode === "beta" || mode === "auto" || mode === "ai") {
       
       // ✅ FIXED PROMPT (No more typos or invalid JSON)
       const systemPrompt = `
@@ -491,7 +492,9 @@ RETURN VALID JSON ONLY (no markdown, no code fences):
         // 🚀 FORCE SYNC: Ensure both keys exist so UI always finds the number
         matchScore: finalAnalysis.score, 
         score: finalAnalysis.score,
-        summary: extractedFacts.summary,
+        // summary: extractedFacts.summary,
+        summary: extractedFacts.summary, // 👈 Ensure this is here
+        discoveredSkills: extractedFacts.learningDiscovery || [], // 👈 Add this for the Learning Loop
         metadata: { 
           provider: providerName, 
           status: "SUCCESS", 
@@ -896,5 +899,7 @@ SCHEMA:
     res.status(500).json({ message: "Entity extraction failed.", detail: err.message });
   }
 });
+
+router.performAnalysis = performAnalysis;
 module.exports = router;
 

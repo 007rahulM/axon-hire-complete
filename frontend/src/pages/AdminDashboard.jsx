@@ -185,7 +185,7 @@ const paginatedData = filteredData.slice(
   );
 
   return (
-<div className="min-h-screen bg-[#020617] p-4 md:p-12 pt-44 text-white overflow-hidden relative font-sans">
+<div className="min-h-screen bg-[#020617] p-4 md:p-17 pt-44 text-white overflow-hidden relative font-sans">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto space-y-8">
@@ -193,8 +193,8 @@ const paginatedData = filteredData.slice(
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-slate-800 pb-6 gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">ADMIN <span className="text-indigo-500">NEXUS</span></h1>
-            <p className="text-slate-400 font-mono text-xs mt-2 tracking-widest uppercase">System Control v2.0 • Active</p>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">ADMIN <span className="text-indigo-500">CONTROL</span></h1>
+            <p className="text-slate-400 font-mono text-xs mt-2 tracking-widest uppercase">System Control • Actived</p>
           </div>
           <button onClick={fetchData} className="p-2 bg-slate-800 rounded-full hover:bg-indigo-600 transition-colors shadow-lg hover:shadow-indigo-500/50"><RefreshIcon /></button>
         </div>

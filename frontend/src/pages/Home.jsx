@@ -215,7 +215,7 @@ function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-indigo-900/10 to-transparent blur-[120px] -z-10 pointer-events-none"></div>
         
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-800 bg-slate-900/50 text-slate-300 text-sm font-bold uppercase tracking-widest mb-8 hover:bg-slate-800 transition-colors cursor-default">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             Axon is Live
         </div>
 
@@ -245,7 +245,7 @@ function Home() {
           {/* MOTO: SIGNAL vs NOISE */}
           <div className="grid md:grid-cols-2 gap-16 items-center">
              <div className="space-y-6">
-                 <h2 className="text-4xl md:text-5xl font-bold">Signal vs. Noise.</h2>
+                 <h2 className="text-4xl md:text-5xl font-bold">Signal vs Noise</h2>
                  <p className="text-slate-400 text-lg leading-relaxed">
                      90% of a recruiter's time is spent sifting through noise—bad formats, irrelevant skills, and bias. Axon filters this out instantly, leaving only the pure signal: <strong>Talent</strong>
                  </p>

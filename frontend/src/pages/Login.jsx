@@ -51,7 +51,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-[#020617] px-4">
       
       {/* LOGIN CARD */}
-      <div className="w-full max-w-md bg-[#0f172a] rounded-2xl shadow-2xl border border-slate-800 relative overflow-hidden">
+      <div className="w-full max-w-md bg-[#0f172a] rounded-2xl shadow-2xl border border-slate-800 relative overflow-hidden mt-10">
         
         {/* Top Gradient Accent (The "Glow") */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>

@@ -4,12 +4,14 @@ import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
 // 👇 NEW IMPORT: Google Button Component
 import { GoogleLogin } from '@react-oauth/google';
+import { Eye,EyeOff } from "lucide-react";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const[showPassword,setShowPassword]=useState(false);
   
   const navigate = useNavigate();
   // 👇 UPDATE: Get googleLogin from context
@@ -80,24 +82,36 @@ function Login() {
                 className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
             </div>
-
-            {/* Password Field */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-                  Password
-                </label>
-                {/* Optional: Add Forgot Password link here later */}
-              </div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              />
-            </div>
+{/* Password Field */}
+<div className="relative">
+  <div className="flex justify-between items-center mb-2">
+    <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 tracking-wider">
+      Password
+    </label>
+  </div>
+  
+  <div className="relative">
+    <input
+      // 👁️ Logic: toggle between "text" and "password"
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="••••••••"
+      required
+      // 🎨 Theme: use bg-slate-50 for light mode and bg-slate-950 for dark
+ className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+    />
+    
+    {/* The Toggle Button */}
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+    >
+      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+    </button>
+  </div>
+</div>
 
             {/* Error Message */}
             {error && (

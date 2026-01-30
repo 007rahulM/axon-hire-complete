@@ -16,10 +16,15 @@ import axios from "axios";
 // If we are in "production" (deployed), use the Render URL.
 // If we are in "development" (localhost), use localhost:5000.
 // This way, you never have to manually switch it again.
-const baseURL = import.meta.env.MODE === "production"
-  // ? "https://axon-hire.onrender.com/api"
-  ? "https://axon-hire-mvp.onrender.com/api"
-  : "http://localhost:5000/api";
+
+
+//==================================================
+// const baseURL = import.meta.env.MODE === "production"
+//   // ? "https://axon-hire.onrender.com/api"
+//   ? "https://axon-hire-mvp.onrender.com/api"
+//   : "http://localhost:5000/api";
+
+const baseURL = "https://axon-hire-mvp.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,

@@ -34,6 +34,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 
 const { refreshSkillCache } = require("./utils/skillMap");
+const interviewRoutes=require("./routes/interviewRoutes");
+
 
 
 // --- 3. INITIALIZE THE APP ---
@@ -46,10 +48,11 @@ const app = express();
 app.use(
   cors({
     origin: [
+      // "https://axon-hire.vercel.app"
+      "https://axon-hire-complete-mvp.vercel.app",
       "http://localhost:5173",
       "http://localhost:5174",
-      // "https://axon-hire.vercel.app"
-      "https://axon-hire-complete-mvp.vercel.app"
+      
     ],
     methods: "GET,POST,PUT,DELETE,PATCH",
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -108,6 +111,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/alerts", alertRoutes);
+
+app.use("/api/interview",interviewRoutes);
 
 // --- 7. MONGODB CONNECTION ---
 // Connect to the MongoDB database using the secret URL from our .env file

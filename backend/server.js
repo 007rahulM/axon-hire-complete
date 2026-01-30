@@ -34,7 +34,7 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 
 const { refreshSkillCache } = require("./utils/skillMap");
-const interviewRoutes=require("./routes/interviewRoutes");
+//const interviewRoutes=require("./routes/interviewRoutes");
 
 
 
@@ -112,7 +112,7 @@ app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/alerts", alertRoutes);
 
-app.use("/api/interview",interviewRoutes);
+//app.use("/api/interview",interviewRoutes);
 
 // --- 7. MONGODB CONNECTION ---
 // Connect to the MongoDB database using the secret URL from our .env file

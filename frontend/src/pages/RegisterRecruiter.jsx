@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; 
 import axiosInstance from "../api/axiosInstance";
-
+import { Eye, EyeOff } from "lucide-react";
 // --- ICONS ---
 const UserIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -29,6 +29,9 @@ function RegisterRecruiter() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  // New visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -104,7 +107,7 @@ function RegisterRecruiter() {
                   <input type="email" placeholder="rahul@company.com" value={email} onChange={(e) => setEmail(e.target.value)} required
                     className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"/>
                 </div>
-                <div>
+                {/* <div>
                   <label className="block mb-2 text-xs font-bold uppercase text-slate-500 tracking-wider">Password</label>
                   <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required
                     className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"/>
@@ -113,7 +116,54 @@ function RegisterRecruiter() {
                   <label className="block mb-2 text-xs font-bold uppercase text-slate-500 tracking-wider">Confirm Password</label>
                   <input type="password" placeholder="••••••••" value={confirm} onChange={(e) => setConfirm(e.target.value)} required
                     className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"/>
-                </div>
+                </div> */}
+                {/* Password Field */}
+<div className="relative">
+  <label className="block mb-2 text-xs font-bold uppercase text-slate-500 tracking-wider">
+    Password
+  </label>
+  <div className="relative">
+    <input 
+      type={showPassword ? "text" : "password"} 
+      placeholder="••••••••" 
+      value={password} 
+      onChange={(e) => setPassword(e.target.value)} 
+      required
+      className="w-full p-3.5 pr-12 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
+
+{/* Confirm Password Field */}
+<div className="relative">
+  <label className="block mb-2 text-xs font-bold uppercase text-slate-500 tracking-wider">
+    Confirm Password
+  </label>
+  <div className="relative">
+    <input 
+      type={showConfirm ? "text" : "password"} 
+      placeholder="••••••••" 
+      value={confirm} 
+      onChange={(e) => setConfirm(e.target.value)} 
+      required
+      className="w-full p-3.5 pr-12 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirm(!showConfirm)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+    >
+      {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
               </div>
             </div>
 

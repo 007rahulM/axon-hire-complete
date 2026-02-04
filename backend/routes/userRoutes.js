@@ -1,138 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-// const verifyToken = require("../middleware/authMiddleware");
-// const upload = require("../middleware/uploadMiddleware"); // Your Resume Uploader
-// const User = require("../models/User");
-// const multer = require("multer");
-// const path = require("path");
-// const fs = require("fs");
-
-// // --- 1. LOCAL IMAGE UPLOAD CONFIG (For Avatars) ---
-// // Fix: Ensure folder exists to prevent crash
-// const uploadDir = path.join(__dirname, "../uploads");
-// if (!fs.existsSync(uploadDir)) {
-//     fs.mkdirSync(uploadDir, { recursive: true });
-// }
-
-// const avatarStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, uploadDir); 
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, "avatar-" + Date.now() + path.extname(file.originalname));
-//   },
-// });
-
-// const avatarUpload = multer({ 
-//   storage: avatarStorage,
-//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-//   fileFilter: (req, file, cb) => {
-//     const filetypes = /jpeg|jpg|png|webp/;
-//     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-//     const mimetype = filetypes.test(file.mimetype);
-//     if (mimetype && extname) return cb(null, true);
-//     cb(new Error("Images Only!"));
-//   }
-// });
-
-// // ==========================================
-// // 🟢 AVATAR UPLOAD ROUTE (The New Feature)
-// // ==========================================
-// router.post("/upload-avatar", verifyToken, avatarUpload.single("avatar"), async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id);
-//     if (!user) return res.status(404).json({ message: "User not found" });
-
-//     // Save relative path
-//     const avatarUrl = `/uploads/${req.file.filename}`;
-    
-//     user.profilePicture = avatarUrl;
-//     await user.save();
-
-//     res.json({ message: "Avatar updated!", profilePicture: avatarUrl });
-//   } catch (err) {
-//     console.error("Avatar Upload Error:", err);
-//     res.status(500).json({ message: "Image upload failed" });
-//   }
-// });
-
-// // ==========================================
-// // 🟢 RESUME UPLOAD (Your Legacy Logic - Untouched)
-// // ==========================================
-// router.post("/upload-resume", verifyToken, (req, res) => {
-//     const uploadSingle = upload.single("resume");
-
-//     uploadSingle(req, res, async (err) => {
-//         if (err) {
-//             console.error("Upload Middleware Error:", err);
-//             return res.status(500).json({ message: "File upload failed", error: err.message });
-//         }
-
-//         try {
-//             if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-
-//             const cloudUrl = req.file.path;
-//             const user = await User.findById(req.user.id);
-//             if (!user) return res.status(404).json({ message: "User not found" });
-            
-//             user.resumeUrl = cloudUrl;
-//             await user.save();
-
-//             res.status(200).json({
-//                 message: "Resume uploaded successfully",
-//                 user: user,
-//                 resumeUrl: cloudUrl,
-//             });
-
-//         } catch (dbErr) {
-//             console.error("Database Error:", dbErr.message);
-//             res.status(500).json({ message: "Server error during database save" });
-//         }
-//     });
-// });
-
-// // ==========================================
-// // 🟢 PROFILE DATA ROUTES
-// // ==========================================
-
-// router.get("/profile", verifyToken, async (req, res) => {
-//     try {
-//         const user = await User.findById(req.user.id).select("-password");
-//         if (!user) return res.status(404).json({ message: "User not found" });
-//         res.json(user);
-//     } catch (err) {
-//         console.error("Profile error:", err.message);
-//         res.status(500).json({ message: "Server error" });
-//     }
-// });
-
-// // Use this for saving Title/Bio/Skills/Avatar
-// router.put("/update-profile", verifyToken, async (req, res) => {
-//   try {
-//     const { title, about, skills, experience, profilePicture } = req.body;
-    
-//     const user = await User.findById(req.user.id);
-//     if (!user) return res.status(404).json({ message: "User not found" });
-
-//     // Only update fields that are actually sent
-//     if (title !== undefined) user.title = title;
-//     if (about !== undefined) user.about = about;
-//     if (skills !== undefined) user.skills = skills;
-//     if (experience !== undefined) user.experience = experience;
-//     if (profilePicture !== undefined) user.profilePicture = profilePicture;
-
-//     await user.save();
-    
-//     const updatedUser = await User.findById(req.user.id).select("-password");
-//     res.json({ message: "Profile updated successfully!", user: updatedUser });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: "Server Error" });
-//   }
-// });
-
-// module.exports = router;
-
 
 
 const express = require("express");
@@ -172,7 +37,7 @@ const avatarCloudStorage = new CloudinaryStorage({
 const avatarUpload = multer({ storage: avatarCloudStorage });
 
 // ==========================================
-// 🟢 AVATAR UPLOAD ROUTE (NOW USES CLOUDINARY)
+//  AVATAR UPLOAD ROUTE (NOW USES CLOUDINARY)
 // ==========================================
 router.post("/upload-avatar", verifyToken, avatarUpload.single("avatar"), async (req, res) => {
   try {
@@ -193,7 +58,7 @@ router.post("/upload-avatar", verifyToken, avatarUpload.single("avatar"), async 
 });
 
 // ==========================================
-// 🟢 RESUME UPLOAD (LEGACY - CLOUDINARY)
+// RESUME UPLOAD (LEGACY - CLOUDINARY)
 // ==========================================
 // This uses the 'upload' middleware imported at the top. 
 // WE DO NOT TOUCH THIS LOGIC.
@@ -232,7 +97,7 @@ router.post("/upload-resume", verifyToken, (req, res) => {
 });
 
 // ==========================================
-// 🟢 PROFILE DATA ROUTES
+// PROFILE DATA ROUTES
 // ==========================================
 
 router.get("/profile", verifyToken, async (req, res) => {
@@ -274,7 +139,7 @@ router.put("/update-profile", verifyToken, async (req, res) => {
 
 
 // ==========================================
-// 🟢 SAVED JOBS FEATURE
+//  SAVED JOBS FEATURE
 // ==========================================
 
 //  Toggle Save/Unsave Job
@@ -323,7 +188,7 @@ router.get("/saved-jobs", verifyToken, async (req, res) => {
 });
 
 // ==========================================
-// 📩 USER FEEDBACK ROUTE
+// USER FEEDBACK ROUTE
 // ==========================================
 router.post("/feedback", verifyToken, async (req, res) => {
   try {

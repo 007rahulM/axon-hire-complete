@@ -15,6 +15,9 @@ const cors = require("cors");
 
 const path=require("path"); //import path 
 const fs=require("fs");//import file system tool
+const helmet=require("helmet"); //import helmet for security headers
+
+
 
 // --- 2. IMPORT OUR ROUTE FILES ---
 // We import the "mini-apps" we wrote for Auth, Jobs, and AI
@@ -42,6 +45,8 @@ const { refreshSkillCache } = require("./utils/skillMap");
 // Create the main Express application "app"
 const app = express();
 
+
+
 // --- 4. MIDDLEWARE SETUP ---
 // 'app.use()' means "run this on EVERY request that comes in"
 // Use CORS to allow requests from any origin (e.g., your React app)
@@ -62,16 +67,22 @@ app.use(
 
 // Use Express's built-in JSON parser. This lets our server read the JSON data you send from Postman/React.
 app.use(express.json());
-//this server all files from the uploads filder as static files
-//it means if we have a file at uploads/my-resume.pdf
-//we can access it in the browsesr at"http://locahost:500/uploads/mu-resume.pdf
-//print path we are trying to serve
-const uploadsPath = path.join(__dirname, "uploads");
-console.log("SERVER STARTUP: Serving files from ->", uploadsPath);
+
+//use before the you use middleware list
+app.use(helmet()); //set security headers
 
 
-//server folder explicitly
-app.use("/uploads",express.static(uploadsPath));
+//this is old route for the upload just kept for the refernce 
+// //this server all files from the uploads filder as static files
+// //it means if we have a file at uploads/my-resume.pdf
+// //we can access it in the browsesr at"http://locahost:500/uploads/mu-resume.pdf
+// //print path we are trying to serve
+// const uploadsPath = path.join(__dirname, "uploads");
+// console.log("SERVER STARTUP: Serving files from ->", uploadsPath);
+
+
+// //server folder explicitly
+// app.use("/uploads",express.static(uploadsPath));
 
 
 
@@ -116,19 +127,18 @@ app.use("/api/alerts", alertRoutes);
 
 // --- 7. MONGODB CONNECTION ---
 // Connect to the MongoDB database using the secret URL from our .env file
-// --- 7. MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(async () => {
-    console.log("✅ Connected to MongoDB successfully");
+    console.log(" Connected to MongoDB successfully");
     
-    // 🧠 INITIALIZE THE BRAIN
+    //  INITIALIZE THE BRAIN
     // This loads all 500+ skills from the DB into server memory
     await refreshSkillCache(); 
   }) 
-  .catch((err) => console.log("❌ MongoDB connection error:", err.message));
+  .catch((err) => console.log(" MongoDB connection error:", err.message));
 
 // --- 8. START THE SERVER ---
 // Get the port number from the .env file, or just use 5000 if it's not defined

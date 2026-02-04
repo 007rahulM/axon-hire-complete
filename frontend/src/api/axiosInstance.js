@@ -19,15 +19,16 @@ import axios from "axios";
 
 
 //==================================================
-// const baseURL = import.meta.env.MODE === "production"
-//   // ? "https://axon-hire.onrender.com/api"
-//   ? "https://axon-hire-mvp.onrender.com/api"
-//   : "http://localhost:5000/api";
+const baseURL = import.meta.env.MODE === "production"
+  // ? "https://axon-hire.onrender.com/api"
+  ? "https://axon-hire-mvp.onrender.com/api"
+  : "http://localhost:5000/api";
 
-const baseURL = "https://axon-hire-mvp.onrender.com/api";
+// const baseURL = "https://axon-hire-mvp.onrender.com/api";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
+  timeout: 10000, // 10 seconds timeout
   headers: {
     "Content-Type": "application/json",
   },

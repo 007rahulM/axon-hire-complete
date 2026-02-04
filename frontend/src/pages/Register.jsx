@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
+import { Eye, EyeOff } from 'lucide-react';
 
 function Register() {
   const [step, setStep] = useState(1); // 1 = Register Form, 2 = OTP Form
@@ -10,6 +11,8 @@ function Register() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
   // Handle Input Changes
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -124,7 +127,7 @@ function Register() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-2 text-xs font-bold uppercase text-slate-400 tracking-wider">Password</label>
                   <input
@@ -149,7 +152,62 @@ function Register() {
                     className="w-full p-3.5 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                   />
                 </div>
-              </div>
+              </div> */}
+              {/* Password Field */}
+       {/* Password Grid */}
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+  
+  {/* Password Field */}
+  <div className="relative">
+    <label className="block mb-2 text-xs font-bold uppercase text-slate-400 tracking-wider">
+      Password
+    </label>
+    <div className="relative">
+      <input
+        name="password"
+        type={showPassword ? "text" : "password"}
+        placeholder="••••••••"
+        value={formData.password}
+        onChange={handleChange}
+        required
+        className="w-full p-3.5 pr-12 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+      >
+        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
+  </div>
+
+  {/* Confirm Password Field */}
+  <div className="relative">
+    <label className="block mb-2 text-xs font-bold uppercase text-slate-400 tracking-wider">
+      Confirm
+    </label>
+    <div className="relative">
+      <input
+        name="confirm"
+        type={showConfirmPassword ? "text" : "password"}
+        placeholder="••••••••"
+        value={formData.confirm}
+        onChange={handleChange}
+        required
+        className="w-full p-3.5 pr-12 rounded-xl bg-[#020617] border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+      />
+      <button
+        type="button"
+        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition-colors"
+      >
+        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
+  </div>
+
+</div>
 
               <button
                 type="submit"

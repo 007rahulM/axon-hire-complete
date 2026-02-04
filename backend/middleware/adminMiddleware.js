@@ -2,9 +2,9 @@ const adminMiddleware = (req, res, next) => {
   try {
     const role = req.user.role;
 
-    console.log("user Id:", req.user.id);
-    console.log("user role:", req.user.role);
-    console.log(`security check: User role is '${role}'`);
+    // console.log("user Id:", req.user.id);
+    // console.log("user role:", req.user.role);
+    // console.log(`security check: User role is '${role}'`);
 
     // Allow only recruiter or admin
     if (role !== "admin" && role !== "recruiter") {

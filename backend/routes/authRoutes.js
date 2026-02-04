@@ -11,7 +11,7 @@ const { sendWelcomeEmail, sendOtpEmail } = require("../utils/emailService"); // 
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyToken = require("../middleware/authMiddleware");
-
+const crypto=require("crypto");
 // --- 1. REGISTER (Step 1: Send OTP) ---
 router.post("/register", async (req, res) => {
   try {
@@ -24,7 +24,10 @@ router.post("/register", async (req, res) => {
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    //cnage the opt from the old match.random to more sercur one crypto 
+    const otp=crypto.randomInt(100000,999999).toString();
     const otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes from now
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -80,38 +83,6 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-// // --- 3. LOGIN (Check Verification) ---
-// router.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-
-//     if (!user) return res.status(400).json({ message: "User not found" });
-
-//     // 🔒 SECURITY CHECK: Is account verified?
-//     if (!user.isVerified) {
-//       return res.status(403).json({ message: "Please verify your email first." });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-//     const token = jwt.sign(
-//       { id: user._id, email: user.email, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "12h" }
-//     );
-
-//     res.status(200).json({
-//       message: "Login successful",
-//       token,
-//       user: { id: user._id, name: user.name, email: user.email, role: user.role },
-//     });
-//   } catch (err) {
-//     console.error("Login Error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
 
 
 //-- 2   new recruiter register route
@@ -208,7 +179,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// 🎯 ROUTE: POST /api/auth/google (FIXED & DEBUGGED)
+//  POST /api/auth/google 
 router.post("/google", async (req, res) => {
   try {
     // Debug log to see exactly what frontend sent
@@ -216,7 +187,7 @@ router.post("/google", async (req, res) => {
 
     const { token } = req.body;
     
-    // 🛑 SAFETY CHECK: Don't crash if token is missing
+    //  Don't crash if token is missing
     if (!token) {
         console.error("❌ Error: No token found in request body.");
         return res.status(400).json({ message: "No token provided" });
@@ -275,14 +246,14 @@ router.post("/google", async (req, res) => {
 });
 
 // ------------------------------------------------------------------
-// 🚀 NEW ROUTE: UPGRADE USER TO RECRUITER (Onboarding)
+// NEW ROUTE: UPGRADE USER TO RECRUITER (Onboarding)
 // ------------------------------------------------------------------
-// --- 5. 🚀 NEW RECRUITER ONBOARDING ROUTE ---
+// --- 5. NEW RECRUITER ONBOARDING ROUTE ---
 // Inside backend/routes/authRoutes.js
 
 router.put("/onboard-recruiter", verifyToken, async (req, res) => {
   try {
-    // 👇 UPDATED: Extract new fields
+    //  Extract new fields
     const { companyName, contactEmail, website, description, logo, size, industry, location } = req.body;
     const userId = req.user.id;
 
@@ -301,7 +272,7 @@ router.put("/onboard-recruiter", verifyToken, async (req, res) => {
       contactEmail,
       website,
       description,
-      // 👇 Save new fields
+      // Save new fields
       logo: logo || "",
       size: size || "",
       industry: industry || "",

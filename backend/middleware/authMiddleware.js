@@ -5,7 +5,7 @@ const verifyToken = (req, res, next) => {
   console.log(" Incoming headers:", req.headers);
   //extra token from the authorization header
   const authHeader = req.headers["authorization"]; // 🎯 Correct spelling
-  console.log("Authorization header:", req.headers["authorization"]);
+  // console.log("Authorization header:", req.headers["authorization"]);
 
   //token usually comes as bearer <token>
   const token = authHeader && authHeader.split(" ")[1];

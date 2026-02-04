@@ -1,6 +1,7 @@
 //this file defineds how a "user" looks in MongoDB(a schema)
 
 //import mongoose to create schema
+const { min } = require("moment");
 const mongoose = require("mongoose");
 
 //create user schema(structure of a user document)
@@ -17,6 +18,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: false,
+    min:6, //minimum length 6 chars
   },
   googleId: {
     type: String, // 👈 ADD THIS

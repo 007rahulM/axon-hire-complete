@@ -1,7 +1,7 @@
 const { getSkillWeight } = require("./skillMap");
 
 /**
- * 🎯 AXON V3 STABLE ENGINE
+ *
  * Stops "Node.js" vs "Nodejs" mismatch and filters junk links.
  */
 const calculateV3Score = (candidateData, jobRequirements, targetMonths = 24) => {
@@ -14,7 +14,7 @@ const calculateV3Score = (candidateData, jobRequirements, targetMonths = 24) => 
 
   // 🚀 FIX 1: Punctuation-Proof Normalization
   // This turns "Node.js" and "Nodejs" both into "nodejs" for matching.
-  const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normalize = (str) => str.replace(/[^a-z0-9+#]/g, "");
   const foundSkillsNormalized = (candidateData.skills || []).map(s => normalize(s));
 
   // 1. SKILLS CALCULATION (60 Points Max)
@@ -41,7 +41,7 @@ const calculateV3Score = (candidateData, jobRequirements, targetMonths = 24) => 
   const months = Number(candidateData.totalMonths) || 0;
   expPoints = months >= targetMonths ? 30 : (months / targetMonths) * 30;
 
-  // 🚀 FIX 2: Portfolio Link Filter
+
   // Only counts GitHub, Vercel, Netlify, Render, or Portfolio links.
   const portfolioKeywords = ['github', 'vercel', 'netlify', 'portfolio', 'render', 'io', 'onrender'];
   const validLinks = (candidateData.links || []).filter(link => 
@@ -61,7 +61,7 @@ const calculateV3Score = (candidateData, jobRequirements, targetMonths = 24) => 
     matchedSkills,
     missingRequiredSkills: missingSkills,
     professionalMonths: months,
-    uniqueLinksFound: validLinks.length, // 🟢 Now only counts REAL portfolios
+    uniqueLinksFound: validLinks.length, 
     breakdown: {
       skillScore: Math.round(skillPoints),
       expScore: Math.round(expPoints),

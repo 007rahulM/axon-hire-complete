@@ -78,9 +78,11 @@
 // export const useAuth = () => useContext(AuthContext);
 
 
+
 // frontend/src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 // 1. Create the context "box"
 const AuthContext = createContext();
@@ -149,25 +151,21 @@ export const AuthProvider = ({ children }) => {
 // 👇 FIX: Accepts token string properly
   const googleLogin = async (googleToken) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: googleToken }),
-      });
+      // const res = await fetch("http://localhost:5000/api/auth/google", {
+      const res=await axiosInstance.post("/auth/google", { token: googleToken });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        login(data.user, data.token);
-        navigate("/"); 
-      } else {
-        console.error("Backend login failed:", data.message);
+      //axios puts the response data in .data
+      const data=res.data;
+        
+      if(res.status==200||res.status==201){
+        login(data.user,data.token);
+        navigate("/");
       }
-    } catch (error) {
-      console.error("Error connecting to backend:", error);
+    }catch(err){
+      console.error("Google login error:", TypeError.response?.data?.message || err.message);
+      throw err;//thorow os login.jsx can catch and show the error message 
     }
   };
-
 
 //   // 7. Provide all these values to the entire app
 //   return (

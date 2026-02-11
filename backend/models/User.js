@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: false,
-    min:6, //minimum length 6 chars
+    minlength:6, //minimum length 6 chars
   },
   googleId: {
     type: String, // 👈 ADD THIS

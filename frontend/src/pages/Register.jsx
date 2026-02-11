@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
   const [step, setStep] = useState(1); // 1 = Register Form, 2 = OTP Form
@@ -45,21 +46,26 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       setLoading(false);
     }
   };
-
+const { login } = useAuth();
   // --- STEP 2: VERIFY OTP ---
-  const handleVerify = async (e) => {
+const handleVerify = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     setLoading(true);
 
     try {
-      await axiosInstance.post("/auth/verify-otp", { 
+      const res = await axiosInstance.post("/auth/verify-otp", { 
         email: formData.email, 
         otp 
       });
-      setSuccess("Account verified! Redirecting...");
-      setTimeout(() => navigate("/login"), 1500);
+      
+      // 🛠 FIX: Auto-login instead of redirecting to login page
+      const { user, token } = res.data;
+      login(user, token);
+
+      setSuccess("Account verified! Welcome.");
+      setTimeout(() => navigate("/"), 1500); // Redirect to Home
     } catch (err) {
       setError(err.response?.data?.message || "Invalid or Expired Code");
     } finally {

@@ -2,6 +2,7 @@
 
 // 1. Import axios library
 import axios from "axios";
+import { API_BASE_URL } from "./config"; // Import the base URL from config.js
 
 // 2. Create an axios instance so we can preconfigure it
 //const axiosInstance = axios.create({
@@ -18,17 +19,17 @@ import axios from "axios";
 // This way, you never have to manually switch it again.
 
 
-//==================================================
-const baseURL = import.meta.env.MODE === "production"
-  // ? "https://axon-hire.onrender.com/api"
-  ? "https://axon-hire-mvp.onrender.com/api"
-  : "http://localhost:5000/api";
+// //==================================================
+// const baseURL = import.meta.env.MODE === "production"
+//   // ? "https://axon-hire.onrender.com/api"
+//   ? "https://axon-hire-mvp.onrender.com/api"
+//   : "http://localhost:5000/api";
 
 // const baseURL = "https://axon-hire-mvp.onrender.com/api";
 
 const axiosInstance = axios.create({
-  baseURL: baseURL,
-  timeout: 10000, // 10 seconds timeout
+  baseURL: `${API_BASE_URL}/api`,
+  timeout: 30000, // 30 seconds timeout
   headers: {
     "Content-Type": "application/json",
   },

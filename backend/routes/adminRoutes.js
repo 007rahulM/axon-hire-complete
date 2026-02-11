@@ -25,7 +25,7 @@ const isAdmin = async (req, res, next) => {
 const protectAdmin = [verifyToken, isAdmin];
 
 // ==========================================
-// 📊 DASHBOARD STATS
+
 // ==========================================
 router.get("/stats", protectAdmin, async (req, res) => {
   try {
@@ -87,7 +87,7 @@ router.put("/users/:id/role", protectAdmin, async (req, res) => {
 });
 
 // ==========================================
-// 💼 JOB MANAGEMENT
+
 // ==========================================
 
 // Get All Jobs
@@ -114,7 +114,7 @@ router.delete("/jobs/:id", protectAdmin, async (req, res) => {
 });
 
 // ==========================================
-// 📄 APPLICATION MANAGEMENT
+
 // ==========================================
 
 // Get All Applications

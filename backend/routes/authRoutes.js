@@ -13,41 +13,94 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyToken = require("../middleware/authMiddleware");
 const crypto=require("crypto");
 // --- 1. REGISTER (Step 1: Send OTP) ---
+// router.post("/register", async (req, res) => {
+//   try {
+//     const { name, email, password, confirm } = req.body;
+
+//     if (!name || !email || !password || !confirm) return res.status(400).json({ message: "Fill all fields" });
+//     if (password !== confirm) return res.status(400).json({ message: "Passwords do not match" });
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) return res.status(400).json({ message: "User already exists" });
+
+//     // Generate 6-digit OTP
+//     // const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+//     //cnage the opt from the old match.random to more sercur one crypto 
+//     const otp=crypto.randomInt(100000,999999).toString();
+//     const otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes from now
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = new User({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       isVerified: false, // Not verified yet
+//       otp,
+//       otpExpires
+//     });
+
+//     await newUser.save();
+    
+//     // Send the Code
+//     await sendOtpEmail(email, otp);
+
+//     res.status(201).json({ message: "OTP sent to email", email: email });
+
+//   } catch (err) {
+//     console.error("Register Error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// --- 1. REGISTER (Step 1: Send OTP) ---
 router.post("/register", async (req, res) => {
   try {
+    // 🛠 FIX 1: Corrected typo 'passowrd' to 'password'
     const { name, email, password, confirm } = req.body;
 
-    if (!name || !email || !password || !confirm) return res.status(400).json({ message: "Fill all fields" });
-    if (password !== confirm) return res.status(400).json({ message: "Passwords do not match" });
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
-
-    // Generate 6-digit OTP
-    // const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    //cnage the opt from the old match.random to more sercur one crypto 
-    const otp=crypto.randomInt(100000,999999).toString();
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes from now
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-      isVerified: false, // Not verified yet
-      otp,
-      otpExpires
-    });
-
-    await newUser.save();
+    // 🛠 FIX 2: Ensure all check variables match the destructured names
+    if (!name || !email || !password || !confirm) {
+      return res.status(400).json({ message: "Fill all fields" });
+    }
     
-    // Send the Code
-    await sendOtpEmail(email, otp);
+    if (password !== confirm) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
 
-    res.status(201).json({ message: "OTP sent to email", email: email });
+    // Check if user exists and if they are verified
+    let user = await User.findOne({ email });
 
+    if (user) {
+      if (user.isVerified) {
+        return res.status(400).json({ message: "User already exists and is verified. Please login" });
+      }
+      
+      // If unverified, update their details so they can try again (Idempotent Registration)
+      user.name = name;
+      user.password = await bcrypt.hash(password, 10);
+    } else {
+      // Create a brand new user record
+      user = new User({
+        name,
+        email,
+        password: await bcrypt.hash(password, 10),
+        isVerified: false // 🛠 FIX 3: Corrected 'isVerifiedLfalse' typo
+      });
+    }
+
+    // Secure OTP generation using crypto
+    const otp = crypto.randomInt(100000, 999999).toString();
+    user.otp = otp;
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes
+
+    await user.save();
+
+    // Send email after saving so we have a record to verify against 
+    await sendOtpEmail(email, otp); //
+    
+    res.status(200).json({ message: "OTP sent to email", email: email });
   } catch (err) {
     console.error("Register Error:", err);
     res.status(500).json({ message: "Server error" });
@@ -57,7 +110,7 @@ router.post("/register", async (req, res) => {
 // --- 2. VERIFY OTP (Step 2: Activate Account) ---
 router.post("/verify-otp", async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp ,companyData } = req.body;
     
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
@@ -73,64 +126,134 @@ router.post("/verify-otp", async (req, res) => {
     user.otpExpires = undefined;
     await user.save();
 
+    //laxy initialization:Create Company profile only after verification 
+    if(user.role==="recruiter" && companyData){
+      const newCompany=new Company({
+        owner:user._id,
+        name:companyData.companyName,
+        contactEmail:companyData.contactEmail,
+        website:companyData.website||"",
+        description:companyData.companyDescription||""
+      });
+      await newCompany.save();
+      console.log(`Verified Recruiter: ${user.email} | Created Company:${companyData.companyName}`);
+    }
+  const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+
     // Send the nice Welcome Email now
     await sendWelcomeEmail(user);
-
-    res.status(200).json({ message: "Account verified successfully!" });
+res.status(200).json({ 
+      message: "Account verified successfully!",
+      token, 
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
 
   } catch (err) {
+    console.error("Verification Error:",err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 
 
-//-- 2   new recruiter register route
-router.post("/register-recruiter",async(req,res)=>{
-  try{
-    // extract the data from the request body
-    const {name,email,password,confirm,companyName,contactEmail,website,companyDescription}=req.body;
-    //we accept use info and company info
-    if(!name ||!email||!password||!confirm||!companyName ||!contactEmail){
-      return res.status(400).json({message:"Please enter all required fields"});
+//-- 2. New Recruiter Register Route
+router.post("/register-recruiter", async (req, res) => {
+  try {
+    // Extract data from the request body
+    const { name, email, password, confirm } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !confirm) {
+      return res.status(400).json({ message: "Please enter all required fields" });
     }
-    //check if user exists
-    const existingUser=await User.findOne({email});
-    if(existingUser) return res.status(400).json({message:"User already exists"});
 
-    // create the user role:recruiter
-    const hashedPassword=await bcrypt.hash(password,10);
-    const newUser=new User(
-      {name,email,password:hashedPassword,confirm,role:"recruiter" } //here force role to be recruiter
-    );
-    const savedUser=await newUser.save();
+    if (password !== confirm) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
 
-    // create the company linled to the user
-    const newCompany=new Company({
-      owner:savedUser._id,  //link to the new recruiter
-      name:companyName,
-      contactEmail:contactEmail,
-      website:website ||"",
-      description:companyDescription || ""  
+    // CHECK IF USER EXISTS
+    // We use 'let' here because we might need to reassign 'user' if they don't exist yet
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // If user exists and is already verified, stop them.
+      if (user.isVerified) {
+        return res.status(400).json({ message: "Account already exists. Please login" });
+      }
+
+      // If unverified, update their info to allow retrying (Idempotent)
+      user.name = name;
+      user.password = await bcrypt.hash(password, 10);
+    } else {
+      // CREATE NEW USER (Recruiter)
+      user = new User({
+        name,
+        email,
+        password: await bcrypt.hash(password, 10),
+        role: "recruiter", // Explicitly set role
+        isVerified: false
+      });
+    }
+
+    // GENERATE OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    user.otp = otp;
     
-    });
+    // Set Expiration: 10 minutes (10 * 60s * 1000ms)
+    user.otpExpires = Date.now() + 10 * 60 * 1000; 
 
-    await newCompany.save();
-    //send success response auto-login logic
-    const payload={ id:savedUser._id,email:savedUser.email,role:savedUser.role};
-    const token=jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:"12h"});
+    await user.save();
+    
+    // Send email
+    await sendOtpEmail(email, otp);
 
-    res.status(201).json({
-      message:"Recruiter registered successfully",
-      token,
-      user:{id:savedUser._id,name:savedUser.name,email:savedUser.email,role:savedUser.role},
-      Company:newCompany
-    });
-   }catch(err){
-    console.error("Recruiter registration error:",err);
-    res.status(500).json({message:"Server error during registration"});
-   }
+    // Response: 200 OK. 
+    // We do NOT send a token here, so the user is NOT logged in yet.
+    res.status(200).json({ message: "Recruiter OTP sent", email });
+
+  } catch (err) {
+    console.error("Recruiter Register Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
+
+//     // create the user role:recruiter
+//     const hashedPassword=await bcrypt.hash(password,10);
+//     const newUser=new User(
+//       {name,email,password:hashedPassword,confirm,role:"recruiter" } //here force role to be recruiter
+//     );
+//     const savedUser=await newUser.save();
+
+//     // create the company linled to the user
+//     const newCompany=new Company({
+//       owner:savedUser._id,  //link to the new recruiter
+//       name:companyName,
+//       contactEmail:contactEmail,
+//       website:website ||"",
+//       description:companyDescription || ""  
+    
+//     });
+
+//     await newCompany.save();
+//     //send success response auto-login logic
+//     const payload={ id:savedUser._id,email:savedUser.email,role:savedUser.role};
+//     const token=jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:"12h"});
+
+//     res.status(201).json({
+//       message:"Recruiter registered successfully",
+//       token,
+//       user:{id:savedUser._id,name:savedUser.name,email:savedUser.email,role:savedUser.role},
+//       Company:newCompany
+//     });
+//    }catch(err){
+//     console.error("Recruiter registration error:",err);
+//     res.status(500).json({message:"Server error during registration"});
+//    }
+// });
 
 
 
@@ -145,6 +268,17 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" }); // This is the 400 Bad Request you see
     
+//we check isVerified before we run bcrypt.compare
+//this saves cpu resorces on unverifed accounts
+if(!user.isVerified){
+  return res.status(403).json({
+    message:"Please verify your email before logging in ",
+    isVerified:false,
+    email:user.email
+  });
+}
+
+
     //comapre password with hashed one
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)

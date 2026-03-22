@@ -18,6 +18,10 @@ const fs=require("fs");//import file system tool
 const helmet=require("helmet"); //import helmet for security headers
 
 
+const rateLimit=require("express-rate-limit"); //import rate limiter to prevent brute force attacks
+
+
+
 
 // --- 2. IMPORT OUR ROUTE FILES ---
 // We import the "mini-apps" we wrote for Auth, Jobs, and AI
@@ -40,6 +44,12 @@ const { refreshSkillCache } = require("./utils/skillMap");
 //const interviewRoutes=require("./routes/interviewRoutes");
 
 
+
+//add request logging middleware 
+const morgan=require("morgan");
+const logger=require("./utils/logger");
+
+logger.info("Server initializing...");
 
 // --- 3. INITIALIZE THE APP ---
 // Create the main Express application "app"
@@ -68,8 +78,13 @@ app.use(
 // Use Express's built-in JSON parser. This lets our server read the JSON data you send from Postman/React.
 app.use(express.json());
 
+
+
 //use before the you use middleware list
 app.use(helmet()); //set security headers
+
+//morgan with our winston stream
+app.use(morgan('combined',{stream:logger.stream}));
 
 
 //this is old route for the upload just kept for the refernce 
@@ -85,6 +100,38 @@ app.use(helmet()); //set security headers
 // app.use("/uploads",express.static(uploadsPath));
 
 
+//general api limiter (optional, can be applied globally)
+const limiter=rateLimit({
+  windowMs:15*60*1000, //15 mins
+  max:100, //limit each ip to 100 requests per windowMs
+  message:{
+    message:"Too many requests from this IP, please try again later."
+  },
+});
+
+// //apply to all routes
+// app.use(limiter);
+
+//apply rater limiter for specific end points
+app.use("/api/jobs",limiter);
+app.use("/api/ai",limiter);
+app.use("/api/applications",limiter);
+app.use("/api/admin",limiter);
+app.use("/api/notifications",limiter);
+app.use("/api/alerts",limiter);
+app.use("/api/users",limiter);
+
+
+//stricter limiter for auth endpoints
+const authLimiter=rateLimit({
+  windowMs:15*60*1000,  //15 minutes
+  max:5,//only 5 attempts per ip 
+  message:{
+    message:"Too many login attempts , please try again later"
+  },
+});
+
+app.use("/api/auth", authLimiter);
 
 app.use("/api/users",userRoutes)
 
@@ -125,6 +172,31 @@ app.use("/api/alerts", alertRoutes);
 
 //app.use("/api/interview",interviewRoutes);
 
+
+
+
+
+
+
+
+
+//eroor middleware i just dont wanted to create another all call here so i write right here 
+//404 handler
+app.use((req,res,next)=>{
+  res.status(404).json({message:"Not Found"});
+
+});
+
+//global erro handler
+app.use((err,req,res,next)=>{
+  logger.error(`Unhandled error:${err.message}`,{stack:err.stack,url:req.url});
+  res.status(500).json({message:"Internal Server Error"});
+});
+ 
+
+
+
+
 // --- 7. MONGODB CONNECTION ---
 // Connect to the MongoDB database using the secret URL from our .env file
 mongoose.connect(process.env.MONGO_URI, {
@@ -145,3 +217,4 @@ mongoose.connect(process.env.MONGO_URI, {
 const PORT = process.env.PORT || 5000;
 // Tell the app to start "listening" for requests on our port
 app.listen(PORT, () => console.log(` server stared on http://localhost:${PORT}`));
+logger.info(`🚀 Server started on port ${PORT} with logging`);

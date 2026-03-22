@@ -1,6 +1,12 @@
 # Ignore node modules
 node_modules/
 
+#ingnore log fileslogs/
+*.log
+*.log.gz
+#ingnore lgo folder which is in the backend folder 
+
+
 # Environment files
 .env
 .env.local

@@ -12,54 +12,30 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyToken = require("../middleware/authMiddleware");
 const crypto=require("crypto");
-// --- 1. REGISTER (Step 1: Send OTP) ---
-// router.post("/register", async (req, res) => {
-//   try {
-//     const { name, email, password, confirm } = req.body;
+const {body,validationResult}=require("express-validator");
+const logger=require("../utils/logger");
 
-//     if (!name || !email || !password || !confirm) return res.status(400).json({ message: "Fill all fields" });
-//     if (password !== confirm) return res.status(400).json({ message: "Passwords do not match" });
+router.post("/register",[
+  body('name').notEmpty().withMessage('Name is required'),
+    body("email").notEmpty().withMessage("Valid email is required"),
+    body("password").isLength({min:6}).withMessage("Password must be at least 6 characters"),
+    body("confirm").custom((value,{req})=>value===req.body.password).withMessage("Password do not match"),
+  
+], async (req, res) => {
 
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) return res.status(400).json({ message: "User already exists" });
+//check validation results
+const erros=validationResult(req);
+if(!erros.isEmpty()){
+  return res.status(400).json({errors:erros.array()});
+}
 
-//     // Generate 6-digit OTP
-//     // const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-//     //cnage the opt from the old match.random to more sercur one crypto 
-//     const otp=crypto.randomInt(100000,999999).toString();
-//     const otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes from now
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const newUser = new User({
-//       name,
-//       email,
-//       password: hashedPassword,
-//       isVerified: false, // Not verified yet
-//       otp,
-//       otpExpires
-//     });
-
-//     await newUser.save();
-    
-//     // Send the Code
-//     await sendOtpEmail(email, otp);
-
-//     res.status(201).json({ message: "OTP sent to email", email: email });
-
-//   } catch (err) {
-//     console.error("Register Error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
-// --- 1. REGISTER (Step 1: Send OTP) ---
-router.post("/register", async (req, res) => {
   try {
+
+    
     // 🛠 FIX 1: Corrected typo 'passowrd' to 'password'
     const { name, email, password, confirm } = req.body;
-
+    
     // 🛠 FIX 2: Ensure all check variables match the destructured names
     if (!name || !email || !password || !confirm) {
       return res.status(400).json({ message: "Fill all fields" });
@@ -68,7 +44,9 @@ router.post("/register", async (req, res) => {
     if (password !== confirm) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
-
+    //logger .info  of attempting to user register 
+    logger.info(`New user registration attempt: ${email}`);
+    
     // Check if user exists and if they are verified
     let user = await User.findOne({ email });
 
@@ -102,6 +80,10 @@ router.post("/register", async (req, res) => {
     
     res.status(200).json({ message: "OTP sent to email", email: email });
   } catch (err) {
+
+    //on error logger
+    logger.error(`Registration failed for ${email}: ${err.message}`);
+
     console.error("Register Error:", err);
     res.status(500).json({ message: "Server error" });
   }
@@ -161,7 +143,21 @@ res.status(200).json({
 
 
 //-- 2. New Recruiter Register Route
-router.post("/register-recruiter", async (req, res) => {
+router.post("/register-recruiter",[
+body('name').notEmpty().withMessage("Name is required"),
+body("email").isEmail().withMessage("Valid email is required"),
+body("password").isLength({min:6}).withMessage("Password must be at least 6 characters"),
+body("confirm").custom((value,{req})=>value==req.body.password).withMessage("Passwords do not match"),
+
+],
+   async (req, res) => {
+
+    //check validation results
+    const erros=validationResult(req);
+    if(!erros.isEmpty()){
+      return res.status(400).json({erros:erros.array()});
+    }
+
   try {
     // Extract data from the request body
     const { name, email, password, confirm } = req.body;
@@ -260,7 +256,18 @@ router.post("/register-recruiter", async (req, res) => {
 
 
 // login with JWT
-router.post("/login", async (req, res) => {
+router.post("/login",[
+  body("email").isEmail().withMessage("Valid email is required"),
+  body("password").isLength({min:6}).withMessage("Password must be at least 6 characters")
+
+], async (req, res) => {
+
+  //check validation results
+  const erros=validationResult(req);
+  if(!erros.isEmpty()){
+    logger.error(`Validation failed :${JSON.stringify(errors.array())}`,{email:req.body.email});
+    return res.status(400).json({errors:erros.array()});
+  }
   try {
     const { email, password } = req.body;
 
@@ -385,7 +392,23 @@ router.post("/google", async (req, res) => {
 // --- 5. NEW RECRUITER ONBOARDING ROUTE ---
 // Inside backend/routes/authRoutes.js
 
-router.put("/onboard-recruiter", verifyToken, async (req, res) => {
+router.put("/onboard-recruiter", [
+  body("companyName").notEmpty().withMessage("Company Name is required"),
+  body("contactEmail").isEmail().withMessage("Valid company emial is required"),
+  body("website").optional().isURL().withMessage("Valid URL is required for website"),
+  body("description").optional().isLength({ max: 500 }).withMessage("Description can be up to 500 characters long"),
+
+],
+  
+  verifyToken, async (req, res) => {
+
+
+    //check validation results
+    const erros=validationResult(req);
+    if(!erros.isEmpty()){
+      return res.status(400).json({erros:erros.array()});
+    }
+
   try {
     //  Extract new fields
     const { companyName, contactEmail, website, description, logo, size, industry, location } = req.body;

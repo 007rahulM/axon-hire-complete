@@ -71,5 +71,9 @@ const userSchema = new mongoose.Schema({
   otpExpires: { type: Date } // Code expires in 10 mins
 });
 
+//indexing for faster accessing
+userSchema.index({ email: 1 });//to quickly find a user by email (for login)
+userSchema.index({ savedJobs: 1 }); //to quickly find all users who saved a particular job
+
 //export the model to use in other files
 module.exports = mongoose.model("User", userSchema);

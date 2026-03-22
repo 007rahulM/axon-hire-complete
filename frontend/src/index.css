@@ -1,41 +1,488 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Light Mode (Minimalist) */
-    --background: 0 0% 100%;    /* Pure White */
-    --foreground: 222.2 84% 4.9%; /* Deep Slate text */
-    --border: 214.3 31.8% 91.4%; /* Light gray borders */
-    --accent: 210 40% 96.1%;    /* Very subtle gray */
-  }
+/* ─────────────────────────────────────────
+   DESIGN TOKENS
+   These CSS variables are the single source
+   of truth for every color in the app.
+   Light mode = default, dark mode = [data-theme="dark"]
+───────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-page:      #f5f4f1;
+  --bg-surface:   #ffffff;
+  --bg-hover:     #f0eeea;
+  --bg-subtle:    #f8f7f4;
 
-  .dark {
-    /* Dark Mode (Professional Slate) */
-    --background: 222.2 84% 4.9%; 
-    --foreground: 210 40% 98%;    
-    --border: 217.2 32.6% 17.5%;
-    --accent: 217.2 32.6% 12%;
-  }
+  /* Borders */
+  --border:       #e2dfd8;
+  --border-strong:#c9c6be;
 
-  html,
-  body,
-  #root {
-    /* Instead of hardcoded slate, we use our new variables */
-    @apply bg-background text-foreground min-h-screen antialiased transition-colors duration-300;
-  }
+  /* Text */
+  --text-1: #111110;
+  --text-2: #4a4845;
+  --text-3: #8a8783;
+
+  /* Brand */
+  --accent:     #0057b8;
+  --accent-h:   #004494;
+  --accent-bg:  #e8f0fb;
+  --accent-mid: #b0ccf5;
+
+  /* Status */
+  --green:      #186534;
+  --green-bg:   #eaf5ee;
+  --orange:     #b45309;
+  --orange-bg:  #fef3e2;
+  --red:        #991b1b;
+  --red-bg:     #fef2f2;
+  --purple:     #5b21b6;
+  --purple-bg:  #ede9fe;
+  --cyan:       #0e7490;
+  --cyan-bg:    #ecfeff;
+
+  /* Surfaces */
+  --nav-bg:     #ffffff;
+  --sidebar-bg: #ffffff;
+  --modal-overlay: rgba(17,17,16,0.55);
+
+  /* Shadows */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow:     0 4px 16px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.05);
+
+  /* Radius */
+  --r-sm:  4px;
+  --r:     8px;
+  --r-lg:  10px;
+  --r-xl:  12px;
 }
 
-/* --- PROFESSIONAL SCROLLBAR --- */
+/* ─── DARK MODE ─── */
+[data-theme="dark"],
+.dark {
+  --bg-page:      #0d0d0c;
+  --bg-surface:   #161615;
+  --bg-hover:     #1e1e1c;
+  --bg-subtle:    #121211;
+  --border:       #2a2a28;
+  --border-strong:#3d3d3a;
+  --text-1: #f0eeea;
+  --text-2: #a8a49e;
+  --text-3: #5c5a55;
+  --accent:     #4a9eff;
+  --accent-h:   #6ab0ff;
+  --accent-bg:  #0d2340;
+  --accent-mid: #1a4070;
+  --green:      #4ade80;
+  --green-bg:   #052e16;
+  --orange:     #fb923c;
+  --orange-bg:  #2c1400;
+  --red:        #f87171;
+  --red-bg:     #2c0000;
+  --purple:     #a78bfa;
+  --purple-bg:  #1e1040;
+  --cyan:       #22d3ee;
+  --cyan-bg:    #083344;
+  --nav-bg:     #111110;
+  --sidebar-bg: #111110;
+  --modal-overlay: rgba(0,0,0,0.75);
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.3);
+  --shadow:     0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.6);
+}
+
+/* ─────────────────────────────────────────
+   BASE RESET
+───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-1);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ─────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px; /* Slightly thinner for a cleaner look */
+  width: 5px;
+  height: 5px;
 }
-
 ::-webkit-scrollbar-track {
-  @apply bg-background; /* Matches the theme background automatically */
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-3);
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+/* ─────────────────────────────────────────
+   TYPOGRAPHY UTILITIES
+   Use these instead of Tailwind text classes
+   so dark mode works automatically
+───────────────────────────────────────── */
+.ax-h1 { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.035em; line-height: 1.15; color: var(--text-1); }
+.ax-h2 { font-size: 1.5rem;  font-weight: 600; letter-spacing: -0.025em; color: var(--text-1); }
+.ax-h3 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.015em; color: var(--text-1); }
+.ax-body { font-size: 0.875rem; color: var(--text-2); line-height: 1.65; }
+.ax-caption { font-size: 0.75rem; color: var(--text-3); }
+.ax-label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); }
+.ax-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+/* ─────────────────────────────────────────
+   SURFACE UTILITIES
+───────────────────────────────────────── */
+.ax-surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
 }
+.ax-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.25rem;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.ax-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────
+   BUTTON SYSTEM
+───────────────────────────────────────── */
+.ax-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 0.4375rem 1rem; border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif; font-size: 0.8125rem; font-weight: 500;
+  cursor: pointer; border: none; transition: all 0.15s; white-space: nowrap;
+  text-decoration: none;
+}
+.ax-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ax-btn-primary {
+  background: var(--accent); color: #fff;
+}
+.ax-btn-primary:hover:not(:disabled) { background: var(--accent-h); }
+
+.ax-btn-outline {
+  background: var(--bg-surface); color: var(--text-1);
+  border: 1px solid var(--border-strong);
+}
+.ax-btn-outline:hover:not(:disabled) {
+  border-color: var(--accent); color: var(--accent); background: var(--accent-bg);
+}
+
+.ax-btn-ghost {
+  background: transparent; color: var(--text-2);
+}
+.ax-btn-ghost:hover:not(:disabled) { background: var(--bg-hover); color: var(--text-1); }
+
+.ax-btn-danger {
+  background: var(--red-bg); color: var(--red);
+  border: 1px solid transparent;
+}
+.ax-btn-danger:hover:not(:disabled) { opacity: 0.85; }
+
+/* ─────────────────────────────────────────
+   INPUT SYSTEM
+───────────────────────────────────────── */
+.ax-input {
+  width: 100%; padding: 0.5625rem 0.875rem;
+  background: var(--bg-surface); color: var(--text-1);
+  border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif; font-size: 0.8125rem;
+  outline: none; transition: border-color 0.15s;
+}
+.ax-input::placeholder { color: var(--text-3); }
+.ax-input:focus { border-color: var(--accent); }
+.ax-input:disabled { opacity: 0.5; cursor: not-allowed; background: var(--bg-subtle); }
+
+.ax-label-text {
+  display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-2);
+  margin-bottom: 0.375rem;
+}
+
+/* ─────────────────────────────────────────
+   BADGE / STATUS PILLS
+───────────────────────────────────────── */
+.ax-badge {
+  display: inline-flex; align-items: center; padding: 0.125rem 0.5rem;
+  border-radius: 3px; font-size: 0.6875rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+.ax-badge-blue   { background: var(--accent-bg);  color: var(--accent); }
+.ax-badge-green  { background: var(--green-bg);   color: var(--green); }
+.ax-badge-orange { background: var(--orange-bg);  color: var(--orange); }
+.ax-badge-red    { background: var(--red-bg);     color: var(--red); }
+.ax-badge-purple { background: var(--purple-bg);  color: var(--purple); }
+.ax-badge-cyan   { background: var(--cyan-bg);    color: var(--cyan); }
+.ax-badge-gray   { background: var(--bg-subtle);  color: var(--text-3); }
+
+/* ─────────────────────────────────────────
+   LOGO COMPONENT
+   Reusable — import in Navbar + Footer
+───────────────────────────────────────── */
+.ax-logo {
+  display: flex; align-items: center; gap: 9px; cursor: pointer; text-decoration: none;
+}
+.ax-logo-mark {
+  width: 28px; height: 28px; flex-shrink: 0;
+}
+.ax-logo-mark svg {
+  width: 28px; height: 28px;
+}
+.ax-logo-text {
+  font-size: 1.0625rem; font-weight: 700; color: var(--text-1);
+  letter-spacing: -0.03em; line-height: 1; white-space: nowrap;
+}
+.ax-logo-text span { color: var(--accent); }
+
+/* ─────────────────────────────────────────
+   NAVBAR
+───────────────────────────────────────── */
+.ax-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg); border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.ax-nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;
+  display: flex; align-items: center; height: 54px;
+}
+.ax-nav-links { display: flex; align-items: center; margin-left: 2rem; }
+.ax-nav-link {
+  display: flex; align-items: center; height: 54px; padding: 0 0.875rem;
+  font-size: 0.8125rem; font-weight: 500; color: var(--text-2);
+  border-bottom: 2px solid transparent; transition: all 0.15s;
+  cursor: pointer; white-space: nowrap; text-decoration: none;
+}
+.ax-nav-link:hover { color: var(--text-1); }
+.ax-nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+.ax-nav-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* ─────────────────────────────────────────
+   THEME TOGGLE BUTTON
+───────────────────────────────────────── */
+.ax-theme-btn {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--bg-surface);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-2); transition: all 0.15s;
+  font-size: 14px;
+}
+.ax-theme-btn:hover { border-color: var(--border-strong); color: var(--text-1); }
+
+/* ─────────────────────────────────────────
+   NOTIFICATION BELL
+───────────────────────────────────────── */
+.ax-bell {
+  position: relative; width: 32px; height: 32px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--bg-surface);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-2); transition: all 0.15s;
+}
+.ax-bell:hover { border-color: var(--border-strong); color: var(--text-1); }
+.ax-bell-dot {
+  position: absolute; top: 5px; right: 5px; width: 7px; height: 7px;
+  background: #e53e3e; border-radius: 50%; border: 1.5px solid var(--nav-bg);
+}
+
+/* ─────────────────────────────────────────
+   MODAL OVERLAY
+───────────────────────────────────────── */
+.ax-overlay {
+  position: fixed; inset: 0; background: var(--modal-overlay);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9000; padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.18s;
+}
+.ax-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+.ax-modal {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--r-xl); max-width: 620px; width: 100%;
+  max-height: 88vh; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(10px); transition: transform 0.18s;
+}
+.ax-overlay.open .ax-modal { transform: translateY(0); }
+
+/* ─────────────────────────────────────────
+   JOB CARD
+───────────────────────────────────────── */
+.ax-job-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 1.125rem; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  display: flex; flex-direction: column; gap: 0.75rem; position: relative;
+}
+.ax-job-card:hover {
+  border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px);
+}
+.ax-skill-tag {
+  padding: 0.125rem 0.5rem; border-radius: 3px;
+  font-size: 0.6875rem; font-weight: 500;
+  background: var(--bg-subtle); color: var(--text-2); border: 1px solid var(--border);
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR (Recruiter Dashboard)
+───────────────────────────────────────── */
+.ax-sidebar {
+  background: var(--sidebar-bg); border-right: 1px solid var(--border);
+  padding: 1rem 0;
+}
+.ax-sidebar-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 0.4375rem 0.875rem; font-size: 0.75rem; font-weight: 500;
+  color: var(--text-2); cursor: pointer; transition: all 0.15s;
+  border-left: 2px solid transparent; text-decoration: none;
+}
+.ax-sidebar-item:hover { color: var(--text-1); background: var(--bg-hover); }
+.ax-sidebar-item.active { color: var(--accent); background: var(--accent-bg); border-left-color: var(--accent); }
+.ax-sidebar-section-label {
+  font-size: 0.625rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--text-3); padding: 0.5rem 0.875rem 0.25rem;
+}
+
+/* ─────────────────────────────────────────
+   TABLE
+───────────────────────────────────────── */
+.ax-table { width: 100%; border-collapse: collapse; }
+.ax-table th {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-3); padding: 0.5625rem 0.875rem;
+  text-align: left; background: var(--bg-subtle); border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.ax-table td {
+  padding: 0.6875rem 0.875rem; border-bottom: 1px solid var(--border);
+  font-size: 0.8125rem; vertical-align: middle; color: var(--text-1);
+}
+.ax-table tr:last-child td { border-bottom: none; }
+.ax-table tr:hover td { background: var(--bg-hover); }
+
+/* ─────────────────────────────────────────
+   SEARCH BOX
+───────────────────────────────────────── */
+.ax-search-box {
+  display: flex; background: var(--bg-surface);
+  border: 1.5px solid var(--border-strong); border-radius: var(--r);
+  overflow: hidden; transition: border-color 0.15s;
+}
+.ax-search-box:focus-within { border-color: var(--accent); }
+.ax-search-seg {
+  display: flex; align-items: center; gap: 7px;
+  padding: 0 0.875rem; flex: 1; height: 44px;
+}
+.ax-search-seg input {
+  border: none; outline: none; font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem; color: var(--text-1); background: transparent; width: 100%;
+}
+.ax-search-seg input::placeholder { color: var(--text-3); }
+.ax-search-seg svg { color: var(--text-3); flex-shrink: 0; }
+.ax-search-div { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; align-self: center; }
+
+/* ─────────────────────────────────────────
+   FORM FIELDS — reusable in Login, Register, PostJob
+───────────────────────────────────────── */
+.ax-form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+.ax-form-label {
+  font-size: 0.75rem; font-weight: 500; color: var(--text-2);
+}
+.ax-form-input {
+  width: 100%; padding: 0.5625rem 0.875rem;
+  background: var(--bg-subtle); color: var(--text-1);
+  border: 1px solid var(--border-strong); border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif; font-size: 0.8125rem;
+  outline: none; transition: border-color 0.15s, background 0.15s;
+}
+.ax-form-input::placeholder { color: var(--text-3); }
+.ax-form-input:focus { border-color: var(--accent); background: var(--bg-surface); }
+.ax-form-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─────────────────────────────────────────
+   FILTER SIDEBAR (Jobs page)
+───────────────────────────────────────── */
+.ax-filter-check {
+  width: 14px; height: 14px; border: 1.5px solid var(--border-strong);
+  border-radius: 3px; flex-shrink: 0; transition: all 0.1s;
+  display: flex; align-items: center; justify-content: center;
+}
+.ax-filter-check.on { background: var(--accent); border-color: var(--accent); }
+
+/* ─────────────────────────────────────────
+   LOADING SKELETON
+───────────────────────────────────────── */
+.ax-skeleton {
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, var(--bg-hover) 50%, var(--bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: ax-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-sm);
+}
+@keyframes ax-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes ax-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ax-fade-in { animation: ax-fade-in 0.2s ease-out forwards; }
+
+@keyframes ax-slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.ax-slide-in { animation: ax-slide-in 0.2s ease-out forwards; }
+
+/* ─────────────────────────────────────────
+   TAILWIND OVERRIDES
+   Keep Tailwind working but make our
+   variables take priority for key properties
+───────────────────────────────────────── */
+#root {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  color: var(--text-1);
+}
+
+/* Make sure Tailwind bg-white respects dark mode */
+.bg-white { background-color: var(--bg-surface) !important; }
+.bg-slate-950, .bg-\[\#020617\] { background-color: var(--bg-page) !important; }
+.bg-\[\#0f172a\] { background-color: var(--bg-surface) !important; }
+.border-slate-800 { border-color: var(--border) !important; }
+.border-slate-700 { border-color: var(--border-strong) !important; }
+.text-white { color: var(--text-1) !important; }
+.text-slate-400 { color: var(--text-3) !important; }
+.text-slate-300 { color: var(--text-2) !important; }

@@ -33,4 +33,7 @@ const notificationSchema = new mongoose.Schema({
   }
 });
 
+
+//indexing for faster retrieval of notifications for a user
+notificationSchema.index({ user: 1, createdAt: -1 }); // Get recent notifications for a user quickly
 module.exports = mongoose.model("Notification", notificationSchema);

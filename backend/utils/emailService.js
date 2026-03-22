@@ -59,7 +59,7 @@ const createTemplate = (title, bodyContent, buttonText, buttonLink) => {
 const sendEmail = async (to, subject, htmlContent) => {
   try {
     const mailOptions = {
-      from: '"Axon Hire" <axon.hire.project@gmail.com>',
+      from: '"Axon Hire" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>',
       to: to,
       subject: subject,
       html: htmlContent,

@@ -1,608 +1,466 @@
-// import { useState, useEffect } from "react";
-// import { useAuth } from "../context/AuthContext";
-// import axiosInstance from "../api/axiosInstance";
-// import { useNavigate } from "react-router-dom";
-// import { Helmet } from 'react-helmet-async'; // 👈 NEW IMPORT
 
-// // --- CONFIG ---
-// const JOBS_PER_PAGE = 12;
 
-// // --- ICONS ---
-// const BuildingIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="22.01"></line><line x1="15" y1="22" x2="15" y2="22.01"></line><line x1="12" y1="22" x2="12" y2="22.01"></line><line x1="12" y1="2" x2="12" y2="4"></line><line x1="8" y1="2" x2="8" y2="4"></line><line x1="16" y1="2" x2="16" y2="4"></line></svg>);
-// const MapPinIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>);
-// const MoneyIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>);
-// const CheckIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>);
-// const CloseIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>);
-// const InfoIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>);
-// const SearchIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>);
-// const FilterIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>);
-
-// // --- JOB CARD COMPONENT ---
-// function JobCard({ job, onApply, applied, onClick }) {
-//   const { title, company, location, salary, requirements, description } = job;
-
-//   return (
-//     <div onClick={onClick} className="group relative flex flex-col h-full bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-1 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/20 hover:border-indigo-500/50">
-//       <div className="flex flex-col h-full bg-slate-900/40 rounded-xl p-6 relative overflow-hidden">
-//         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-//         <div className="flex justify-between items-start mb-5">
-//           <div className="flex items-start gap-4">
-//              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 border border-slate-700 group-hover:border-indigo-500/50 group-hover:text-indigo-400 transition-colors duration-300 shadow-sm">
-//                 <BuildingIcon />
-//              </div>
-//              <div>
-//                 <h3 className="text-lg font-bold text-white leading-tight group-hover:text-indigo-300 transition-colors">{title}</h3>
-//                 <p className="text-sm text-slate-400 font-medium mt-1">{company}</p>
-//              </div>
-//           </div>
-//         </div>
-
-//         <div className="flex flex-wrap gap-2 mb-6">
-//           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 text-slate-300 text-xs font-medium border border-slate-700"><MapPinIcon /> {location || "Remote"}</span>
-//           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-900/20 text-emerald-400 text-xs font-medium border border-emerald-800/30"><MoneyIcon /> {salary || "Not Disclosed"}</span>
-//         </div>
-
-//         <div className="mb-6">
-//             <div className="flex flex-wrap gap-2">
-//                 {requirements && requirements.length > 0 ? (
-//                     requirements.slice(0, 3).map((skill, index) => (
-//                         <span key={index} className="px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 group-hover:border-indigo-500/40 transition-colors">{skill}</span>
-//                     ))
-//                 ) : <span className="text-xs text-slate-500 italic flex items-center gap-1"><InfoIcon /> No skills listed</span>}
-//                 {requirements && requirements.length > 3 && <span className="px-2 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-500 border border-slate-700">+{requirements.length - 3}</span>}
-//             </div>
-//         </div>
-
-//         <div className="mb-6 flex-grow">
-//           <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">
-//               {description || <span className="italic opacity-50">No description provided.</span>}
-//           </p>
-//         </div>
-
-//         <div className="mt-auto pt-5 border-t border-slate-700/50">
-//           <button
-//             onClick={(e) => { e.stopPropagation(); if(!applied) onApply(); }}
-//             disabled={applied}
-//             className={`w-full py-3 px-4 font-bold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2
-//               ${applied ? "bg-slate-800/50 text-slate-500 cursor-default border border-slate-700" : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-900/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5"}`}
-//           >
-//             {applied ? <><CheckIcon /> Applied</> : "Apply Now"}
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// // --- JOB DETAILS MODAL ---
-// function JobModal({ job, onClose, onApply, applied }) {
-//   if (!job) return null;
-//   const hasDescription = job.description && job.description.trim().length > 0;
-//   const hasRequirements = job.requirements && job.requirements.length > 0;
-
-//   return (
-//     <>
-//       {/* 🚀 SEO MAGIC TAGS INJECTED HERE */}
-//       <Helmet>
-//         <title>{job.title} at {job.company} | Axon Hire</title>
-//         <meta name="description" content={`Apply for ${job.title} at ${job.company}. Salary: ${job.salary || "Competitive"}.`} />
-        
-//         {/* Open Graph / Facebook / Discord */}
-//         <meta property="og:title" content={`${job.title} - ${job.company}`} />
-//         <meta property="og:description" content={`We are hiring a ${job.title}. Apply now on Axon.`} />
-//         <meta property="og:image" content="https://axon-hire.vercel.app/logo.png" />
-//       </Helmet>
-
-//       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-//         <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] relative">
-//           <div className="p-8 border-b border-slate-800 bg-slate-900 flex justify-between items-start">
-//               <div className="flex gap-5">
-//                   <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 shadow-inner"><BuildingIcon /></div>
-//                   <div>
-//                       <h2 className="text-2xl font-bold text-white tracking-tight">{job.title}</h2>
-//                       <p className="text-lg text-indigo-400 font-medium mt-1">{job.company}</p>
-//                       <div className="flex flex-wrap items-center gap-3 mt-3 text-slate-400 text-sm">
-//                           <span className="flex items-center gap-1.5 bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700"><MapPinIcon /> {job.location || "Remote"}</span>
-//                           <span className="flex items-center gap-1.5 text-emerald-400 font-medium bg-emerald-900/10 px-2 py-0.5 rounded border border-emerald-900/30"><MoneyIcon /> {job.salary || "Competitive"}</span>
-//                       </div>
-//                   </div>
-//               </div>
-//               <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border border-transparent hover:border-slate-700"><CloseIcon /></button>
-//           </div>
-
-//           <div className="p-8 overflow-y-auto space-y-8 bg-[#0f111a]">
-//             {hasDescription ? (
-//                <section>
-//                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">About the Role</h3>
-//                   <div className="text-slate-300 leading-7 whitespace-pre-line text-sm md:text-base font-light">{job.description}</div>
-//                </section>
-//             ) : <div className="text-center p-8 bg-slate-800/30 rounded-xl border border-slate-800 border-dashed"><p className="text-slate-500 italic">No detailed description provided.</p></div>}
-            
-//             {hasRequirements && (
-//               <section>
-//                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">Skills & Requirements</h3>
-//                   <div className="flex flex-wrap gap-2">
-//                   {job.requirements.map((skill, index) => (
-//                       <span key={index} className="px-3 py-2 rounded-lg bg-indigo-500/10 text-indigo-200 border border-indigo-500/20 text-sm font-medium">{skill}</span>
-//                   ))}
-//                   </div>
-//               </section>
-//             )}
-//           </div>
-
-//           <div className="p-6 border-t border-slate-800 bg-slate-900">
-//             <button
-//               onClick={() => !applied && onApply(job)}
-//               disabled={applied}
-//               className={`w-full py-4 px-6 font-bold text-lg rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-xl
-//                 ${applied ? "bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed" : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-500/25 hover:-translate-y-1"}`}
-//             >
-//               {applied ? <> <CheckIcon /> Application Submitted </> : "Apply for this Position"}
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
-
-// // --- MAIN JOBS PAGE ---
-// function Jobs() {
-//   const { user, isLoggedIn } = useAuth();
-//   const [jobList, setJobList] = useState([]);
-//   const [appliedJobIds, setAppliedJobIds] = useState(new Set()); // 🔥 FIX: Using Set for O(1) lookups
-//   const [loading, setLoading] = useState(true);
-  
-//   // Search & Filter State
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [locationFilter, setLocationFilter] = useState("All"); 
-  
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [selectedJob, setSelectedJob] = useState(null); 
-  
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         setLoading(true);
-//         // 1. Fetch Jobs
-//         const jobResponse = await axiosInstance.get("/jobs");
-//         setJobList(jobResponse.data);
-
-//         // 2. Fetch User's Applications (The Fix!)
-//         if (isLoggedIn) {
-//           try {
-//             const appsResponse = await axiosInstance.get("/applications/my-applications");
-//             // Create a Set of Job IDs the user has applied to
-//             const ids = new Set(appsResponse.data.map(app => app.jobId?._id || app.jobId));
-//             setAppliedJobIds(ids);
-//           } catch (err) {
-//             console.error("Failed to sync applications", err);
-//           }
-//         }
-//       } catch (err) {
-//         console.error("Failed to fetch jobs:", err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchData();
-//   }, [isLoggedIn]); // Re-run if login status changes
-
-//   // --- FILTER LOGIC ---
-//   const filteredJobs = jobList.filter(job => {
-//       const query = searchQuery.toLowerCase();
-      
-//       const matchesSearch = 
-//           job.title.toLowerCase().includes(query) || 
-//           job.company.toLowerCase().includes(query) ||
-//           job.location.toLowerCase().includes(query); 
-      
-//       const matchesLocation = locationFilter === "All" 
-//           ? true 
-//           : locationFilter === "Remote" 
-//               ? job.location.toLowerCase().includes("remote") 
-//               : !job.location.toLowerCase().includes("remote");
-
-//       return matchesSearch && matchesLocation;
-//   });
-
-//   const indexOfLastJob = currentPage * JOBS_PER_PAGE;
-//   const indexOfFirstJob = indexOfLastJob - JOBS_PER_PAGE;
-//   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-//   const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
-
-//   const handlePageChange = (pageNumber) => {
-//     setCurrentPage(pageNumber);
-//     window.scrollTo({ top: 0, behavior: 'smooth' });
-//   };
-
-//   const handleApply = async (job) => {
-//     if (!isLoggedIn || !user) {
-//       alert("You must be logged in to apply for a job");
-//       navigate("/login");
-//       return;
-//     }
-    
-//     if (!user.resumeUrl) {
-//       const confirmRedirect = window.confirm("Please upload a resume first. Go to Profile?");
-//       if (confirmRedirect) navigate("/profile");
-//       return;
-//     }
-
-//     try {
-//       await axiosInstance.post(`/applications/${job._id}/apply`);
-      
-//       // Update UI instantly (Optimistic update)
-//       setAppliedJobIds(prev => new Set(prev).add(job._id));
-      
-//       alert("Application Successful!");
-//     } catch (err) {
-//       console.error("Application failed:", err);
-//       if (err.response?.status === 400) {
-//          // Backend says "Already applied", so sync the UI
-//          setAppliedJobIds(prev => new Set(prev).add(job._id));
-//          alert("You have already applied.");
-//       } else {
-//          alert(err.response?.data?.message || "Application failed");
-//       }
-//     }
-//   };
-
-//   const isJobApplied = (jobId) => appliedJobIds.has(jobId);
-
-//   return (
-//     <div className="min-h-screen pt-24 pb-12 px-4 md:px-8 bg-slate-950 text-slate-200">
-//       <div className="max-w-7xl mx-auto">
-        
-//         {/* HEADER & SEARCH SECTION */}
-//         <div className="mb-10 flex flex-col gap-6 border-b border-slate-800 pb-8">
-//             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-//                 <div>
-//                     <h2 className="text-4xl font-bold text-white mb-2 tracking-tight">Open Positions</h2>
-//                     <p className="text-slate-400 text-lg">Find your next role at top companies.</p>
-//                 </div>
-//                 {!loading && (
-//                     <div className="bg-slate-900 px-5 py-2 rounded-full border border-slate-800 shadow-sm">
-//                         <span className="text-white font-bold">{filteredJobs.length}</span>
-//                         <span className="text-slate-400 ml-1">jobs found</span>
-//                     </div>
-//                 )}
-//             </div>
-
-//             {/* SEARCH BAR */}
-//             <div className="flex flex-col md:flex-row gap-4 bg-[#0f172a] p-4 rounded-2xl border border-slate-800 shadow-xl">
-//                 <div className="flex-1 relative">
-//                     <div className="absolute left-4 top-3.5 text-slate-500"><SearchIcon /></div>
-//                     <input 
-//                         type="text" 
-//                         placeholder="Search by Title, Company, or City..." 
-//                         value={searchQuery}
-//                         onChange={(e) => setSearchQuery(e.target.value)}
-//                         className="w-full bg-slate-900 border border-slate-700 text-white pl-12 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-slate-500"
-//                     />
-//                 </div>
-//                 <div className="flex items-center gap-3">
-//                     <div className="flex items-center gap-2 text-slate-400 px-2 font-bold text-sm uppercase tracking-wide"><FilterIcon /> Filter:</div>
-//                     <select 
-//                         value={locationFilter}
-//                         onChange={(e) => setLocationFilter(e.target.value)}
-//                         className="bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-//                     >
-//                         <option value="All">All Types</option>
-//                         <option value="Remote">Remote Only</option>
-//                         <option value="On-site">On-site</option>
-//                     </select>
-//                 </div>
-//             </div>
-//         </div>
-
-//         {/* LOADING & EMPTY STATES */}
-//         {loading && (
-//             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
-//                 {[1,2,3,4,5,6].map(i => <div key={i} className="h-72 bg-slate-900 rounded-2xl border border-slate-800"></div>)}
-//             </div>
-//         )}
-        
-//         {!loading && filteredJobs.length === 0 && (
-//               <div className="text-center py-24 bg-slate-900 rounded-2xl border border-slate-800 border-dashed">
-//                   <div className="text-4xl mb-4">🔍</div>
-//                   <h3 className="text-xl font-bold text-white mb-2">No Jobs Found</h3>
-//                   <p className="text-slate-500 text-lg">Try searching for a different location or title.</p>
-//                   <button onClick={() => {setSearchQuery(""); setLocationFilter("All");}} className="mt-6 text-indigo-400 hover:text-indigo-300 font-bold underline">Clear all filters</button>
-//               </div>
-//         )}
-
-//         {/* JOB GRID */}
-//         {!loading && filteredJobs.length > 0 && (
-//             <>
-//                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-//                 {currentJobs.map((job) => (
-//                     <JobCard
-//                         key={job._id}
-//                         job={job}
-//                         applied={isJobApplied(job._id)}
-//                         onApply={() => handleApply(job)}
-//                         onClick={() => setSelectedJob(job)} 
-//                     />
-//                 ))}
-//                 </div>
-
-//                 {totalPages > 1 && (
-//                     <div className="flex justify-center items-center mt-16 gap-2">
-//                         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-5 py-2.5 text-sm font-medium rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white shadow-sm">Previous</button>
-//                         <div className="flex items-center gap-1 px-2">
-//                             {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-//                                 <button key={number} onClick={() => handlePageChange(number)} className={`w-10 h-10 flex items-center justify-center text-sm rounded-xl transition-all ${currentPage === number ? "bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-900/50" : "text-slate-500 hover:bg-slate-800 hover:text-white"}`}>{number}</button>
-//                             ))}
-//                         </div>
-//                         <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-5 py-2.5 text-sm font-medium rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white shadow-sm">Next</button>
-//                     </div>
-//                 )}
-//             </>
-//         )}
-//       </div>
-
-//       {selectedJob && (
-//         <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} onApply={(j) => { handleApply(j); }} applied={isJobApplied(selectedJob._id)} />
-//       )}
-//     </div>
-//   );
-// }
-
-// export default Jobs;
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import axiosInstance from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from 'react-helmet-async';
-import useDebounce from "../hooks/useDebounce"; // 👈 Ensure you created this hook file as discussed!
+import { Helmet } from "react-helmet-async";
+import useDebounce from "../hooks/useDebounce";
 
-// --- CONFIG ---
 const JOBS_PER_PAGE = 12;
 
-// --- ICONS ---
-const BuildingIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="22.01"></line><line x1="15" y1="22" x2="15" y2="22.01"></line><line x1="12" y1="22" x2="12" y2="22.01"></line><line x1="12" y1="2" x2="12" y2="4"></line><line x1="8" y1="2" x2="8" y2="4"></line><line x1="16" y1="2" x2="16" y2="4"></line></svg>);
-const MapPinIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>);
-const MoneyIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>);
-const CheckIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>);
-const CloseIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>);
-const InfoIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>);
-const SearchIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>);
-const FilterIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>);
-const HeartIcon = ({ filled }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={filled ? "text-rose-500" : "text-slate-400"}>
-    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+// ─── ICONS ───
+const SearchIcon = () => (
+  <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
   </svg>
 );
-const GridIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>);
-const ListIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>);
-const BellIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>);
+const LocationIcon = () => (
+  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+const SalaryIcon = () => (
+  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <line x1="12" y1="1" x2="12" y2="23"/>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  </svg>
+);
+const BookmarkIcon = ({ filled }) => (
+  <svg width="13" height="13" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+    style={{ color: filled ? "var(--accent)" : "var(--text-3)" }}>
+    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+  </svg>
+);
+const CheckIcon = () => (
+  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+const CloseIcon = () => (
+  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+const GridIcon = () => (
+  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+  </svg>
+);
+const ListIcon = () => (
+  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+  </svg>
+);
+const BellIcon = () => (
+  <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+);
+const FilterIcon = () => (
+  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+  </svg>
+);
 
-// --- SKELETON LOADER (Visual Upgrade) ---
-const JobSkeleton = () => (
-  <div className="bg-[#0f172a] border border-slate-800 p-6 rounded-xl animate-pulse flex flex-col h-[280px]">
-    <div className="flex justify-between items-start mb-4">
-      <div className="w-12 h-12 bg-slate-800 rounded-lg"></div>
-      <div className="w-8 h-8 bg-slate-800 rounded-full"></div>
+// ─── SKELETON CARD ───
+const SkeletonCard = () => (
+  <div style={{
+    background: "var(--bg-surface)", border: "1px solid var(--border)",
+    borderRadius: "10px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px",
+  }}>
+    <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+      <div className="ax-skeleton" style={{ width: "38px", height: "38px", borderRadius: "8px", flexShrink: 0 }} />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "7px" }}>
+        <div className="ax-skeleton" style={{ height: "12px", width: "55%", borderRadius: "3px" }} />
+        <div className="ax-skeleton" style={{ height: "14px", width: "75%", borderRadius: "3px" }} />
+      </div>
     </div>
-    <div className="h-6 w-3/4 bg-slate-800 rounded mb-2"></div>
-    <div className="h-4 w-1/2 bg-slate-800 rounded mb-6"></div>
-    <div className="flex gap-2 mb-auto">
-        <div className="h-6 w-16 bg-slate-800 rounded-full"></div>
-        <div className="h-6 w-16 bg-slate-800 rounded-full"></div>
+    <div style={{ display: "flex", gap: "6px" }}>
+      <div className="ax-skeleton" style={{ height: "10px", width: "70px", borderRadius: "3px" }} />
+      <div className="ax-skeleton" style={{ height: "10px", width: "50px", borderRadius: "3px" }} />
     </div>
-    <div className="h-10 w-full bg-slate-800 rounded-xl mt-4"></div>
+    <div style={{ display: "flex", gap: "5px" }}>
+      {[50, 60, 45].map((w, i) => (
+        <div key={i} className="ax-skeleton" style={{ height: "20px", width: `${w}px`, borderRadius: "3px" }} />
+      ))}
+    </div>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid var(--border)" }}>
+      <div className="ax-skeleton" style={{ height: "13px", width: "80px", borderRadius: "3px" }} />
+      <div className="ax-skeleton" style={{ height: "28px", width: "64px", borderRadius: "4px" }} />
+    </div>
   </div>
 );
 
-// --- JOB ALERT COMPONENT ---
+// ─── JOB ALERT (same logic, new style) ───
 function JobAlert() {
-    const [keyword, setKeyword] = useState('');
-    const [status, setStatus] = useState('idle');
-    const [msg, setMsg] = useState('');
-  
-    const handleSubscribe = async (e) => {
-      e.preventDefault();
-      if(!keyword.trim()) return;
-      
-      setStatus('loading');
-      setMsg('');
-  
-      try {
-        await axiosInstance.post('/alerts/subscribe', { keywords: [keyword] });
-        
-        setStatus('success');
-        setMsg(`Success! You will be emailed when "${keyword}" jobs are posted.`);
-        setKeyword('');
-        setTimeout(() => { setStatus('idle'); setMsg(''); }, 4000);
-      } catch (err) {
-        console.error("Alert Error:", err);
-        setStatus('error');
-        setMsg(err.response?.status === 401 ? "Please login to subscribe." : "Failed to subscribe. Try again.");
-      } 
-    };
-  
-    return (
-      <div className="mb-10 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl border border-indigo-500/30 p-1 shadow-lg shadow-indigo-500/10">
-          <div className="bg-slate-900/50 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-sm">
-              <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30 animate-pulse">
-                      <BellIcon />
-                  </div>
-                  <div>
-                      <h3 className="text-white font-bold text-lg">Get Instant Job Alerts</h3>
-                      <p className="text-slate-400 text-sm">Don't miss out. Get notified via email for new roles.</p>
-                  </div>
-              </div>
-  
-              <form onSubmit={handleSubscribe} className="flex-1 w-full md:w-auto md:max-w-md flex flex-col md:flex-row gap-2">
-                  <div className="flex-1 relative">
-                      <input 
-                          type="text" 
-                          placeholder="Skill (e.g. React, Python)" 
-                          value={keyword}
-                          onChange={(e) => setKeyword(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-700 text-white px-4 py-2.5 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-                      />
-                  </div>
-                  <button 
-                      type="submit" 
-                      disabled={status === 'loading' || status === 'success'}
-                      className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg
-                          ${status === 'success' 
-                              ? 'bg-emerald-600 text-white shadow-emerald-900/50 cursor-default' 
-                              : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-900/50 hover:-translate-y-0.5'
-                          }`}
-                  >
-                      {status === 'loading' ? 'Saving...' : status === 'success' ? 'Subscribed!' : 'Notify Me'}
-                  </button>
-              </form>
-          </div>
-          {(msg) && (
-              <div className={`text-center py-2 text-xs font-bold rounded-b-xl ${status === 'success' ? 'text-emerald-400 bg-emerald-900/20' : 'text-rose-400 bg-rose-900/20'}`}>
-                  {msg}
-              </div>
-          )}
-      </div>
-    );
-  }
+  const [keyword, setKeyword] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [msg, setMsg] = useState("");
 
-// --- JOB CARD COMPONENT ---
-function JobCard({ job, onApply, applied, isSaved, onToggleSave, onClick }) {
-  const { title, company, location, salary, requirements, description } = job;
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!keyword.trim()) return;
+    setStatus("loading");
+    setMsg("");
+    try {
+      await axiosInstance.post("/alerts/subscribe", { keywords: [keyword] });
+      setStatus("success");
+      setMsg(`You'll be notified when "${keyword}" jobs are posted.`);
+      setKeyword("");
+      setTimeout(() => { setStatus("idle"); setMsg(""); }, 4000);
+    } catch (err) {
+      setStatus("error");
+      setMsg(err.response?.status === 401 ? "Sign in to subscribe to alerts." : "Failed. Try again.");
+    }
+  };
 
   return (
-    <div onClick={onClick} className="group relative flex flex-col h-full bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-1 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/20 hover:border-indigo-500/50">
-      <div className="flex flex-col h-full bg-slate-900/40 rounded-xl p-6 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+    <div style={{
+      background: "var(--bg-surface)", border: "1px solid var(--border)",
+      borderRadius: "10px", padding: "16px 20px", marginBottom: "16px",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      gap: "16px", flexWrap: "wrap",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{
+          width: "32px", height: "32px", borderRadius: "50%",
+          background: "var(--accent-bg)", border: "1px solid var(--accent-mid)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          color: "var(--accent)", flexShrink: 0,
+        }}>
+          <BellIcon />
+        </div>
+        <div>
+          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-1)" }}>Get job alerts</div>
+          <div style={{ fontSize: "11px", color: "var(--text-3)" }}>Email notifications when new roles match your skill</div>
+        </div>
+      </div>
 
-        <div className="flex justify-between items-start mb-5">
-          <div className="flex items-start gap-4">
-             <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 border border-slate-700 group-hover:border-indigo-500/50 group-hover:text-indigo-400 transition-colors duration-300 shadow-sm">
-                <BuildingIcon />
-             </div>
-             <div>
-                <h3 className="text-lg font-bold text-white leading-tight group-hover:text-indigo-300 transition-colors line-clamp-1">{title}</h3>
-                <p className="text-sm text-slate-400 font-medium mt-1">{company}</p>
-             </div>
+      <form onSubmit={handleSubscribe} style={{ display: "flex", gap: "7px", flex: 1, maxWidth: "380px" }}>
+        <input
+          type="text"
+          placeholder="Skill (e.g. React, Python)"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          style={{
+            flex: 1, padding: "7px 12px", borderRadius: "5px",
+            border: "1px solid var(--border-strong)", background: "var(--bg-subtle)",
+            color: "var(--text-1)", fontFamily: "Inter, sans-serif", fontSize: "12px", outline: "none",
+          }}
+        />
+        <button
+          type="submit"
+          disabled={status === "loading" || status === "success"}
+          style={{
+            padding: "7px 16px", borderRadius: "5px", border: "none",
+            background: status === "success" ? "var(--green-bg)" : "var(--accent)",
+            color: status === "success" ? "var(--green)" : "white",
+            fontFamily: "Inter, sans-serif", fontSize: "12px", fontWeight: 500,
+            cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
+          }}
+        >
+          {status === "loading" ? "Saving…" : status === "success" ? "Subscribed!" : "Notify me"}
+        </button>
+      </form>
+
+      {msg && (
+        <div style={{
+          width: "100%", fontSize: "11px", fontWeight: 500,
+          color: status === "success" ? "var(--green)" : "var(--red)",
+          paddingTop: "4px",
+        }}>{msg}</div>
+      )}
+    </div>
+  );
+}
+
+// ─── JOB CARD ───
+function JobCard({ job, applied, isSaved, onApply, onToggleSave, onClick }) {
+  const { title, company, location, salary, requirements, description } = job;
+  const [hover, setHover] = useState(false);
+
+  // Color based on first letter of company
+  const colors = ["#0057b8","#0891b2","#7c3aed","#16a34a","#d97706","#be185d","#dc2626","#0e7490"];
+  const colorIndex = (company?.charCodeAt(0) || 0) % colors.length;
+  const logoColor = colors[colorIndex];
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: "var(--bg-surface)",
+        border: `1px solid ${hover ? "var(--accent)" : "var(--border)"}`,
+        borderRadius: "10px", padding: "18px", cursor: "pointer",
+        transition: "border-color 0.15s, box-shadow 0.15s, transform 0.15s",
+        transform: hover ? "translateY(-1px)" : "translateY(0)",
+        boxShadow: hover ? "var(--shadow)" : "none",
+        display: "flex", flexDirection: "column", gap: "11px", position: "relative",
+      }}
+    >
+      {/* Card top */}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "11px" }}>
+        {/* Company logo */}
+        <div style={{
+          width: "38px", height: "38px", borderRadius: "8px",
+          background: logoColor, display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: "14px", fontWeight: 700,
+          color: "white", flexShrink: 0, border: "1px solid rgba(0,0,0,0.08)",
+        }}>
+          {company?.charAt(0) || "?"}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: "11px", color: "var(--text-3)", fontWeight: 500, marginBottom: "2px" }}>
+            {company}
           </div>
-          
-          <button 
-            onClick={(e) => { e.stopPropagation(); onToggleSave(job._id); }}
-            className="p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
-            title={isSaved ? "Remove from Saved" : "Save Job"}
-          >
-            <HeartIcon filled={isSaved} />
-          </button>
+          <div style={{
+            fontSize: "14px", fontWeight: 600, color: hover ? "var(--accent)" : "var(--text-1)",
+            lineHeight: 1.3, letterSpacing: "-0.01em", transition: "color 0.15s",
+          }}>
+            {title}
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 text-slate-300 text-xs font-medium border border-slate-700"><MapPinIcon /> {location || "Remote"}</span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-900/20 text-emerald-400 text-xs font-medium border border-emerald-800/30"><MoneyIcon /> {salary || "Not Disclosed"}</span>
-        </div>
+        {/* Save button */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleSave(job._id); }}
+          style={{
+            width: "26px", height: "26px", borderRadius: "4px",
+            border: `1px solid ${isSaved ? "var(--accent)" : "var(--border)"}`,
+            background: isSaved ? "var(--accent-bg)" : "var(--bg-surface)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", flexShrink: 0, transition: "all 0.15s",
+          }}
+          title={isSaved ? "Unsave" : "Save job"}
+        >
+          <BookmarkIcon filled={isSaved} />
+        </button>
+      </div>
 
-        <div className="mb-6">
-            <div className="flex flex-wrap gap-2">
-                {requirements && requirements.length > 0 ? (
-                    requirements.slice(0, 3).map((skill, index) => (
-                        <span key={index} className="px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 group-hover:border-indigo-500/40 transition-colors">{skill}</span>
-                    ))
-                ) : <span className="text-xs text-slate-500 italic flex items-center gap-1"><InfoIcon /> No skills listed</span>}
-                {requirements && requirements.length > 3 && <span className="px-2 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-500 border border-slate-700">+{requirements.length - 3}</span>}
-            </div>
-        </div>
+      {/* Location + type */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "var(--text-2)" }}>
+          <LocationIcon />{location || "Remote"}
+        </span>
+        <span style={{ width: "2px", height: "2px", background: "var(--text-3)", borderRadius: "50%" }} />
+     <span style={{ fontSize: "11px", color: "var(--text-2)" }}>{job.type || "Full-time"}</span>
+      </div>
 
-        <div className="mb-6 flex-grow">
-          <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">
-              {description || <span className="italic opacity-50">No description provided.</span>}
-          </p>
-        </div>
+      {/* Skills */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+        {requirements && requirements.length > 0 ? (
+          <>
+            {requirements.slice(0, 3).map((skill, i) => (
+              <span key={i} className="ax-skill-tag">{skill}</span>
+            ))}
+            {requirements.length > 3 && (
+              <span className="ax-skill-tag" style={{ color: "var(--text-3)" }}>
+                +{requirements.length - 3}
+              </span>
+            )}
+          </>
+        ) : (
+          <span style={{ fontSize: "11px", color: "var(--text-3)", fontStyle: "italic" }}>No skills listed</span>
+        )}
+      </div>
 
-        <div className="mt-auto pt-5 border-t border-slate-700/50">
-          <button
-            onClick={(e) => { e.stopPropagation(); if(!applied) onApply(); }}
-            disabled={applied}
-            className={`w-full py-3 px-4 font-bold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2
-              ${applied ? "bg-slate-800/50 text-slate-500 cursor-default border border-slate-700" : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-900/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5"}`}
-          >
-            {applied ? <><CheckIcon /> Applied</> : "Apply Now"}
-          </button>
+      {/* Footer */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        paddingTop: "10px", borderTop: "1px solid var(--border)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", fontWeight: 600, color: "var(--green)" }}>
+          <SalaryIcon />{salary || "Not disclosed"}
         </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); if (!applied) onApply(); }}
+          disabled={applied}
+          style={{
+            padding: "5px 14px", borderRadius: "4px", fontSize: "11px", fontWeight: 600,
+            border: "none", cursor: applied ? "default" : "pointer",
+            background: applied ? "var(--bg-subtle)" : "var(--accent)",
+            color: applied ? "var(--text-3)" : "white",
+            fontFamily: "Inter, sans-serif", transition: "all 0.15s",
+            display: "flex", alignItems: "center", gap: "5px",
+          }}
+        >
+          {applied ? <><CheckIcon />Applied</> : "Apply now"}
+        </button>
       </div>
     </div>
   );
 }
 
-// --- JOB DETAILS MODAL ---
+// ─── JOB ROW (list view) ───
+function JobRow({ job, applied, isSaved, onApply, onToggleSave, onClick }) {
+  const colors = ["#0057b8","#0891b2","#7c3aed","#16a34a","#d97706","#be185d","#dc2626","#0e7490"];
+  const logoColor = colors[(job.company?.charCodeAt(0) || 0) % colors.length];
+
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        background: "var(--bg-surface)", border: "1px solid var(--border)",
+        borderRadius: "10px", padding: "14px 18px", cursor: "pointer",
+        transition: "all 0.15s", display: "grid",
+        gridTemplateColumns: "38px 1fr auto", gap: "12px", alignItems: "center",
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.boxShadow = "var(--shadow-sm)"; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+    >
+      <div style={{ width: "38px", height: "38px", borderRadius: "8px", background: logoColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, color: "white" }}>
+        {job.company?.charAt(0)}
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-1)", marginBottom: "3px" }}>{job.title}</div>
+        <div style={{ fontSize: "11px", color: "var(--text-3)", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+          <span>{job.company}</span>
+          <span style={{ width: "2px", height: "2px", background: "var(--text-3)", borderRadius: "50%" }} />
+          <span>{job.location || "Remote"}</span>
+          <span style={{ width: "2px", height: "2px", background: "var(--text-3)", borderRadius: "50%" }} />
+<span>{job.type || "Full-time"}</span>
+          <span style={{ width: "2px", height: "2px", background: "var(--text-3)", borderRadius: "50%" }} />
+          <span>{job.salary || "Not disclosed"}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <button onClick={e => { e.stopPropagation(); onToggleSave(job._id); }} style={{ width: "26px", height: "26px", borderRadius: "4px", border: `1px solid ${isSaved ? "var(--accent)" : "var(--border)"}`, background: isSaved ? "var(--accent-bg)" : "var(--bg-surface)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+          <BookmarkIcon filled={isSaved} />
+        </button>
+        <button onClick={e => { e.stopPropagation(); if (!applied) onApply(); }} disabled={applied} style={{ padding: "5px 14px", borderRadius: "4px", fontSize: "11px", fontWeight: 600, border: "none", cursor: applied ? "default" : "pointer", background: applied ? "var(--bg-subtle)" : "var(--accent)", color: applied ? "var(--text-3)" : "white", fontFamily: "Inter, sans-serif", display: "flex", alignItems: "center", gap: "4px" }}>
+          {applied ? <><CheckIcon />Applied</> : "Apply"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── JOB MODAL ───
 function JobModal({ job, onClose, onApply, applied, isSaved, onToggleSave }) {
   if (!job) return null;
-  const hasDescription = job.description && job.description.trim().length > 0;
-  const hasRequirements = job.requirements && job.requirements.length > 0;
+
+  const colors = ["#0057b8","#0891b2","#7c3aed","#16a34a","#d97706","#be185d","#dc2626","#0e7490"];
+  const logoColor = colors[(job.company?.charCodeAt(0) || 0) % colors.length];
 
   return (
     <>
-      <Helmet>
-        <title>{job.title} at {job.company} | Axon Hire</title>
-      </Helmet>
+      <Helmet><title>{job.title} at {job.company} | AxonHire</title></Helmet>
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-        <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col max-h-[90vh] relative">
-          <div className="p-8 border-b border-slate-800 bg-slate-900 flex justify-between items-start">
-              <div className="flex gap-5">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 shadow-inner"><BuildingIcon /></div>
-                  <div>
-                      <h2 className="text-2xl font-bold text-white tracking-tight">{job.title}</h2>
-                      <p className="text-lg text-indigo-400 font-medium mt-1">{job.company}</p>
-                      <div className="flex flex-wrap items-center gap-3 mt-3 text-slate-400 text-sm">
-                          <span className="flex items-center gap-1.5 bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700"><MapPinIcon /> {job.location || "Remote"}</span>
-                          <span className="flex items-center gap-1.5 text-emerald-400 font-medium bg-emerald-900/10 px-2 py-0.5 rounded border border-emerald-900/30"><MoneyIcon /> {job.salary || "Competitive"}</span>
-                      </div>
-                  </div>
+      {/* Overlay */}
+      <div
+        onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, background: "var(--modal-overlay)",
+          zIndex: 9000, display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "20px", animation: "ax-fade-in 0.15s ease-out",
+        }}
+      >
+        {/* Modal */}
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: "var(--bg-surface)", border: "1px solid var(--border)",
+            borderRadius: "12px", maxWidth: "620px", width: "100%",
+            maxHeight: "88vh", display: "flex", flexDirection: "column",
+            boxShadow: "var(--shadow-lg)", animation: "ax-modal-in 0.18s ease-out",
+          }}
+        >
+          {/* Modal header */}
+          <div style={{ padding: "20px 20px 16px", display: "flex", alignItems: "flex-start", gap: "14px", borderBottom: "1px solid var(--border)" }}>
+            <div style={{ width: "48px", height: "48px", borderRadius: "10px", background: logoColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", fontWeight: 700, color: "white", flexShrink: 0 }}>
+              {job.company?.charAt(0)}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "11px", color: "var(--text-3)", fontWeight: 500, marginBottom: "3px" }}>{job.company}</div>
+              <div style={{ fontSize: "19px", fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text-1)", marginBottom: "8px" }}>{job.title}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+                {[
+                  { icon: <LocationIcon />, label: job.location || "Remote" },
+                  { icon: <SalaryIcon />, label: job.salary || "Not disclosed" },
+                ].map((p, i) => (
+                  <span key={i} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 9px", border: "1px solid var(--border)", borderRadius: "4px", fontSize: "11px", color: "var(--text-2)", background: "var(--bg-subtle)" }}>
+                    {p.icon}{p.label}
+                  </span>
+                ))}
               </div>
-              <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border border-transparent hover:border-slate-700"><CloseIcon /></button>
+            </div>
+            <button
+              onClick={onClose}
+              style={{ width: "28px", height: "28px", borderRadius: "4px", border: "1px solid var(--border)", background: "var(--bg-surface)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-3)", flexShrink: 0 }}
+            >
+              <CloseIcon />
+            </button>
           </div>
 
-          <div className="p-8 overflow-y-auto space-y-8 bg-[#0f111a]">
-            {hasDescription ? (
-               <section>
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">About the Role</h3>
-                  <div className="text-slate-300 leading-7 whitespace-pre-line text-sm md:text-base font-light">{job.description}</div>
-               </section>
-            ) : <div className="text-center p-8 bg-slate-800/30 rounded-xl border border-slate-800 border-dashed"><p className="text-slate-500 italic">No detailed description provided.</p></div>}
-            
-            {hasRequirements && (
-              <section>
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">Skills & Requirements</h3>
-                  <div className="flex flex-wrap gap-2">
-                  {job.requirements.map((skill, index) => (
-                      <span key={index} className="px-3 py-2 rounded-lg bg-indigo-500/10 text-indigo-200 border border-indigo-500/20 text-sm font-medium">{skill}</span>
+          {/* Modal body */}
+          <div style={{ padding: "18px 20px", overflowY: "auto", flex: 1, display: "flex", flexDirection: "column", gap: "18px" }}>
+            {job.description ? (
+              <div>
+                <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-3)", marginBottom: "8px" }}>About the role</div>
+                <div style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.75, whiteSpace: "pre-line" }}>{job.description}</div>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: "24px", background: "var(--bg-subtle)", borderRadius: "8px", border: "1px dashed var(--border)", fontSize: "13px", color: "var(--text-3)", fontStyle: "italic" }}>
+                No description provided for this role.
+              </div>
+            )}
+
+            {job.requirements && job.requirements.length > 0 && (
+              <div>
+                <div style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "var(--text-3)", marginBottom: "8px" }}>Skills & Requirements</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {job.requirements.map((skill, i) => (
+                    <span key={i} style={{ padding: "4px 10px", borderRadius: "4px", fontSize: "12px", fontWeight: 500, background: "var(--accent-bg)", color: "var(--accent)", border: "1px solid var(--accent-mid)" }}>
+                      {skill}
+                    </span>
                   ))}
-                  </div>
-              </section>
+                </div>
+              </div>
             )}
           </div>
 
-          <div className="p-6 border-t border-slate-800 bg-slate-900 flex gap-4">
-            <button
+          {/* Modal footer */}
+          <div style={{ padding: "14px 20px", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+            <div>
+              <div style={{ fontSize: "10px", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Salary</div>
+              <div style={{ fontSize: "17px", fontWeight: 700, color: "var(--green)", letterSpacing: "-0.01em" }}>{job.salary || "Not disclosed"}</div>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
                 onClick={() => onToggleSave(job._id)}
-                className={`p-4 rounded-xl border transition-colors ${isSaved ? "bg-rose-500/10 border-rose-500/30 text-rose-500" : "bg-slate-800 border-slate-700 text-slate-400 hover:text-white"}`}
-                title="Save Job"
-            >
-                <HeartIcon filled={isSaved} />
-            </button>
-
-            <button
-              onClick={() => !applied && onApply(job)}
-              disabled={applied}
-              className={`flex-1 py-4 px-6 font-bold text-lg rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-xl
-                ${applied ? "bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed" : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-500/25 hover:-translate-y-1"}`}
-            >
-              {applied ? <> <CheckIcon /> Application Submitted </> : "Apply for this Position"}
-            </button>
+                style={{
+                  padding: "8px 14px", border: `1px solid ${isSaved ? "var(--accent)" : "var(--border)"}`,
+                  borderRadius: "5px", background: isSaved ? "var(--accent-bg)" : "var(--bg-surface)",
+                  color: isSaved ? "var(--accent)" : "var(--text-2)",
+                  fontFamily: "Inter, sans-serif", fontSize: "12px", fontWeight: 500, cursor: "pointer",
+                  display: "flex", alignItems: "center", gap: "5px",
+                }}
+              >
+                <BookmarkIcon filled={isSaved} />
+                {isSaved ? "Saved" : "Save"}
+              </button>
+              <button
+                onClick={() => !applied && onApply(job)}
+                disabled={applied}
+                style={{
+                  padding: "8px 22px", borderRadius: "5px",
+                  background: applied ? "var(--bg-subtle)" : "var(--accent)",
+                  color: applied ? "var(--text-3)" : "white", border: "none",
+                  fontFamily: "Inter, sans-serif", fontSize: "12px", fontWeight: 600,
+                  cursor: applied ? "default" : "pointer", transition: "all 0.15s",
+                  display: "flex", alignItems: "center", gap: "6px",
+                }}
+              >
+                {applied ? <><CheckIcon />Applied</> : "Apply for this role"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -610,34 +468,42 @@ function JobModal({ job, onClose, onApply, applied, isSaved, onToggleSave }) {
   );
 }
 
-// --- MAIN JOBS PAGE ---
+// ─── MAIN JOBS PAGE ───
 function Jobs() {
   const { user, isLoggedIn } = useAuth();
-  const [jobList, setJobList] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]); // Filtered state separate from raw data
-  const [appliedJobIds, setAppliedJobIds] = useState(new Set());
-  const [savedJobIds, setSavedJobIds] = useState(new Set()); 
-  const [loading, setLoading] = useState(true);
-  
-  // Search & Filter State
-  const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearch = useDebounce(searchQuery, 500); // ⚡ Debounced for performance
-
-  const [locationFilter, setLocationFilter] = useState("All"); 
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'list'
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedJob, setSelectedJob] = useState(null); 
-  
   const navigate = useNavigate();
 
+  // ── All original state ──
+  const [jobList, setJobList] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [appliedJobIds, setAppliedJobIds] = useState(new Set());
+  const [savedJobIds, setSavedJobIds] = useState(new Set());
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+  const [locationFilter, setLocationFilter] = useState("All");
+  const [viewMode, setViewMode] = useState("grid");
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  // ── Load-more state (replaces pagination) ──
+  const [visibleCount, setVisibleCount] = useState(JOBS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Reset visible count when filters change
+  useEffect(() => { setVisibleCount(JOBS_PER_PAGE); }, [debouncedSearch, locationFilter]);
+
+  // ── Original fetch logic — untouched ──
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const jobResponse = await axiosInstance.get("/jobs");
-        setJobList(jobResponse.data);
-        setFilteredJobs(jobResponse.data); // Initialize filtered with all
+        // Backend returns { jobs, pagination } — extract the array
+        const jobs = Array.isArray(jobResponse.data)
+          ? jobResponse.data
+          : (jobResponse.data.jobs || []);
+        setJobList(jobs);
+        setFilteredJobs(jobs);
 
         if (isLoggedIn) {
           try {
@@ -648,7 +514,6 @@ function Jobs() {
             const savedResponse = await axiosInstance.get("/users/saved-jobs");
             const saveIds = new Set(savedResponse.data.map(job => job._id));
             setSavedJobIds(saveIds);
-
           } catch (err) {
             console.error("Sync failed", err);
           }
@@ -662,59 +527,40 @@ function Jobs() {
     fetchData();
   }, [isLoggedIn]);
 
-  // ⚡ FILTER EFFECT (Runs only when debounced search or filters change)
+  // ── Original filter logic — untouched ──
   useEffect(() => {
-      const query = debouncedSearch.toLowerCase();
-      
-      const results = jobList.filter(job => {
-          const matchesSearch = 
-              job.title.toLowerCase().includes(query) || 
-              job.company.toLowerCase().includes(query) ||
-              job.location.toLowerCase().includes(query); 
-          
-          const matchesLocation = locationFilter === "All" 
-              ? true 
-              : locationFilter === "Remote" 
-                  ? job.location.toLowerCase().includes("remote") 
-                  : !job.location.toLowerCase().includes("remote");
-
-          return matchesSearch && matchesLocation;
-      });
-
-      setFilteredJobs(results);
-      setCurrentPage(1); // Reset pagination on search
+    const query = debouncedSearch.toLowerCase();
+    const results = jobList.filter(job => {
+      const matchesSearch =
+        job.title.toLowerCase().includes(query) ||
+        job.company.toLowerCase().includes(query) ||
+        job.location.toLowerCase().includes(query);
+      const matchesLocation =
+        locationFilter === "All" ? true
+        : locationFilter === "Remote" ? job.location.toLowerCase().includes("remote")
+        : !job.location.toLowerCase().includes("remote");
+      return matchesSearch && matchesLocation;
+    });
+    setFilteredJobs(results);
+    setVisibleCount(JOBS_PER_PAGE);
   }, [debouncedSearch, locationFilter, jobList]);
 
+  // ── Original toggleSave — untouched ──
   const toggleSave = async (jobId) => {
-    if (!isLoggedIn) {
-        alert("Please login to save jobs.");
-        return;
-    }
+    if (!isLoggedIn) { alert("Please login to save jobs."); return; }
     try {
-        const newSet = new Set(savedJobIds);
-        if (newSet.has(jobId)) {
-            newSet.delete(jobId);
-        } else {
-            newSet.add(jobId);
-        }
-        setSavedJobIds(newSet);
-        await axiosInstance.put(`/users/save/${jobId}`);
+      const newSet = new Set(savedJobIds);
+      if (newSet.has(jobId)) newSet.delete(jobId);
+      else newSet.add(jobId);
+      setSavedJobIds(newSet);
+      await axiosInstance.put(`/users/save/${jobId}`);
     } catch (err) {
-        console.error("Failed to toggle save:", err);
-        alert("Action failed");
+      console.error("Failed to toggle save:", err);
+      alert("Action failed");
     }
   };
 
-  const indexOfLastJob = currentPage * JOBS_PER_PAGE;
-  const indexOfFirstJob = indexOfLastJob - JOBS_PER_PAGE;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
+  // ── Original handleApply — untouched ──
   const handleApply = async (job) => {
     if (!isLoggedIn || !user) {
       alert("You must be logged in to apply for a job");
@@ -733,157 +579,212 @@ function Jobs() {
     } catch (err) {
       console.error("Application failed:", err);
       if (err.response?.status === 400) {
-         setAppliedJobIds(prev => new Set(prev).add(job._id));
-         alert("You have already applied.");
+        setAppliedJobIds(prev => new Set(prev).add(job._id));
+        alert("You have already applied.");
       } else {
-         alert(err.response?.data?.message || "Application failed");
+        alert(err.response?.data?.message || "Application failed");
       }
     }
   };
 
+  // ── Load more handler ──
+  const handleLoadMore = useCallback(() => {
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + JOBS_PER_PAGE);
+      setLoadingMore(false);
+    }, 400);
+  }, []);
+
+  const visibleJobs = filteredJobs.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredJobs.length;
+  const remaining = filteredJobs.length - visibleCount;
+
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 md:px-8 bg-slate-950 text-slate-200">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* HEADER & SEARCH SECTION */}
-        <div className="mb-10 flex flex-col gap-6 border-b border-slate-800 pb-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                <div>
-                    <h2 className="text-4xl font-bold text-white mb-2 tracking-tight">Open Positions</h2>
-                    <p className="text-slate-400 text-lg">Find your next role at top companies.</p>
-                </div>
-                {!loading && (
-                    <div className="bg-slate-900 px-5 py-2 rounded-full border border-slate-800 shadow-sm">
-                        <span className="text-white font-bold">{filteredJobs.length}</span>
-                        <span className="text-slate-400 ml-1">jobs found</span>
-                    </div>
-                )}
-            </div>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)" }}>
+      <Helmet><title>Open Positions | AxonHire</title></Helmet>
 
-            {/* SEARCH BAR & CONTROLS */}
-            <div className="flex flex-col md:flex-row gap-4 bg-[#0f172a] p-4 rounded-2xl border border-slate-800 shadow-xl">
-                <div className="flex-1 relative">
-                    <div className="absolute left-4 top-3.5 text-slate-500"><SearchIcon /></div>
-                    <input 
-                        type="text" 
-                        placeholder="Search by Title, Company, or City..." 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-slate-900 border border-slate-700 text-white pl-12 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-slate-500"
-                    />
-                </div>
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-slate-400 px-2 font-bold text-sm uppercase tracking-wide"><FilterIcon /> Filter:</div>
-                    <select 
-                        value={locationFilter}
-                        onChange={(e) => setLocationFilter(e.target.value)}
-                        className="bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer"
-                    >
-                        <option value="All">All Types</option>
-                        <option value="Remote">Remote Only</option>
-                        <option value="On-site">On-site</option>
-                    </select>
+      {/* ── SEARCH BAR ── */}
+      <div style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)", padding: "14px 24px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
 
-                    {/* VIEW TOGGLE */}
-                    <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-700 ml-2">
-                        <button onClick={() => setViewMode("grid")} className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}><GridIcon /></button>
-                        <button onClick={() => setViewMode("list")} className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}><ListIcon /></button>
-                    </div>
-                </div>
+          {/* Search box */}
+          <div style={{ display: "flex", background: "var(--bg-subtle)", border: "1.5px solid var(--border-strong)", borderRadius: "7px", overflow: "hidden", flex: 1, maxWidth: "580px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "0 13px", flex: 1 }}>
+              <span style={{ color: "var(--text-3)", flexShrink: 0 }}><SearchIcon /></span>
+              <input
+                type="text"
+                placeholder="Job title, company, or skill..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ border: "none", outline: "none", fontFamily: "Inter, sans-serif", fontSize: "13px", color: "var(--text-1)", background: "transparent", width: "100%", height: "40px" }}
+              />
             </div>
+          </div>
+
+          {/* Location filter */}
+          <select
+            value={locationFilter}
+            onChange={e => setLocationFilter(e.target.value)}
+            style={{ padding: "8px 12px", border: "1px solid var(--border-strong)", borderRadius: "7px", background: "var(--bg-surface)", color: "var(--text-1)", fontFamily: "Inter, sans-serif", fontSize: "12px", cursor: "pointer", outline: "none" }}
+          >
+            <option value="All">All locations</option>
+            <option value="Remote">Remote only</option>
+            <option value="On-site">On-site</option>
+          </select>
+
+          {/* View toggle */}
+          <div style={{ display: "flex", background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: "6px", padding: "3px", gap: "2px" }}>
+            {[
+              { mode: "grid", icon: <GridIcon /> },
+              { mode: "list", icon: <ListIcon /> },
+            ].map(({ mode, icon }) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                style={{
+                  width: "30px", height: "30px", borderRadius: "4px", border: "none", cursor: "pointer",
+                  background: viewMode === mode ? "var(--bg-surface)" : "transparent",
+                  color: viewMode === mode ? "var(--accent)" : "var(--text-3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: viewMode === mode ? "var(--shadow-sm)" : "none",
+                  transition: "all 0.15s",
+                }}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+
+          {/* Result count */}
+          {!loading && (
+            <span style={{ fontSize: "12px", color: "var(--text-3)", whiteSpace: "nowrap" }}>
+              <strong style={{ color: "var(--text-1)" }}>{filteredJobs.length.toLocaleString()}</strong> jobs found
+            </span>
+          )}
         </div>
+      </div>
 
-        {/* JOB ALERT COMPONENT */}
+      {/* ── MAIN CONTENT ── */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px 24px" }}>
+
+        {/* Job Alert */}
         <JobAlert />
 
-        {/* SKELETON LOADER (Visual Upgrade) */}
+        {/* Loading skeletons */}
         {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[1,2,3,4,5,6].map(i => <JobSkeleton key={i} />)}
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "10px" }}>
+            {Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
         )}
-        
-        {/* EMPTY STATE */}
+
+        {/* Empty state */}
         {!loading && filteredJobs.length === 0 && (
-              <div className="text-center py-24 bg-slate-900 rounded-2xl border border-slate-800 border-dashed">
-                  <div className="text-4xl mb-4">🔍</div>
-                  <h3 className="text-xl font-bold text-white mb-2">No Jobs Found</h3>
-                  <p className="text-slate-500 text-lg">Try searching for a different location or title.</p>
-                  <button onClick={() => {setSearchQuery(""); setLocationFilter("All");}} className="mt-6 text-indigo-400 hover:text-indigo-300 font-bold underline">Clear all filters</button>
-              </div>
+          <div style={{ textAlign: "center", padding: "64px 24px", background: "var(--bg-surface)", borderRadius: "12px", border: "1px dashed var(--border)" }}>
+            <div style={{ fontSize: "32px", marginBottom: "12px" }}>🔍</div>
+            <h3 style={{ fontSize: "16px", fontWeight: 600, color: "var(--text-1)", marginBottom: "6px" }}>No jobs found</h3>
+            <p style={{ fontSize: "13px", color: "var(--text-3)", marginBottom: "20px" }}>Try a different search or clear your filters</p>
+            <button
+              onClick={() => { setSearchQuery(""); setLocationFilter("All"); }}
+              style={{ padding: "8px 20px", background: "var(--accent)", color: "white", border: "none", borderRadius: "5px", fontSize: "13px", fontWeight: 500, cursor: "pointer", fontFamily: "Inter, sans-serif" }}
+            >
+              Clear filters
+            </button>
+          </div>
         )}
 
-        {/* JOB GRID / LIST */}
+        {/* Jobs grid / list */}
         {!loading && filteredJobs.length > 0 && (
-            <>
-                {viewMode === "grid" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {currentJobs.map((job) => (
-                        <JobCard
-                            key={job._id}
-                            job={job}
-                            applied={appliedJobIds.has(job._id)}
-                            isSaved={savedJobIds.has(job._id)}
-                            onApply={() => handleApply(job)}
-                            onToggleSave={toggleSave}
-                            onClick={() => setSelectedJob(job)} 
-                        />
-                    ))}
-                    </div>
-                ) : (
-                    // LIST VIEW LAYOUT
-                    <div className="flex flex-col gap-4">
-                        {currentJobs.map((job) => (
-                            <div key={job._id} onClick={() => setSelectedJob(job)} className="flex items-center justify-between bg-[#0f172a] border border-slate-800 p-5 rounded-xl hover:bg-slate-800/50 hover:border-indigo-500/30 cursor-pointer transition-all group">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 border border-slate-700 group-hover:text-indigo-400">
-                                        <BuildingIcon />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors">{job.title}</h3>
-                                        <p className="text-sm text-slate-400">{job.company} • {job.location}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-6">
-                                    <span className="hidden md:block text-sm font-medium text-emerald-400 bg-emerald-900/10 px-3 py-1 rounded border border-emerald-900/30">{job.salary || "Competitive"}</span>
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); toggleSave(job._id); }}
-                                        className="p-2 text-slate-500 hover:text-rose-500 hover:bg-slate-900 rounded-full transition-colors"
-                                    >
-                                        <HeartIcon filled={savedJobIds.has(job._id)} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+          <>
+            {viewMode === "grid" ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "10px" }}>
+                {visibleJobs.map(job => (
+                  <JobCard
+                    key={job._id}
+                    job={job}
+                    applied={appliedJobIds.has(job._id)}
+                    isSaved={savedJobIds.has(job._id)}
+                    onApply={() => handleApply(job)}
+                    onToggleSave={toggleSave}
+                    onClick={() => setSelectedJob(job)}
+                  />
+                ))}
 
-                {/* PAGINATION CONTROLS */}
-                {totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-16 gap-2">
-                        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="px-5 py-2.5 text-sm font-medium rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white shadow-sm">Previous</button>
-                        <div className="flex items-center gap-1 px-2">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                                <button key={number} onClick={() => handlePageChange(number)} className={`w-10 h-10 flex items-center justify-center text-sm rounded-xl transition-all ${currentPage === number ? "bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-900/50" : "text-slate-500 hover:bg-slate-800 hover:text-white"}`}>{number}</button>
-                            ))}
-                        </div>
-                        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-5 py-2.5 text-sm font-medium rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white shadow-sm">Next</button>
-                    </div>
-                )}
-            </>
+                {/* Skeleton placeholders while loading more */}
+                {loadingMore && Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={`sk-${i}`} />)}
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
+                {visibleJobs.map(job => (
+                  <JobRow
+                    key={job._id}
+                    job={job}
+                    applied={appliedJobIds.has(job._id)}
+                    isSaved={savedJobIds.has(job._id)}
+                    onApply={() => handleApply(job)}
+                    onToggleSave={toggleSave}
+                    onClick={() => setSelectedJob(job)}
+                  />
+                ))}
+                {loadingMore && Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="ax-skeleton" style={{ height: "66px", borderRadius: "10px" }} />
+                ))}
+              </div>
+            )}
+
+            {/* ── LOAD MORE ── */}
+            {hasMore && (
+              <div style={{ textAlign: "center", marginTop: "28px" }}>
+                <p style={{ fontSize: "12px", color: "var(--text-3)", marginBottom: "12px" }}>
+                  Showing <strong style={{ color: "var(--text-1)" }}>{visibleJobs.length}</strong> of <strong style={{ color: "var(--text-1)" }}>{filteredJobs.length}</strong> jobs
+                </p>
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  style={{
+                    padding: "10px 32px", border: "1px solid var(--border-strong)",
+                    borderRadius: "6px", background: "var(--bg-surface)",
+                    color: "var(--text-1)", fontFamily: "Inter, sans-serif",
+                    fontSize: "13px", fontWeight: 500, cursor: loadingMore ? "default" : "pointer",
+                    transition: "all 0.15s", opacity: loadingMore ? 0.6 : 1,
+                  }}
+                  onMouseEnter={e => { if (!loadingMore) { e.target.style.borderColor = "var(--accent)"; e.target.style.color = "var(--accent)"; }}}
+                  onMouseLeave={e => { e.target.style.borderColor = "var(--border-strong)"; e.target.style.color = "var(--text-1)"; }}
+                >
+                  {loadingMore ? "Loading…" : `Load ${Math.min(remaining, JOBS_PER_PAGE)} more jobs`}
+                </button>
+              </div>
+            )}
+
+            {/* All loaded */}
+            {!hasMore && filteredJobs.length > JOBS_PER_PAGE && (
+              <div style={{ textAlign: "center", marginTop: "24px", fontSize: "12px", color: "var(--text-3)" }}>
+                All {filteredJobs.length} jobs loaded
+              </div>
+            )}
+          </>
         )}
       </div>
 
+      {/* ── JOB MODAL ── */}
       {selectedJob && (
-        <JobModal 
-            job={selectedJob} 
-            onClose={() => setSelectedJob(null)} 
-            onApply={(j) => { handleApply(j); }} 
-            applied={appliedJobIds.has(selectedJob._id)}
-            isSaved={savedJobIds.has(selectedJob._id)}
-            onToggleSave={toggleSave}
+        <JobModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          onApply={(j) => { handleApply(j); }}
+          applied={appliedJobIds.has(selectedJob._id)}
+          isSaved={savedJobIds.has(selectedJob._id)}
+          onToggleSave={toggleSave}
         />
       )}
+
+      {/* Animation keyframes */}
+      <style>{`
+        @keyframes ax-modal-in {
+          from { transform: translateY(10px); opacity: 0; }
+          to   { transform: translateY(0);    opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

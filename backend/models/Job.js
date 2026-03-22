@@ -14,6 +14,11 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  type:{
+    type:String,
+enum:["Full-time","Part-time","Contract","Internship","Remote","Freelance"],
+default:"Full-time",
+  },
   salary: {
     type: String,
     required: true,
@@ -70,6 +75,14 @@ const jobSchema = new mongoose.Schema({
   //   ref: 'User'
   // }
  { timestamps: true }); // Automatically adds createdAt and updatedAt
+
+
+ //indexes for serach to imporve performace more
+ jobSchema.index({title:1});
+ jobSchema.index({location:1});
+ jobSchema.index({type:1});
+ jobSchema.index({createdAt:-1});
+
 
 //export this router so server.js can use it
 module.exports = mongoose.model("Job", jobSchema);

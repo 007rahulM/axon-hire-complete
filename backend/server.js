@@ -216,5 +216,46 @@ mongoose.connect(process.env.MONGO_URI, {
 // Get the port number from the .env file, or just use 5000 if it's not defined
 const PORT = process.env.PORT || 5000;
 // Tell the app to start "listening" for requests on our port
-app.listen(PORT, () => console.log(` server stared on http://localhost:${PORT}`));
-logger.info(`🚀 Server started on port ${PORT} with logging`);
+
+
+
+// if (require.main === module) {
+//   app.listen(PORT, () => console.log(`Server started on port "http://localhost:${PORT}"`));
+//   logger.info(`🚀 Server started on port ${PORT} with logging`);
+// }
+
+// module.exports=app; //export app for testing
+
+let serverInstance = null;
+
+const startServer = () => {
+  if (require.main === module) {
+    serverInstance = app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  }
+  return app;
+};
+
+const closeServer = async () => {
+  if (serverInstance) {
+    await serverInstance.close();
+  }
+  await mongoose.disconnect();
+};
+
+// Wait for MongoDB and skill cache to be ready
+const serverReady = new Promise((resolve, reject) => {
+  mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(async () => {
+      console.log(" Connected to MongoDB successfully");
+      await refreshSkillCache();
+      resolve();
+    })
+    .catch((err) => {
+      console.log(" MongoDB connection error:", err.message);
+      reject(err);
+    });
+});
+
+startServer();
+
+module.exports = { app, closeServer, serverReady };

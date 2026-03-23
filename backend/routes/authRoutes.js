@@ -263,10 +263,10 @@ router.post("/login",[
 ], async (req, res) => {
 
   //check validation results
-  const erros=validationResult(req);
-  if(!erros.isEmpty()){
-    logger.error(`Validation failed :${JSON.stringify(errors.array())}`,{email:req.body.email});
-    return res.status(400).json({errors:erros.array()});
+  const errors=validationResult(req);
+  if(!errors.isEmpty()){
+logger.error(`Validation failed :${JSON.stringify(errors.array())}`,{email:req.body.email});
+    return res.status(400).json({errors:errors.array()});
   }
   try {
     const { email, password } = req.body;

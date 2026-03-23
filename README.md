@@ -193,7 +193,7 @@ axon-hire-complete/
 - **MongoDB** — [MongoDB Atlas](https://www.mongodb.com/atlas) (free tier) or a local instance
 - **Cloudinary** account — [Sign up free](https://cloudinary.com/)
 - **Gmail** account with [App Password](https://support.google.com/accounts/answer/185833) enabled
-- **Google Cloud** project with OAuth 2.0 Client ID — [Console](https://console.cloud.google.com/)
+- **Google Cloud** project with OAuth 2.0 Client ID — [Console](https://console.cloud.google.com/) (Frontend needs `VITE_GOOGLE_CLIENT_ID`)
 - AI API keys (at least one): [OpenRouter](https://openrouter.ai/), [Groq](https://console.groq.com/), or [Google AI Studio](https://aistudio.google.com/)
 
 ### 1. Clone the Repository
@@ -253,7 +253,7 @@ npm run dev
 npm start
 ```
 
-> **Optional**: Seed the initial skill taxonomy:
+> **Required once for accurate skill scoring**: Seed the initial skill taxonomy:
 > ```bash
 > node scripts/seedSkills.js
 > ```
@@ -263,6 +263,12 @@ npm start
 ```bash
 cd ../frontend
 npm install
+```
+
+Create a `.env.local` (or `.env`) file in `frontend/`:
+
+```env
+VITE_GOOGLE_CLIENT_ID=your-google-oauth-client-id
 ```
 
 Start the frontend:
@@ -284,6 +290,7 @@ npm run preview
 |----------|-----|
 | Frontend | http://localhost:5173 |
 | Backend  | http://localhost:5000 |
+| Deployed API (prod) | https://axon-hire-mvp.onrender.com/api |
 
 ---
 

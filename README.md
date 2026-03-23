@@ -34,7 +34,6 @@
 - ✅ Upload resume & avatar to cloud storage (Cloudinary)
 - ✅ Browse active jobs with search and filters
 - ✅ Apply to jobs — triggers a **background AI audit** of your resume
-- ✅ Prep with the **AI Interview Coach** (streamed answers) and auto-generated interview questions
 - ✅ View your **AI match score** and matched skills per application
 - ✅ Save favourite jobs for later
 - ✅ Track application status in a visual timeline
@@ -63,7 +62,6 @@
 - 📑 **Resume Parsing**: Extracts experience, education, and skill sections from PDF resumes
 - 🏷️ **Skill Normalization**: 500+ canonical skills with synonym mapping (e.g., "React" = "React.js" = "ReactJS")
 - 🧠 **Learning Loop**: AI-discovered skills/synonyms are upserted into the skill map with throttled cache refresh
-- 🎤 **AI Interview Prep**: Question generation and self-evaluation endpoints (streaming and JSON modes)
 
 ---
 
@@ -371,15 +369,12 @@ npm run preview
 | PUT | `/api/notifications/read-all` | Mark all as read | Yes |
 | POST | `/api/alerts/subscribe` | Subscribe to job alerts | Yes |
 
-### AI & Interview Prep
+### AI Scoring
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
 | POST | `/api/ai/analyze` | Run AI carousel + deterministic scoring on a resume URL | Yes |
 | POST | `/api/ai/analyze-v3` | Deterministic v3 scoring (60/30/10) with AI discovery | Yes |
-| POST | `/api/ai/generate-questions` | Generate interview questions (JSON) for a job | Yes |
-| POST | `/api/ai/generate-questions-stream` | Stream interview questions for live UX | Yes |
-| POST | `/api/ai/evaluate-myself` | Self-evaluation responses for the AI coach | Yes |
 
 ### Admin
 

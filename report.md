@@ -61,7 +61,7 @@ npm run preview
 - Frontend: `cd frontend && npm run lint` (ESLint).
 
 ## Deployment (from README)
-- Frontend → Vercel (root: `frontend/`, Vite auto-detected; `vercel.json` handles SPA routing).
+- Frontend → Vercel (root: `frontend/`, Vite autodetected; `vercel.json` handles SPA routing).
 - Backend → Render (root: `backend/`, build `npm install`, start `npm start`; mirror `.env` vars in dashboard).
 
 ## Key Features Snapshot

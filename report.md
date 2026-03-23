@@ -19,6 +19,7 @@ Create `backend/.env` (see README for details):
 MONGO_URI=...
 JWT_SECRET=...               # 32+ chars recommended
 EMAIL_USER=...
+EMAIL_FROM=...               # optional; defaults to EMAIL_USER if unset
 EMAIL_PASS=...
 CLOUDINARY_CLOUD_NAME=...
 CLOUDINARY_API_KEY=...
@@ -61,7 +62,7 @@ npm run preview
 - Frontend: `cd frontend && npm run lint` (ESLint).
 
 ## Deployment (from README)
-- Frontend → Vercel (root: `frontend/`, Vite autodetected; `vercel.json` handles SPA routing).
+- Frontend → Vercel (root: `frontend/`, Vite autodetected; `frontend/vercel.json` handles SPA routing).
 - Backend → Render (root: `backend/`, build `npm install`, start `npm start`; mirror `.env` vars in dashboard).
 
 ## Key Features Snapshot

@@ -479,6 +479,7 @@ These areas affect the most files. Extra care required:
 | 🟡 MEDIUM | `backend/models/Application.js` | Schema changes affect apply flow, recruiter view, AI scoring storage. |
 | 🟢 LOW | `backend/routes/interviewRoutes.js` | Currently commented out in `server.js` — not mounted. |
 | 🟢 LOW | `backend/utils/scoring.js` | Not imported anywhere currently. |
+| 🔴 CRITICAL | `frontend/src/api/interviewApi.js` | ⚠️ **Pre-existing bug**: imports backend Mongoose models directly (`../../../backend/models/Interview.js`, `../../../backend/models/Job.js`). These will fail in a browser — frontend must only call API endpoints, not require Node/Mongoose modules. |
 | 🟢 LOW | `frontend/src/pages/JobAlert.jsx` | Uses raw `fetch` to hardcoded localhost — isolated from axiosInstance. |
 
 ---

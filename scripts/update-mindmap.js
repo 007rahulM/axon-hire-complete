@@ -44,7 +44,7 @@ const SKIP_DIRS = new Set([
   "public",
 ]);
 
-// File extensions to analyse
+// File extensions to analyze
 const SOURCE_EXTS = new Set([".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"]);
 
 // ─── File Discovery ─────────────────────────────────────────────────────────────

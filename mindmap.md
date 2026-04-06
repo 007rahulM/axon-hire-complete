@@ -487,8 +487,8 @@ These areas affect the most files. Extra care required:
 <!-- AUTO:TIMESTAMP:START -->
 ## 🕐 Last Auto-Updated
 
-**Date:** 2026-04-06T18:37:31.936Z  
-**Commit:** `19cbe5f2`  
-**Message:** docs: remove interview coach references  
+**Date:** 2026-04-06T18:55:50.199Z  
+**Commit:** `97642892`  
+**Message:** fix: typo analyse→analyze in script, document pre-existing interviewApi cross-boundary import bug  
 **Branch:** copilot/create-mindmap-for-code-references
 <!-- AUTO:TIMESTAMP:END -->

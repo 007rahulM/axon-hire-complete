@@ -12,6 +12,10 @@
  * Usage:
  *   node scripts/update-mindmap.js
  *
+ * README is only updated when the triggering commit message starts with
+ * "feat:" — all other commits skip the README update so it doesn't get
+ * noisy timestamps on every tiny fix.
+ *
  * No npm dependencies — uses only Node.js built-ins.
  */
 
@@ -323,6 +327,18 @@ function replaceSection(content, key, newInner) {
 
 // ─── README Update ──────────────────────────────────────────────────────────────
 
+/**
+ * Returns true if the current commit is a feature commit.
+ * A feature commit has a message starting with "feat:" (conventional commits).
+ * The COMMIT_MESSAGE env var is set by the GitHub Actions workflow.
+ * Falls back to reading git log when running locally.
+ */
+function isFeatureCommit() {
+  const msg =
+    process.env.COMMIT_MESSAGE || execSync('git log -1 --pretty=format:"%s"');
+  return msg.trimStart().toLowerCase().startsWith("feat:");
+}
+
 function updateReadme() {
   if (!fs.existsSync(README_PATH)) return;
 
@@ -391,7 +407,12 @@ function main() {
   fs.writeFileSync(MINDMAP_PATH, mindmap, "utf8");
   console.log("✅  mindmap.md updated");
 
-  updateReadme();
+  if (isFeatureCommit()) {
+    console.log("🆕  Feature commit detected — updating README.md…");
+    updateReadme();
+  } else {
+    console.log("⏭️   Not a feat: commit — skipping README update");
+  }
 
   console.log("🎉  Done");
 }

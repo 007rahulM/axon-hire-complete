@@ -3,9 +3,10 @@ name: 🗺️ Auto-Update Mindmap & README
 # ─── Triggers ────────────────────────────────────────────────────────────────
 on:
   push:
+    # Trigger on every branch so the mindmap stays accurate on feature branches too.
+    # README is only updated for feat: commits (handled inside the script).
     branches:
-      - main
-      - master
+      - "**"
     # Re-generate whenever source files change; skip if only docs changed
     paths-ignore:
       - "mindmap.md"
@@ -48,6 +49,9 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
+          # Passed so the script can decide whether to update README
+          # (only happens for feat: commits)
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
       # ── 4. Commit & push only if the files actually changed ───────────────
       - name: Commit updated docs

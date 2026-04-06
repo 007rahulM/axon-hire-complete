@@ -218,7 +218,7 @@ Create a `.env` file in the `backend/` directory:
 
 <!-- AUTO:README_BADGE:START -->
 ![Docs Updated](https://img.shields.io/badge/docs%20updated-2026-04-06-blue)  
-_Mindmap last regenerated: **2026-04-06T18:37:31.942Z** · commit `19cbe5f2`_
+_Mindmap last regenerated: **2026-04-06T18:55:50.206Z** · commit `97642892`_
 <!-- AUTO:README_BADGE:END -->
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/axon-hire
 

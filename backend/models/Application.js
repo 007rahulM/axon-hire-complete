@@ -84,5 +84,6 @@ const applicationSchema = new Schema(
 //indexies here  to make queries faster when we search for all applications for a job or by a user
 applicationSchema.index({ jobId: 1, applicantId: 1 });//to quickly find if a user has already applied to a job
 applicationSchema.index({ createdAt: -1 }); //to quickly sort applications by most recent
+applicationSchema.index({ applicantId: 1 }); // for "my-applications" route — find all apps by a user
 
 module.exports = mongoose.model("Application", applicationSchema);

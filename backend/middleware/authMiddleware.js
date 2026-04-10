@@ -2,7 +2,6 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  console.log(" Incoming headers:", req.headers);
   //extra token from the authorization header
   const authHeader = req.headers["authorization"]; // 🎯 Correct spelling
   // console.log("Authorization header:", req.headers["authorization"]);

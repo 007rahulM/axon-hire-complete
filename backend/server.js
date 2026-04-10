@@ -41,7 +41,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 
 const { refreshSkillCache } = require("./utils/skillMap");
-//const interviewRoutes=require("./routes/interviewRoutes");
+const interviewRoutes = require("./routes/interviewRoutes");
+const mongoSanitize = require("express-mongo-sanitize");
 
 
 
@@ -86,6 +87,9 @@ app.use(helmet()); //set security headers
 //morgan with our winston stream
 app.use(morgan('combined',{stream:logger.stream}));
 
+// Strip $ and . from user input to prevent NoSQL injection attacks
+app.use(mongoSanitize());
+
 
 //this is old route for the upload just kept for the refernce 
 // //this server all files from the uploads filder as static files
@@ -120,7 +124,6 @@ app.use("/api/admin",limiter);
 app.use("/api/notifications",limiter);
 app.use("/api/alerts",limiter);
 app.use("/api/users",limiter);
-
 
 //stricter limiter for auth endpoints
 const authLimiter=rateLimit({
@@ -170,7 +173,7 @@ app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/alerts", alertRoutes);
 
-//app.use("/api/interview",interviewRoutes);
+app.use("/api/interview", interviewRoutes);
 
 
 
@@ -198,19 +201,8 @@ app.use((err,req,res,next)=>{
 
 
 // --- 7. MONGODB CONNECTION ---
-// Connect to the MongoDB database using the secret URL from our .env file
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(async () => {
-    console.log(" Connected to MongoDB successfully");
-    
-    //  INITIALIZE THE BRAIN
-    // This loads all 500+ skills from the DB into server memory
-    await refreshSkillCache(); 
-  }) 
-  .catch((err) => console.log(" MongoDB connection error:", err.message));
+// A single connection is made inside serverReady. The duplicate connect() above
+// has been removed to prevent wasting Atlas M0 connection pool slots.
 
 // --- 8. START THE SERVER ---
 // Get the port number from the .env file, or just use 5000 if it's not defined

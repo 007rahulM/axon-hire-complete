@@ -3,6 +3,7 @@
 //import mongoose to create schema
 const { min } = require("moment");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
 //create user schema(structure of a user document)
 const userSchema = new mongoose.Schema({
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema({
     minlength:6, //minimum length 6 chars
   },
   googleId: {
-    type: String, // 👈 ADD THIS
+    type: String,
     unique: true,
     sparse: true
 },
@@ -65,11 +66,33 @@ const userSchema = new mongoose.Schema({
   savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
 
   
-// 👇 NEW FIELDS FOR OTP
+// 👇 OTP FIELDS
+// OTP is stored as a SHA-256 hash so a DB dump cannot be used to verify OTPs.
   isVerified: { type: Boolean, default: false }, // Cannot login if false
-  otp: { type: String }, // The 6-digit code
-  otpExpires: { type: Date } // Code expires in 10 mins
+  otp: { type: String }, // SHA-256 hash of the 6-digit code
+  otpExpires: { type: Date }, // Code expires in 10 mins
+
+// 👇 ACCOUNT LOCKOUT FIELDS
+// After MAX_LOGIN_ATTEMPTS failed logins the account is locked for LOCK_DURATION ms.
+  loginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date },
+
+// 👇 PASSWORD RESET FIELDS
+// Token is stored as a SHA-256 hash. Raw token is emailed to the user only.
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
+
+// --- Statics / helpers ---
+
+// Maximum failed attempts before locking the account
+userSchema.statics.MAX_LOGIN_ATTEMPTS = 5;
+// Lock duration: 15 minutes in milliseconds
+userSchema.statics.LOCK_DURATION = 15 * 60 * 1000;
+
+// Hash a plain OTP/token using SHA-256 (deterministic — no salt needed for short-lived codes)
+userSchema.statics.hashToken = (raw) =>
+  crypto.createHash("sha256").update(raw).digest("hex");
 
 //indexing for faster accessing
 userSchema.index({ email: 1 });//to quickly find a user by email (for login)

@@ -1,3 +1,47 @@
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
+import { useAuth } from "../context/AuthContext";
+
+function VerifyOTP() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const email = location.state?.email || "";
+  const companyData = location.state?.companyData || null;
+
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendStatus, setResendStatus] = useState(""); // "sending" | "sent" | "error"
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post("/auth/verify-otp", { email, otp, companyData });
+      login(res.data.user, res.data.token);
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Verification failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setResendStatus("sending");
+    setError("");
+    try {
+      await axiosInstance.post("/auth/resend-otp", { email });
+      setResendStatus("sent");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to resend OTP. Please try again.");
+      setResendStatus("error");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] flex items-center justify-center">
@@ -15,6 +59,9 @@
             required
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {resendStatus === "sent" && (
+            <p className="text-green-400 text-sm">A new code has been sent to your email.</p>
+          )}
           <button
             type="submit"
             disabled={loading}
@@ -23,6 +70,17 @@
             {loading ? "Verifying..." : "Verify Account"}
           </button>
         </form>
+
+        <p className="text-slate-500 text-sm mt-4 text-center">
+          Didn&apos;t receive the code?{" "}
+          <button
+            onClick={handleResend}
+            disabled={resendStatus === "sending"}
+            className="text-indigo-400 hover:text-indigo-300 font-medium disabled:opacity-50"
+          >
+            {resendStatus === "sending" ? "Sending..." : "Resend Code"}
+          </button>
+        </p>
       </div>
     </div>
   );

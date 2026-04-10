@@ -70,7 +70,7 @@ if(!erros.isEmpty()){
 
     // Secure OTP generation using crypto
     const otp = crypto.randomInt(100000, 999999).toString();
-    user.otp = otp;
+    user.otp = User.hashToken(otp); // store only the hash — never the raw OTP
     user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes
 
     await user.save();
@@ -97,8 +97,9 @@ router.post("/verify-otp", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    // Check if OTP matches and hasn't expired
-    if (user.otp !== otp || user.otpExpires < Date.now()) {
+    // Check if OTP matches (compare hash) and hasn't expired
+    const hashedInput = User.hashToken(otp);
+    if (user.otp !== hashedInput || user.otpExpires < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
@@ -197,7 +198,7 @@ body("confirm").custom((value,{req})=>value==req.body.password).withMessage("Pas
 
     // GENERATE OTP
     const otp = crypto.randomInt(100000, 999999).toString();
-    user.otp = otp;
+    user.otp = User.hashToken(otp); // store only the hash
     
     // Set Expiration: 10 minutes (10 * 60s * 1000ms)
     user.otpExpires = Date.now() + 10 * 60 * 1000; 
@@ -285,11 +286,32 @@ if(!user.isVerified){
   });
 }
 
+// --- ACCOUNT LOCKOUT CHECK ---
+// If account is locked and the lock window hasn't expired yet, reject immediately.
+if (user.lockUntil && user.lockUntil > Date.now()) {
+  const minutesLeft = Math.ceil((user.lockUntil - Date.now()) / 60000);
+  return res.status(423).json({
+    message: `Account locked due to too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+  });
+}
 
     //comapre password with hashed one
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" }); // This is also a 400 Bad Request
+    if (!isMatch) {
+      // Increment failed attempts
+      user.loginAttempts = (user.loginAttempts || 0) + 1;
+      if (user.loginAttempts >= User.MAX_LOGIN_ATTEMPTS) {
+        user.lockUntil = new Date(Date.now() + User.LOCK_DURATION);
+        user.loginAttempts = 0; // reset counter after locking
+      }
+      await user.save();
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+// Reset lockout counters on successful login
+user.loginAttempts = 0;
+user.lockUntil = undefined;
+await user.save();
 
     //check jwt token
     const payload = {
@@ -459,6 +481,110 @@ router.put("/onboard-recruiter", [
   } catch (err) {
     console.error("Onboarding Error:", err);
     res.status(500).json({ message: "Server Error during onboarding" });
+  }
+});
+
+// --- RESEND OTP ---
+// Lets a user request a fresh OTP if their email went to spam or expired.
+router.post("/resend-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+    if (user.isVerified) return res.status(400).json({ message: "Account is already verified" });
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+    user.otp = User.hashToken(otp);
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    await sendOtpEmail(email, otp);
+    res.status(200).json({ message: "A new OTP has been sent to your email" });
+  } catch (err) {
+    logger.error(`Resend OTP failed for ${req.body.email}: ${err.message}`);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// --- FORGOT PASSWORD ---
+// Sends a one-time password-reset link to the user's email.
+// We store only the SHA-256 hash of the token in the DB; the raw token is in the link.
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email });
+    // Always return 200 to avoid leaking which emails are registered
+    if (!user) return res.status(200).json({ message: "If that email exists, a reset link has been sent" });
+
+    // Generate a cryptographically secure random token
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = User.hashToken(rawToken);
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await user.save();
+
+    // Build the reset URL that will be emailed to the user
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
+
+    // Re-use the existing email transporter from emailService or nodemailer directly
+    const nodemailer = require("nodemailer");
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    await transporter.sendMail({
+      from: `"Axon Hire" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Reset your Axon Hire password",
+      html: `
+        <p>You requested a password reset.</p>
+        <p>Click the link below to set a new password. This link expires in 1 hour.</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>If you did not request this, ignore this email.</p>
+      `,
+    });
+
+    res.status(200).json({ message: "If that email exists, a reset link has been sent" });
+  } catch (err) {
+    logger.error(`Forgot password failed: ${err.message}`);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// --- RESET PASSWORD ---
+// Validates the reset token (by hashing the incoming raw token and comparing),
+// then saves the new hashed password and clears the token fields.
+router.post("/reset-password/:token", [
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  try {
+    const hashedToken = User.hashToken(req.params.token);
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) return res.status(400).json({ message: "Reset link is invalid or has expired" });
+
+    user.password = await bcrypt.hash(req.body.password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    // Clear any lockout state too
+    user.loginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful. You can now log in." });
+  } catch (err) {
+    logger.error(`Reset password failed: ${err.message}`);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

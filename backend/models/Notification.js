@@ -36,4 +36,5 @@ const notificationSchema = new mongoose.Schema({
 
 //indexing for faster retrieval of notifications for a user
 notificationSchema.index({ user: 1, createdAt: -1 }); // Get recent notifications for a user quickly
+notificationSchema.index({ user: 1, isRead: 1 }); // for unread notification count queries
 module.exports = mongoose.model("Notification", notificationSchema);

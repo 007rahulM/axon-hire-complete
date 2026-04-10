@@ -491,7 +491,10 @@ router.post("/resend-otp", async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const user = await User.findOne({ email });
+    // Ensure email is a plain string (express-mongo-sanitize already strips operators,
+    // but explicit coercion gives CodeQL a clear type guarantee)
+    const safeEmail = String(email).toLowerCase().trim();
+    const user = await User.findOne({ email: safeEmail });
     if (!user) return res.status(400).json({ message: "User not found" });
     if (user.isVerified) return res.status(400).json({ message: "Account is already verified" });
 
@@ -516,7 +519,9 @@ router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
-    const user = await User.findOne({ email });
+    // Ensure email is a plain string (defense-in-depth on top of express-mongo-sanitize)
+    const safeEmail = String(email).toLowerCase().trim();
+    const user = await User.findOne({ email: safeEmail });
     // Always return 200 to avoid leaking which emails are registered
     if (!user) return res.status(200).json({ message: "If that email exists, a reset link has been sent" });
 

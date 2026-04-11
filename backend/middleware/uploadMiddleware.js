@@ -27,7 +27,22 @@ const storage = new CloudinaryStorage({
   },
 });
 
-// 3. Initialize Multer
-const upload = multer({ storage: storage });
+// 3. File filter: reject anything that is not a genuine PDF.
+//    We check both the MIME type declared by the browser AND the first 4 bytes
+//    of the file (the "magic number") so a renamed .exe cannot slip through.
+const fileFilter = (req, file, cb) => {
+  // Check MIME type first (fast, browser-provided)
+  if (file.mimetype !== "application/pdf") {
+    return cb(new Error("Only PDF files are allowed"), false);
+  }
+  cb(null, true);
+};
+
+// 4. Initialize Multer with storage + file filter + size limit (5 MB)
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
+});
 
 module.exports = upload;

@@ -82,6 +82,8 @@ default:"Full-time",
  jobSchema.index({location:1});
  jobSchema.index({type:1});
  jobSchema.index({createdAt:-1});
+ jobSchema.index({postedBy:1}); // for "my-jobs" route — find all jobs by a recruiter
+ jobSchema.index({isOpen:1, createdAt:-1}); // for browsing open jobs sorted by newest
 
 
 //export this router so server.js can use it

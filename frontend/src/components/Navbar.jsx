@@ -1,160 +1,10 @@
-
-
-
-// // frontend/src/components/Navbar.jsx
-// import { useNavigate, Link, useLocation } from "react-router-dom";
-// import { useState, useEffect } from "react";
-// import { useAuth } from "../context/AuthContext";
-// import NotificationBell from "../components/NotificationBell"; 
-
-// const MenuIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>);
-// const CloseIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>);
-
-// function Navbar() {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const { isLoggedIn, user, logout } = useAuth();
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   useEffect(() => { setIsOpen(false); }, [location.pathname]);
-
-//   const handleLogout = () => { logout(); navigate("/login"); };
-
-//   const isRecruiter = user?.role === "admin" || user?.role === "recruiter";
-
-//   return (
-//     <nav className="fixed top-0 left-0 w-full z-50 bg-[#020617]/80 backdrop-blur-md border-b border-slate-800">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between h-20 items-center">
-          
-//           {/* LOGO */}
-//           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-//             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-//               <span className="text-white font-black text-xl italic">A</span>
-//             </div>
-//             <h1 className="text-2xl font-bold tracking-tighter text-white">Axon<span className="text-indigo-400">Hire</span></h1>
-//           </div>
-
-//           {/* DESKTOP NAV */}
-//           <div className="hidden md:flex items-center gap-8">
-//             <Link to="/" className={`text-sm font-semibold transition-colors ${location.pathname === "/" ? "text-indigo-400" : "text-slate-300 hover:text-white"}`}>Home</Link>
-//             <Link to="/jobs" className={`text-sm font-semibold transition-colors ${location.pathname === "/jobs" ? "text-indigo-400" : "text-slate-300 hover:text-white"}`}>Jobs</Link>
-            
-//             {isLoggedIn && (
-//               <>
-//                 <Link to="/saved-jobs" className={`text-sm font-semibold transition-colors ${location.pathname === "/saved-jobs" ? "text-pink-400" : "text-slate-300 hover:text-white"}`}>Saved</Link>
-//                 {/* 🚀 FEEDBACK LINK ADDED HERE */}
-//                 <Link 
-//                   to="/feedback" 
-//                   className={`text-sm font-semibold transition-colors ${location.pathname === "/feedback" ? "text-indigo-400" : "text-slate-300 hover:text-white"}`}
-//                 >
-//                   Feedback
-//                 </Link>
-//               </>
-//             )}
-
-//             <Link to="/ai-bot" className={`text-sm font-semibold transition-colors ${location.pathname === "/ai-bot" ? "text-emerald-400" : "text-slate-300 hover:text-white"}`}>AI Prep</Link>
-            
-//             {user && user.role === 'admin' && (
-//               <Link to="/admin-dashboard" className="text-red-400 font-bold hover:text-red-300">Admin Panel</Link>
-//             )}
-            
-//             {isRecruiter && (
-//               <Link to="/recruiter-dashboard" className={`text-sm font-semibold transition-colors ${location.pathname === "/recruiter-dashboard" ? "text-indigo-400" : "text-slate-300 hover:text-white"}`}>Dashboard</Link>
-//             )}
-//           </div>
-
-//           {/* ACTIONS */}
-//           <div className="hidden md:flex items-center gap-4">
-//             {!isLoggedIn ? (
-//               <>
-//                 <button onClick={() => navigate("/login")} className="text-slate-300 hover:text-white text-sm font-bold px-4 py-2">Login</button>
-//                 <button onClick={() => navigate("/register")} className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95">Join Axon</button>
-//               </>
-//             ) : (
-//               <div className="flex items-center gap-4">
-//                 <NotificationBell />
-//                 <div className="h-6 w-[1px] bg-slate-800"></div>
-
-//                 <button 
-//                   onClick={() => navigate("/post-job")}
-//                   className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-lg transition-all"
-//                 >
-//                   {isRecruiter ? "Post Job" : "Become Recruiter"}
-//                 </button>
-                
-//                 <button onClick={() => navigate("/my-applications")} className="text-slate-300 hover:text-white text-sm font-bold">My Apps</button>
-//                 <button onClick={() => navigate("/profile")} className="text-slate-300 hover:text-white text-sm font-bold">Profile</button>
-//                 <button onClick={handleLogout} className="text-red-400 hover:text-red-300 text-sm font-bold px-4 py-2 border border-red-500/20 hover:bg-red-500/10 rounded-xl transition-all">Logout</button>
-//               </div>
-//             )}
-//           </div>
-
-//           {/* MOBILE TOGGLE */}
-//           <div className="md:hidden flex items-center gap-4">
-//              {isLoggedIn && <NotificationBell />}
-//             <button onClick={() => setIsOpen(!isOpen)} className="text-slate-300 p-2">{isOpen ? <CloseIcon /> : <MenuIcon />}</button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* MOBILE MENU */}
-//       {isOpen && (
-//         <div className="md:hidden bg-[#0f172a] border-b border-slate-800 animate-slideIn">
-//           <div className="px-4 pt-2 pb-6 space-y-2">
-//             <div className="py-4 border-b border-slate-800 mb-4">
-//                {isLoggedIn ? <p className="text-slate-400 text-sm">Signed in as <span className="text-white font-bold">{user?.name}</span></p> : <p className="text-slate-400 text-sm italic">Unlock AI features by signing in.</p>}
-//             </div>
-            
-//             <button onClick={() => navigate("/")} className="block w-full text-left p-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium">Home</button>
-//             <button onClick={() => navigate("/jobs")} className="block w-full text-left p-3 text-slate-300 hover:bg-slate-800 rounded-xl font-medium">Jobs</button>
-//             {isLoggedIn && (
-//               <>
-//                 <button onClick={() => navigate("/saved-jobs")} className="block w-full text-left p-3 text-pink-400 hover:bg-slate-800 rounded-xl font-medium">Saved Jobs</button>
-//                 {/* 🚀 FEEDBACK IN MOBILE MENU */}
-//                 <button onClick={() => navigate("/feedback")} className="block w-full text-left p-3 text-indigo-400 hover:bg-slate-800 rounded-xl font-medium">Feedback</button>
-//               </>
-//             )}
-//             <button onClick={() => navigate("/ai-bot")} className="block w-full text-left p-3 text-emerald-400 hover:bg-slate-800 rounded-xl font-medium">AI Bot Prep</button>
-            
-//             {isRecruiter && <button onClick={() => navigate("/recruiter-dashboard")} className="block w-full text-left p-3 text-indigo-400 hover:bg-slate-800 rounded-xl font-medium">Recruiter Dashboard</button>}
-            
-//             <button onClick={() => navigate("/post-job")} className="block w-full text-left p-3 text-indigo-400 hover:bg-slate-800 rounded-xl font-medium">
-//                {isRecruiter ? "Post a New Job" : "Become a Recruiter"}
-//             </button>
-
-//             <div className="pt-4 space-y-3">
-//               {!isLoggedIn ? (
-//                 <>
-//                   <button onClick={() => navigate("/login")} className="w-full py-3 text-white bg-slate-800 rounded-xl font-bold">Login</button>
-//                   <button onClick={() => navigate("/register")} className="w-full py-3 text-white bg-indigo-600 rounded-xl font-bold">Sign Up</button>
-//                 </>
-//               ) : (
-//                 <>
-//                     <button onClick={() => navigate("/my-applications")} className="w-full py-3 text-white bg-slate-800 rounded-xl font-bold">My Apps</button>
-//                     <button onClick={() => navigate("/profile")} className="w-full py-3 text-white bg-slate-800 rounded-xl font-bold">My Profile</button>
-//                     <button onClick={handleLogout} className="w-full py-3 text-red-400 border border-red-500/30 rounded-xl font-bold">Log Out</button>
-//                 </>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </nav>
-//   );
-// }
-
-// export default Navbar;
-
-
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell";
 
-// ─── LOGO MARK SVG ─── (Axon Neuron — neural network A shape)
 const AxonLogoMark = () => (
-  <svg width="28" height="28" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="26" height="26" viewBox="0 0 30 30" fill="none">
     <circle cx="15" cy="15" r="13" stroke="var(--accent)" strokeWidth="1.5"/>
     <path d="M10 22 L15 9 L20 22" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <line x1="11.8" y1="17.5" x2="18.2" y2="17.5" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"/>
@@ -164,19 +14,18 @@ const AxonLogoMark = () => (
   </svg>
 );
 
-// ─── ICONS ───
 const MenuIcon = () => (
-  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24">
-    <line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/>
+  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" viewBox="0 0 24 24">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
   </svg>
 );
-const CloseIcon = () => (
-  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24">
+const X = () => (
+  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" viewBox="0 0 24 24">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 );
 const SunIcon = () => (
-  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
     <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
     <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
@@ -184,98 +33,72 @@ const SunIcon = () => (
   </svg>
 );
 const MoonIcon = () => (
-  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
   </svg>
 );
-const StarIcon = () => (
-  <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
-    <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-  </svg>
-);
-
-// UpgradeIcon reuses StarIcon shape
-const UpgradeIcon = StarIcon;
-
-// theme cycle: light → dark → premium
-const THEMES = ["light", "dark", "premium"];
-const THEME_LABELS = { light: "Light", dark: "Dark", premium: "Premium" };
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn, user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState("light");
+  const [isDark, setIsDark] = useState(false);
 
-  // Close mobile menu on route change
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
-  // Sync theme on mount
   useEffect(() => {
-    const saved = localStorage.getItem("ax-theme") || "light";
-    applyTheme(saved);
+    const saved = localStorage.getItem("ax-theme");
+    if (saved === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+      setIsDark(true);
+    }
   }, []);
 
-  const applyTheme = (t) => {
-    document.documentElement.setAttribute("data-theme", t === "light" ? "" : t);
-    localStorage.setItem("ax-theme", t);
-    setTheme(t);
-  };
-
-  const cycleTheme = () => {
-    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
-    applyTheme(next);
+  const toggleTheme = () => {
+    const next = isDark ? "" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("ax-theme", next === "" ? "light" : next);
+    setIsDark(!isDark);
   };
 
   const handleLogout = () => { logout(); navigate("/login"); };
   const isRecruiter = user?.role === "admin" || user?.role === "recruiter";
   const isCandidate = isLoggedIn && user?.role === "user";
+  const active = (p) => location.pathname === p ? "active" : "";
 
-  const isActive = (path) => location.pathname === path;
-
-  const ThemeIcon = theme === "dark" ? MoonIcon : theme === "premium" ? StarIcon : SunIcon;
-  const themeColor = theme === "premium" ? "var(--purple)" : theme === "dark" ? "var(--cyan)" : "var(--orange)";
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/jobs", label: "Jobs" },
+    ...(isLoggedIn ? [{ to: "/saved-jobs", label: "Saved" }] : []),
+    { to: "/ai-bot", label: "AI Prep" },
+    ...(isLoggedIn ? [{ to: "/feedback", label: "Feedback" }] : []),
+    ...(isRecruiter ? [{ to: "/recruiter-dashboard", label: "Dashboard" }] : []),
+    ...(user?.role === "admin" ? [{ to: "/admin-dashboard", label: "Admin" }] : []),
+  ];
 
   return (
     <nav className="ax-nav">
       <div className="ax-nav-inner">
-
-        {/* LOGO */}
         <div className="ax-logo" onClick={() => navigate("/")}>
           <div className="ax-logo-mark"><AxonLogoMark /></div>
           <span className="ax-logo-text">Axon<span>Hire</span></span>
         </div>
 
-        {/* DESKTOP LINKS */}
-        <div className="ax-nav-links hidden md:flex">
-          <Link to="/" className={`ax-nav-link ${isActive("/") ? "active" : ""}`}>Home</Link>
-          <Link to="/jobs" className={`ax-nav-link ${isActive("/jobs") ? "active" : ""}`}>Jobs</Link>
-          {isLoggedIn && (
-            <Link to="/saved-jobs" className={`ax-nav-link ${isActive("/saved-jobs") ? "active" : ""}`}>Saved</Link>
-          )}
-          <Link to="/ai-bot" className={`ax-nav-link ${isActive("/ai-bot") ? "active" : ""}`}>AI Prep</Link>
-          {isLoggedIn && (
-            <Link to="/feedback" className={`ax-nav-link ${isActive("/feedback") ? "active" : ""}`}>Feedback</Link>
-          )}
-          {user?.role === "admin" && (
-            <Link to="/admin-dashboard" className={`ax-nav-link ${isActive("/admin-dashboard") ? "active" : ""}`} style={{ color: "var(--red)" }}>Admin</Link>
-          )}
-          {isRecruiter && (
-            <Link to="/recruiter-dashboard" className={`ax-nav-link ${isActive("/recruiter-dashboard") ? "active" : ""}`}>Dashboard</Link>
-          )}
+        {/* Desktop links */}
+        <div className="ax-nav-links" style={{ display:"none" }} id="ax-desktop-links">
+          {navLinks.map(l => (
+            <Link key={l.to} to={l.to} className={`ax-nav-link ${active(l.to)}`}
+              style={l.to === "/admin-dashboard" ? { color:"var(--red)" } : {}}>
+              {l.label}
+            </Link>
+          ))}
         </div>
 
-        {/* DESKTOP ACTIONS */}
-        <div className="ax-nav-actions hidden md:flex">
-          {/* Theme cycle button */}
-          <button
-            className="ax-theme-btn"
-            onClick={cycleTheme}
-            title={`Theme: ${THEME_LABELS[theme]} — click to switch`}
-            style={{ color: themeColor }}
-          >
-            <ThemeIcon />
+        {/* Desktop actions */}
+        <div className="ax-nav-actions" id="ax-desktop-actions">
+          <button className="ax-theme-btn" onClick={toggleTheme} title={isDark ? "Light mode" : "Dark mode"}>
+            {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
 
           {!isLoggedIn ? (
@@ -286,126 +109,69 @@ function Navbar() {
           ) : (
             <>
               <NotificationBell />
-
-              {/* Recruiter upgrade button — visible ONLY for candidates */}
               {isCandidate && (
-                <button
-                  onClick={() => navigate("/register-recruiter")}
-                  className="ax-btn"
-                  style={{
-                    fontSize: "0.75rem",
-                    background: "linear-gradient(135deg, #7c3aed 0%, #0057B8 100%)",
-                    color: "white",
-                    gap: 5,
-                    padding: "0.4rem 0.875rem",
-                  }}
-                  title="Upgrade to recruiter to post jobs and access AI resume analysis"
-                >
-                  <UpgradeIcon /> Become Recruiter
+                <button onClick={() => navigate("/register-recruiter")} className="ax-btn"
+                  style={{ background:"var(--purple-bg)", color:"var(--purple)", border:"1px solid var(--border)", fontSize:"12px" }}>
+                  Post jobs →
                 </button>
               )}
-
               {isRecruiter && (
-                <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ fontSize: "0.75rem" }}>
+                <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ fontSize:"12px" }}>
                   Post a job
                 </button>
               )}
-
               <button onClick={() => navigate("/my-applications")} className="ax-btn ax-btn-ghost">My Apps</button>
               <button onClick={() => navigate("/profile")} className="ax-btn ax-btn-ghost">Profile</button>
-              <button onClick={handleLogout} className="ax-btn" style={{ color: "var(--red)", background: "var(--red-bg)", fontSize: "0.8125rem" }}>
+              <button onClick={handleLogout} className="ax-btn"
+                style={{ color:"var(--red)", background:"var(--red-bg)", border:"1px solid var(--border)" }}>
                 Sign out
               </button>
             </>
           )}
-        </div>
 
-        {/* MOBILE: theme + bell + hamburger */}
-        <div className="md:hidden flex items-center gap-2 ml-auto">
-          <button className="ax-theme-btn" onClick={cycleTheme} style={{ color: themeColor }}>
-            <ThemeIcon />
-          </button>
-          {isLoggedIn && <NotificationBell />}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="ax-theme-btn"
-            style={{ fontSize: "0" }}
-          >
-            {isOpen ? <CloseIcon /> : <MenuIcon />}
+          {/* Mobile hamburger */}
+          <button onClick={() => setIsOpen(o => !o)} className="ax-theme-btn" id="ax-hamburger">
+            {isOpen ? <X /> : <MenuIcon />}
           </button>
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* Mobile menu */}
       {isOpen && (
-        <div
-          className="md:hidden ax-fade-in"
-          style={{ background: "var(--nav-bg)", borderBottom: "1px solid var(--border)", padding: "8px 0 16px" }}
-        >
-          {/* User info */}
-          <div style={{ padding: "10px 16px 12px", borderBottom: "1px solid var(--border)", marginBottom: "4px" }}>
-            {isLoggedIn
-              ? <p style={{ fontSize: "12px", color: "var(--text-3)" }}>Signed in as <strong style={{ color: "var(--text-1)" }}>{user?.name}</strong></p>
-              : <p style={{ fontSize: "12px", color: "var(--text-3)" }}>Sign in to access all features</p>
-            }
+        <div className="ax-fade-in" style={{ background:"var(--nav-bg)", borderTop:"1px solid var(--border)", padding:"12px 16px 16px" }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:"2px", marginBottom:"12px" }}>
+            {navLinks.map(l => (
+              <button key={l.to} onClick={() => navigate(l.to)}
+                style={{ display:"block", width:"100%", textAlign:"left", padding:"8px 10px", background:"none", border:"none", cursor:"pointer", fontFamily:"Inter,sans-serif", fontSize:"13px", fontWeight:500, color: location.pathname === l.to ? "var(--accent)" : "var(--text-2)", borderRadius:"6px", borderLeft: location.pathname === l.to ? "2px solid var(--accent)" : "2px solid transparent" }}>
+                {l.label}
+              </button>
+            ))}
           </div>
-
-          {/* Nav links */}
-          {[
-            { to: "/", label: "Home" },
-            { to: "/jobs", label: "Jobs" },
-            ...(isLoggedIn ? [{ to: "/saved-jobs", label: "Saved Jobs" }] : []),
-            { to: "/ai-bot", label: "AI Prep" },
-            ...(isLoggedIn ? [{ to: "/feedback", label: "Feedback" }] : []),
-            ...(isRecruiter ? [{ to: "/recruiter-dashboard", label: "Recruiter Dashboard" }] : []),
-            ...(user?.role === "admin" ? [{ to: "/admin-dashboard", label: "Admin Panel" }] : []),
-          ].map(({ to, label }) => (
-            <button
-              key={to}
-              onClick={() => navigate(to)}
-              style={{
-                display: "block", width: "100%", textAlign: "left",
-                padding: "9px 16px", fontSize: "13px", fontWeight: "500",
-                color: isActive(to) ? "var(--accent)" : "var(--text-2)",
-                background: "none", border: "none", cursor: "pointer",
-                fontFamily: "Inter, sans-serif",
-                borderLeft: isActive(to) ? "2px solid var(--accent)" : "2px solid transparent",
-              }}
-            >
-              {label}
-            </button>
-          ))}
-
-          {/* Actions */}
-          <div style={{ padding: "12px 16px 0", display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px solid var(--border)", marginTop: "8px" }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:"8px", borderTop:"1px solid var(--border)", paddingTop:"12px" }}>
             {!isLoggedIn ? (
               <>
-                <button onClick={() => navigate("/login")} className="ax-btn ax-btn-outline" style={{ width: "100%", justifyContent: "center" }}>Sign in</button>
-                <button onClick={() => navigate("/register")} className="ax-btn ax-btn-primary" style={{ width: "100%", justifyContent: "center" }}>Get started</button>
+                <button onClick={() => navigate("/login")} className="ax-btn ax-btn-outline" style={{ width:"100%", justifyContent:"center" }}>Sign in</button>
+                <button onClick={() => navigate("/register")} className="ax-btn ax-btn-primary" style={{ width:"100%", justifyContent:"center" }}>Get started free</button>
               </>
             ) : (
               <>
-                {/* Recruiter upgrade button in mobile menu for candidates */}
-                {isCandidate && (
-                  <button
-                    onClick={() => navigate("/register-recruiter")}
-                    className="ax-btn"
-                    style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#0057B8)", color: "white", gap: 6 }}
-                  >
-                    <UpgradeIcon /> Become a Recruiter
-                  </button>
-                )}
-                {isRecruiter && (
-                  <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ width: "100%", justifyContent: "center" }}>Post a job</button>
-                )}
-                <button onClick={() => navigate("/my-applications")} className="ax-btn ax-btn-ghost" style={{ width: "100%", justifyContent: "center" }}>My Applications</button>
-                <button onClick={() => navigate("/profile")} className="ax-btn ax-btn-ghost" style={{ width: "100%", justifyContent: "center" }}>Profile</button>
-                <button onClick={handleLogout} className="ax-btn" style={{ width: "100%", justifyContent: "center", color: "var(--red)", background: "var(--red-bg)" }}>Sign out</button>
+                {isCandidate && <button onClick={() => navigate("/register-recruiter")} className="ax-btn" style={{ width:"100%", justifyContent:"center", background:"var(--purple-bg)", color:"var(--purple)", border:"1px solid var(--border)" }}>Post jobs as Recruiter</button>}
+                {isRecruiter && <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ width:"100%", justifyContent:"center" }}>Post a job</button>}
+                <button onClick={() => navigate("/my-applications")} className="ax-btn ax-btn-ghost" style={{ width:"100%", justifyContent:"center" }}>My Applications</button>
+                <button onClick={() => navigate("/profile")} className="ax-btn ax-btn-ghost" style={{ width:"100%", justifyContent:"center" }}>Profile</button>
+                <button onClick={handleLogout} className="ax-btn" style={{ width:"100%", justifyContent:"center", color:"var(--red)", background:"var(--red-bg)", border:"1px solid var(--border)" }}>Sign out</button>
               </>
             )}
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (min-width: 768px) {
+          #ax-desktop-links { display:flex !important; }
+          #ax-hamburger { display:none !important; }
+        }
+      `}</style>
     </nav>
   );
 }

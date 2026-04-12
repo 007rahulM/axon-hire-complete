@@ -371,18 +371,9 @@ function AIBot() {
   const [streamOutput, setStreamOutput] = useState("");
   const [jsonOutput, setJsonOutput] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [limitHit, setLimitHit] = useState(false);
-  const [usage, setUsage] = useState(null); // { questionCount, questionLimit, role }
 
   const abortControllerRef = useRef(null);
   const endOfContentRef = useRef(null);
-
-  // Fetch usage on mount
-  useEffect(() => {
-    axiosInstance.get("/ai/usage")
-      .then(res => setUsage(res.data))
-      .catch(() => {});
-  }, []);
 
   const handleGenerate = async (e) => {
     e.preventDefault();
@@ -391,7 +382,6 @@ function AIBot() {
     setStreamOutput("");
     setJsonOutput(null);
     setCopied(false);
-    setLimitHit(false);
 
     if (deliveryMode === "stream") {
       abortControllerRef.current = new AbortController();
@@ -403,15 +393,6 @@ function AIBot() {
           signal: abortControllerRef.current.signal,
         });
 
-        // Rate limit hit
-        if (response.status === 429) {
-          setLimitHit(true);
-          setIsLoading(false);
-          // Refresh usage
-          axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
-          return;
-        }
-
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         while (true) {
@@ -419,8 +400,6 @@ function AIBot() {
           if (done) break;
           setStreamOutput((prev) => prev + decoder.decode(value, { stream: true }));
         }
-        // Refresh usage after successful call
-        axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
       } catch (err) {
         if (err.name !== "AbortError") {
           setStreamOutput((prev) => prev + "\n\n**[System Error: Connection Interrupted]**");
@@ -432,15 +411,9 @@ function AIBot() {
         let data = res.data.data;
         if (contentType === "solver" && Array.isArray(data)) data = data[0];
         setJsonOutput(data);
-        axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
       } catch (err) {
-        if (err.response?.status === 429) {
-          setLimitHit(true);
-          axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
-        } else {
-          console.error(err);
-          alert("Failed to generate content.");
-        }
+        console.error(err);
+        alert("Failed to generate content.");
       } finally { setIsLoading(false); }
     }
   };
@@ -464,211 +437,101 @@ function AIBot() {
   const hasOutput = (deliveryMode === "stream" && (streamOutput || isLoading)) ||
                     (deliveryMode === "normal" && jsonOutput);
 
-  // Usage display helpers
-  const remaining = usage
-    ? (usage.questionLimit === null ? null : Math.max(0, usage.questionLimit - usage.questionCount))
-    : null;
-  const isUnlimited = usage?.questionLimit === null;
-
   return (
-    <div style={{ minHeight:"100vh", background:"var(--bg-page)", fontFamily:"Inter,sans-serif", overflowX:"hidden" }}>
+    <div className="ax-page">
       <style>{`
-        @keyframes ai-pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-        @keyframes ai-spin  { to{transform:rotate(360deg)} }
-        @keyframes ai-in    { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
-        @keyframes ai-bar   { 0%{width:0%} 60%{width:85%} 100%{width:100%} }
+        @keyframes ai-spin { to{transform:rotate(360deg)} }
+        @keyframes ai-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
         @keyframes ai-caret { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes ai-float {
-          0%,100%{transform:translateY(0px) rotate(0deg)}
-          33%{transform:translateY(-8px) rotate(1deg)}
-          66%{transform:translateY(-4px) rotate(-1deg)}
-        }
-
-        .ai-card { transition: border-color .2s, box-shadow .2s; }
-        .ai-card:hover { border-color: var(--accent-mid) !important; box-shadow: 0 4px 24px rgba(0,87,184,.08) !important; }
-
-        .ai-seg-btn { transition: all .15s; }
-        .ai-tab:hover:not(.active) { background: var(--bg-subtle) !important; color: var(--text-2) !important; }
-
-        .ai-submit:not(:disabled):hover {
-          filter: brightness(1.1);
-          transform: translateY(-1px);
-          box-shadow: 0 6px 20px rgba(0,87,184,.3) !important;
-        }
-        .ai-submit:disabled { opacity: .45; cursor: not-allowed; }
-
-        .ai-q-card { transition: all .2s; }
-        .ai-q-card:hover { border-color: var(--accent-mid) !important; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,87,184,.08) !important; }
-
-        /* particle dots */
-        .ai-dot { position:absolute; border-radius:50%; animation: ai-float linear infinite; }
+        @keyframes ai-bar { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
+        .ai-card { transition:border-color .2s; }
+        .ai-card:hover { border-color:var(--border-strong) !important; }
+        .ai-tab { transition:all .15s; }
+        .ai-q-card { transition:all .2s; }
+        .ai-q-card:hover { transform:translateY(-1px); box-shadow:var(--shadow) !important; }
+        .ai-submit:hover:not(:disabled) { filter:brightness(1.08); transform:translateY(-1px); }
+        .ai-submit:disabled { opacity:.45; cursor:not-allowed; }
       `}</style>
 
-      {/* ── HERO HEADER ── */}
-      <div style={{ position:"relative", overflow:"hidden", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)", padding:"48px 24px 40px" }}>
-        {/* decorative blobs */}
-        <div style={{ position:"absolute", top:-60, left:-60, width:220, height:220, borderRadius:"50%", background:"var(--accent)", opacity:.05, filter:"blur(60px)", pointerEvents:"none" }}/>
-        <div style={{ position:"absolute", top:20, right:-40, width:160, height:160, borderRadius:"50%", background:"#7c3aed", opacity:.06, filter:"blur(50px)", pointerEvents:"none" }}/>
-
-        {/* floating particles */}
-        {[
-          {s:4,x:"15%",y:"20%",dur:"4s",c:"var(--accent)"},
-          {s:3,x:"82%",y:"60%",dur:"5.5s",c:"#7c3aed"},
-          {s:5,x:"60%",y:"15%",dur:"3.5s",c:"var(--accent)"},
-          {s:3,x:"92%",y:"25%",dur:"6s",c:"#059669"},
-          {s:4,x:"5%",y:"70%",dur:"4.5s",c:"#7c3aed"},
-        ].map((p,i)=>(
-          <div key={i} className="ai-dot" style={{ width:p.s, height:p.s, left:p.x, top:p.y, background:p.c, opacity:.35, animationDuration:p.dur, animationDelay:`${i*0.7}s` }}/>
-        ))}
-
-        <div style={{ maxWidth:720, margin:"0 auto", textAlign:"center", position:"relative" }}>
-          {/* badge */}
-          <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"4px 12px", borderRadius:20, border:"1px solid var(--accent-mid)", background:"var(--accent-bg)", marginBottom:20 }}>
-            <svg width="11" height="11" fill="none" stroke="var(--accent)" strokeWidth="2" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12Z"/></svg>
-            <span style={{ fontSize:10, fontWeight:700, color:"var(--accent)", letterSpacing:".07em", textTransform:"uppercase" }}>AI-Powered Architect v2.0</span>
+      {/* Hero */}
+      <div style={{ background:"var(--bg-surface)", borderBottom:"1px solid var(--border)", padding:"40px 20px 32px" }}>
+        <div style={{ maxWidth:760, margin:"0 auto", textAlign:"center" }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"3px 12px", borderRadius:20, border:"1px solid var(--accent-mid)", background:"var(--accent-bg)", marginBottom:16 }}>
+            <svg width="10" height="10" fill="none" stroke="var(--accent)" strokeWidth="2" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12Z"/></svg>
+            <span style={{ fontSize:10, fontWeight:700, color:"var(--accent)", letterSpacing:".07em", textTransform:"uppercase" }}>AI-Powered Career Coach</span>
           </div>
-
-          <h1 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:800, letterSpacing:"-0.04em", color:"var(--text-1)", lineHeight:1.1, marginBottom:12 }}>
-            Axon{" "}
-            <span style={{ position:"relative", display:"inline-block" }}>
-              <span style={{ color:"var(--accent)" }}>Intelligence</span>
-              {/* underline bar */}
-              <span style={{ position:"absolute", bottom:-4, left:0, right:0, height:3, borderRadius:2, background:"linear-gradient(90deg,var(--accent),#7c3aed)", opacity:.6 }}/>
-            </span>
+          <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:800, letterSpacing:"-0.04em", color:"var(--text-1)", lineHeight:1.1, marginBottom:10 }}>
+            Axon <span style={{ color:"var(--accent)" }}>Intelligence</span>
           </h1>
-          <p style={{ fontSize:14, color:"var(--text-3)", lineHeight:1.7, maxWidth:440, margin:"0 auto 20px" }}>
-            Generate interview protocols or solve complex engineering challenges — powered by Axon AI.
+          <p style={{ fontSize:14, color:"var(--text-3)", lineHeight:1.65, maxWidth:440, margin:"0 auto" }}>
+            Generate interview questions, solve engineering challenges, and prepare for any role — powered by AI.
           </p>
-
-          {/* ── USAGE METER ── */}
-          {usage && !isUnlimited && (
-            <div style={{ display:"inline-flex", alignItems:"center", gap:10, padding:"8px 16px", borderRadius:10, background:"var(--bg-subtle)", border:"1px solid var(--border)", marginBottom:4 }}>
-              <div style={{ display:"flex", gap:4 }}>
-                {Array.from({ length: usage.questionLimit || 3 }).map((_,i) => (
-                  <div key={i} style={{
-                    width:10, height:10, borderRadius:3,
-                    background: i < (usage.questionCount || 0) ? "var(--text-3)" : "var(--accent)",
-                    opacity: i < (usage.questionCount || 0) ? 0.3 : 1,
-                  }}/>
-                ))}
-              </div>
-              <span style={{ fontSize:11, color: remaining === 0 ? "var(--red)" : "var(--text-3)" }}>
-                {remaining === 0
-                  ? "Monthly limit reached — upgrade to continue"
-                  : `${remaining} of ${usage.questionLimit} free requests remaining this month`
-                }
-              </span>
-            </div>
-          )}
-          {usage && isUnlimited && (
-            <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, background:"var(--green-bg)", border:"1px solid rgba(5,150,105,.25)", marginBottom:4 }}>
-              <svg width="10" height="10" fill="none" stroke="var(--green)" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              <span style={{ fontSize:11, color:"var(--green)", fontWeight:600 }}>Unlimited AI requests</span>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ── MAIN CONTENT ── */}
-      <div style={{ maxWidth:760, margin:"0 auto", padding:"32px 20px 48px" }}>
+      {/* Main */}
+      <div style={{ maxWidth:760, margin:"0 auto", padding:"28px 20px 60px" }}>
 
-        {/* ── PAYWALL CARD (limit reached) ── */}
-        {limitHit && (
-          <div style={{ animation:"ai-in .35s ease-out", marginBottom:20, background:"var(--bg-surface)", border:"1px solid var(--red)", borderRadius:14, overflow:"hidden" }}>
-            <div style={{ background:"var(--red-bg)", padding:"20px 24px", textAlign:"center" }}>
-              <div style={{ fontSize:32, marginBottom:10 }}>🚀</div>
-              <div style={{ fontSize:16, fontWeight:800, color:"var(--text-1)", marginBottom:6 }}>You've reached your monthly limit</div>
-              <div style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.7, marginBottom:18, maxWidth:380, margin:"0 auto 18px" }}>
-                Candidates get <strong>{usage?.questionLimit || 3} free AI requests</strong> per month.
-                Upgrade to a recruiter account for <strong>unlimited access</strong> to AI tools, resume analysis, and more.
-              </div>
-              <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
-                <a href="/register-recruiter"
-                  style={{ padding:"10px 24px", background:"var(--accent)", color:"white", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", textDecoration:"none" }}>
-                  Upgrade to Recruiter →
-                </a>
-                <button onClick={() => setLimitHit(false)}
-                  style={{ padding:"10px 20px", background:"var(--bg-surface)", color:"var(--text-2)", border:"1px solid var(--border-strong)", borderRadius:7, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
-                  Maybe later
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── COMMAND CARD ── */}
-        <div className="ai-card" style={{ background:"var(--bg-surface)", border:"1px solid var(--border)", borderRadius:14, overflow:"hidden", marginBottom:20 }}>
-
-          {/* input row */}
-          <div style={{ padding:"16px 16px 0" }}>
-            <div style={{ display:"flex", background:"var(--bg-subtle)", border:"1.5px solid var(--border-strong)", borderRadius:9, overflow:"hidden", transition:"border-color .15s" }}
-              onFocusCapture={e=>e.currentTarget.style.borderColor="var(--accent)"}
-              onBlurCapture={e=>e.currentTarget.style.borderColor="var(--border-strong)"}
+        {/* Control card */}
+        <div className="ax-card ai-card" style={{ marginBottom:20, overflow:"hidden" }}>
+          {/* Input row */}
+          <div style={{ padding:"14px 14px 0" }}>
+            <div style={{ display:"flex", background:"var(--bg-subtle)", border:"1.5px solid var(--border-strong)", borderRadius:8, overflow:"hidden", transition:"border-color .15s" }}
+              onFocusCapture={e => e.currentTarget.style.borderColor = "var(--accent)"}
+              onBlurCapture={e => e.currentTarget.style.borderColor = "var(--border-strong)"}
             >
-              <div style={{ display:"flex", alignItems:"center", paddingLeft:14, color:"var(--text-3)" }}>
-                <Bot size={18}/>
+              <div style={{ display:"flex", alignItems:"center", paddingLeft:12, color:"var(--text-3)" }}>
+                <Bot size={16}/>
               </div>
               <input
                 type="text"
                 value={jobTitle}
-                onChange={e=>setJobTitle(e.target.value)}
-                onKeyDown={e=>{ if(e.key==="Enter") handleGenerate(e); }}
-                placeholder="e.g. 'Senior React Dev' or 'Solve 10+10'…"
-                style={{ flex:1, background:"transparent", border:"none", outline:"none", padding:"13px 12px", fontSize:14, color:"var(--text-1)", fontFamily:"Inter,sans-serif" }}
+                onChange={e => setJobTitle(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") handleGenerate(e); }}
+                placeholder="e.g. 'Senior React Dev' or 'Explain binary search'…"
+                style={{ flex:1, background:"transparent", border:"none", outline:"none", padding:"12px 10px", fontSize:13, color:"var(--text-1)", fontFamily:"Inter,sans-serif" }}
               />
-              <div style={{ padding:6 }}>
+              <div style={{ padding:5 }}>
                 {!isLoading ? (
-                  <button className="ai-submit" onClick={handleGenerate} disabled={!jobTitle.trim() || (remaining === 0)}
-                    style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", background: remaining === 0 ? "var(--bg-subtle)" : "var(--accent)", color: remaining === 0 ? "var(--text-3)" : "white", border: remaining === 0 ? "1px solid var(--border)" : "none", borderRadius:6, fontSize:12, fontWeight:700, cursor: remaining === 0 ? "not-allowed" : "pointer", fontFamily:"inherit", transition:"all .15s" }}
-                    title={remaining === 0 ? "Monthly limit reached — upgrade to continue" : undefined}
-                  >
-                    <Play size={13} fill={remaining === 0 ? "currentColor" : "white"} stroke="none"/> Initialize
+                  <button className="ai-submit ax-btn ax-btn-primary" onClick={handleGenerate} disabled={!jobTitle.trim()}
+                    style={{ gap:5, padding:"8px 14px", fontSize:12 }}>
+                    <Play size={12} fill="white" stroke="none"/> Run
                   </button>
                 ) : (
                   <button onClick={stopGeneration}
-                    style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", background:"rgba(239,68,68,.1)", color:"#ef4444", border:"1px solid rgba(239,68,68,.3)", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
-                    <StopCircle size={13}/> Abort
+                    style={{ display:"flex", alignItems:"center", gap:5, padding:"8px 14px", background:"var(--red-bg)", color:"var(--red)", border:"1px solid var(--red)", borderRadius:6, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                    <StopCircle size={12}/> Stop
                   </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* settings row */}
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, padding:16 }}>
-
-            {/* Protocol */}
+          {/* Mode toggles */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, padding:14 }}>
             <div>
-              <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:6 }}>Protocol</div>
-              <div style={{ display:"flex", background:"var(--bg-subtle)", borderRadius:7, padding:3, border:"1px solid var(--border)" }}>
-                {[
-                  {val:"questions", label:"Interview", icon:<FileText size={12}/>},
-                  {val:"solver",    label:"Solver",    icon:<Code size={12}/>},
-                ].map(opt=>{
-                  const active = contentType===opt.val;
+              <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:5 }}>Mode</div>
+              <div style={{ display:"flex", background:"var(--bg-subtle)", borderRadius:6, padding:3, border:"1px solid var(--border)", gap:2 }}>
+                {[{val:"questions",label:"Interview",icon:<FileText size={11}/>},{val:"solver",label:"Solver",icon:<Code size={11}/>}].map(opt => {
+                  const on = contentType === opt.val;
                   return (
-                    <button key={opt.val} className="ai-tab" onClick={()=>setContentType(opt.val)}
-                      style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:5, padding:"7px 10px", borderRadius:5, border:"none", background:active?"var(--bg-surface)":"transparent", color:active?"var(--text-1)":"var(--text-3)", fontSize:11, fontWeight:active?700:500, cursor:"pointer", fontFamily:"inherit", boxShadow:active?"0 1px 4px rgba(0,0,0,.08)":"none", transition:"all .15s" }}>
-                      <span style={{ color:active?"var(--accent)":"var(--text-3)" }}>{opt.icon}</span>
+                    <button key={opt.val} className="ai-tab" onClick={() => setContentType(opt.val)}
+                      style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:4, padding:"6px 8px", borderRadius:4, border:"none", background: on ? "var(--bg-surface)" : "transparent", color: on ? "var(--text-1)" : "var(--text-3)", fontSize:11, fontWeight: on ? 600 : 400, cursor:"pointer", fontFamily:"inherit", boxShadow: on ? "var(--shadow-sm)" : "none", transition:"all .12s" }}>
+                      <span style={{ color: on ? "var(--accent)" : "var(--text-3)" }}>{opt.icon}</span>
                       {opt.label}
                     </button>
                   );
                 })}
               </div>
             </div>
-
-            {/* Transmission */}
             <div>
-              <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:6 }}>Transmission</div>
-              <div style={{ display:"flex", background:"var(--bg-subtle)", borderRadius:7, padding:3, border:"1px solid var(--border)" }}>
-                {[
-                  {val:"stream", label:"Stream",   icon:<Terminal size={12}/>, activeColor:"#059669"},
-                  {val:"normal", label:"Standard",  icon:<Zap size={12}/>,      activeColor:"var(--accent)"},
-                ].map(opt=>{
-                  const active = deliveryMode===opt.val;
+              <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".08em", marginBottom:5 }}>Output</div>
+              <div style={{ display:"flex", background:"var(--bg-subtle)", borderRadius:6, padding:3, border:"1px solid var(--border)", gap:2 }}>
+                {[{val:"stream",label:"Stream",icon:<Terminal size={11}/>},{val:"normal",label:"Cards",icon:<Zap size={11}/>}].map(opt => {
+                  const on = deliveryMode === opt.val;
                   return (
-                    <button key={opt.val} className="ai-tab" onClick={()=>setDeliveryMode(opt.val)}
-                      style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:5, padding:"7px 10px", borderRadius:5, border:"none", background:active?"var(--bg-surface)":"transparent", color:active?opt.activeColor:"var(--text-3)", fontSize:11, fontWeight:active?700:500, cursor:"pointer", fontFamily:"inherit", boxShadow:active?"0 1px 4px rgba(0,0,0,.08)":"none", transition:"all .15s" }}>
+                    <button key={opt.val} className="ai-tab" onClick={() => setDeliveryMode(opt.val)}
+                      style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:4, padding:"6px 8px", borderRadius:4, border:"none", background: on ? "var(--bg-surface)" : "transparent", color: on ? "var(--accent)" : "var(--text-3)", fontSize:11, fontWeight: on ? 600 : 400, cursor:"pointer", fontFamily:"inherit", boxShadow: on ? "var(--shadow-sm)" : "none", transition:"all .12s" }}>
                       {opt.icon}
                       {opt.label}
                     </button>
@@ -678,154 +541,125 @@ function AIBot() {
             </div>
           </div>
 
-          {/* loading progress bar */}
+          {/* Progress bar */}
           {isLoading && (
-            <div style={{ height:2, background:"var(--border)", overflow:"hidden" }}>
-              <div style={{ height:"100%", background:"linear-gradient(90deg,var(--accent),#7c3aed)", animation:"ai-bar 2.5s ease-out forwards" }}/>
+            <div style={{ height:2, background:"var(--bg-subtle)", overflow:"hidden" }}>
+              <div style={{ height:"100%", background:"var(--accent)", animation:"ai-bar 2s ease-in-out infinite", width:"60%" }}/>
             </div>
           )}
         </div>
 
-        {/* ── STREAM OUTPUT ── */}
+        {/* Stream output */}
         {deliveryMode === "stream" && (streamOutput || isLoading) && (
           <div style={{ animation:"ai-in .3s ease-out" }}>
-            {/* output header bar */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-                <span style={{ width:7, height:7, borderRadius:"50%", background:"#059669", animation:isLoading?"ai-pulse 1.2s infinite":"none", display:"inline-block" }}/>
-                <span style={{ fontSize:10, fontWeight:700, color:"#059669", fontFamily:"monospace", letterSpacing:".06em" }}>
-                  {isLoading?"LIVE UPLINK · ESTABLISHED":"OUTPUT · COMPLETE"}
+              <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                <span style={{ width:7, height:7, borderRadius:"50%", background: isLoading ? "var(--orange)" : "var(--green)", display:"inline-block" }}/>
+                <span style={{ fontSize:10, fontWeight:700, color: isLoading ? "var(--orange)" : "var(--green)", fontFamily:"monospace", letterSpacing:".06em", textTransform:"uppercase" }}>
+                  {isLoading ? "Generating…" : "Complete"}
                 </span>
               </div>
               <button onClick={handleCopy}
-                style={{ display:"flex", alignItems:"center", gap:5, padding:"4px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-surface)", color:copied?"#059669":"var(--text-3)", fontSize:10, fontWeight:600, cursor:"pointer", fontFamily:"monospace", transition:"all .15s" }}>
-                {copied ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy log</>}
+                style={{ display:"flex", alignItems:"center", gap:4, padding:"4px 10px", borderRadius:5, border:"1px solid var(--border)", background:"var(--bg-surface)", color: copied ? "var(--green)" : "var(--text-3)", fontSize:10, fontWeight:600, cursor:"pointer", fontFamily:"monospace", transition:"all .12s" }}>
+                {copied ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy</>}
               </button>
             </div>
-
-            {/* terminal box */}
-            <div style={{ background:"var(--bg-subtle)", border:"1px solid var(--border)", borderRadius:10, overflow:"hidden" }}>
-              {/* terminal title bar */}
-              <div style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)" }}>
-                <div style={{ width:10, height:10, borderRadius:"50%", background:"#ef4444", opacity:.7 }}/>
-                <div style={{ width:10, height:10, borderRadius:"50%", background:"#f59e0b", opacity:.7 }}/>
-                <div style={{ width:10, height:10, borderRadius:"50%", background:"#22c55e", opacity:.7 }}/>
-                <span style={{ marginLeft:6, fontSize:10, color:"var(--text-3)", fontFamily:"monospace" }}>axon-stream · output</span>
+            <div className="ax-card" style={{ overflow:"hidden" }}>
+              <div style={{ display:"flex", alignItems:"center", gap:5, padding:"8px 12px", background:"var(--bg-subtle)", borderBottom:"1px solid var(--border)" }}>
+                {["#ef4444","#f59e0b","#22c55e"].map((c,i) => <div key={i} style={{ width:9, height:9, borderRadius:"50%", background:c, opacity:.7 }}/>)}
+                <span style={{ marginLeft:6, fontSize:10, color:"var(--text-3)", fontFamily:"monospace" }}>axon · output</span>
               </div>
-
-              <div style={{ padding:"20px 22px", fontFamily:"monospace", fontSize:13, lineHeight:1.8, color:"var(--text-1)", minHeight:320 }}>
+              <div style={{ padding:"18px 20px", fontFamily:"Inter,sans-serif", fontSize:13, lineHeight:1.8, color:"var(--text-1)", minHeight:280 }}>
                 <ReactMarkdown components={{
                   code({inline, children, ...props}) {
                     return !inline ? (
-                      <div style={{ margin:"14px 0", borderRadius:7, overflow:"hidden", border:"1px solid var(--border)" }}>
-                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 12px", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)" }}>
+                      <div style={{ margin:"12px 0", borderRadius:6, overflow:"hidden", border:"1px solid var(--border)" }}>
+                        <div style={{ padding:"5px 12px", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)" }}>
                           <span style={{ fontSize:9, fontWeight:700, color:"var(--accent)", textTransform:"uppercase", letterSpacing:".06em" }}>code</span>
-                          <span style={{ fontSize:9, color:"var(--text-3)", fontFamily:"monospace" }}>copy</span>
                         </div>
-                        <code style={{ display:"block", padding:"14px 16px", overflowX:"auto", color:"var(--accent)", background:"var(--bg-page)", fontSize:12 }} {...props}>{children}</code>
+                        <code style={{ display:"block", padding:"13px 15px", overflowX:"auto", color:"var(--accent)", background:"var(--bg-page)", fontSize:12, fontFamily:"monospace" }} {...props}>{children}</code>
                       </div>
-                    ) : (
-                      <code style={{ background:"var(--accent-bg)", color:"var(--accent)", padding:"1px 6px", borderRadius:3, fontSize:12 }} {...props}>{children}</code>
-                    );
+                    ) : <code style={{ background:"var(--accent-bg)", color:"var(--accent)", padding:"1px 5px", borderRadius:3, fontSize:12, fontFamily:"monospace" }} {...props}>{children}</code>;
                   },
-                  h1: ({children,...p})=><h1 style={{ fontSize:20, fontWeight:800, color:"var(--text-1)", marginTop:24, marginBottom:12, paddingBottom:8, borderBottom:"1px solid var(--border)", fontFamily:"inherit" }} {...p}>{children}</h1>,
-                  h2: ({children,...p})=><h2 style={{ fontSize:15, fontWeight:700, color:"var(--accent)", marginTop:18, marginBottom:8, textTransform:"uppercase", letterSpacing:".05em", fontFamily:"inherit" }} {...p}>{children}</h2>,
-                  h3: ({children,...p})=><h3 style={{ fontSize:14, fontWeight:700, color:"var(--text-1)", marginTop:14, marginBottom:6, fontFamily:"inherit" }} {...p}>{children}</h3>,
-                  p:  ({children,...p})=><p style={{ marginBottom:12, color:"var(--text-2)", fontFamily:"inherit" }} {...p}>{children}</p>,
-                  ul: ({children,...p})=><ul style={{ marginBottom:12, paddingLeft:0, listStyle:"none" }} {...p}>{children}</ul>,
-                  li: ({children,...p})=><li style={{ display:"flex", gap:8, marginBottom:4, color:"var(--text-2)" }} {...p}><span style={{ color:"var(--accent)", flexShrink:0, marginTop:1 }}>›</span><span>{children}</span></li>,
-                  strong: ({children,...p})=><strong style={{ color:"var(--text-1)", fontWeight:700, background:"var(--accent-bg)", padding:"0 4px", borderRadius:2 }} {...p}>{children}</strong>,
+                  h1: ({children,...p}) => <h1 style={{ fontSize:18, fontWeight:800, color:"var(--text-1)", marginTop:22, marginBottom:10, paddingBottom:7, borderBottom:"1px solid var(--border)" }} {...p}>{children}</h1>,
+                  h2: ({children,...p}) => <h2 style={{ fontSize:13, fontWeight:700, color:"var(--accent)", marginTop:16, marginBottom:7, textTransform:"uppercase", letterSpacing:".05em" }} {...p}>{children}</h2>,
+                  h3: ({children,...p}) => <h3 style={{ fontSize:13, fontWeight:700, color:"var(--text-1)", marginTop:12, marginBottom:5 }} {...p}>{children}</h3>,
+                  p:  ({children,...p}) => <p style={{ marginBottom:10, color:"var(--text-2)" }} {...p}>{children}</p>,
+                  ul: ({children,...p}) => <ul style={{ marginBottom:10, paddingLeft:0, listStyle:"none" }} {...p}>{children}</ul>,
+                  li: ({children,...p}) => <li style={{ display:"flex", gap:7, marginBottom:4, color:"var(--text-2)" }} {...p}><span style={{ color:"var(--accent)", flexShrink:0 }}>›</span><span>{children}</span></li>,
+                  strong: ({children,...p}) => <strong style={{ color:"var(--text-1)", fontWeight:700 }} {...p}>{children}</strong>,
                 }}>{streamOutput}</ReactMarkdown>
-                {isLoading && (
-                  <span style={{ display:"inline-block", width:2, height:14, background:"var(--accent)", marginLeft:2, animation:"ai-caret 1s infinite", verticalAlign:"middle" }}/>
-                )}
+                {isLoading && <span style={{ display:"inline-block", width:2, height:13, background:"var(--accent)", marginLeft:2, animation:"ai-caret 1s infinite", verticalAlign:"middle" }}/>}
               </div>
             </div>
           </div>
         )}
 
-        {/* ── STANDARD OUTPUT ── */}
+        {/* Card output */}
         {deliveryMode === "normal" && jsonOutput && (
           <div style={{ animation:"ai-in .3s ease-out" }}>
-
-            {/* Questions grid */}
             {contentType === "questions" && Array.isArray(jsonOutput) && (
-              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                 {jsonOutput.map((q, idx) => (
-                  <div key={idx} className="ai-q-card" style={{ background:"var(--bg-surface)", border:"1px solid var(--border)", borderRadius:12, padding:"18px 20px" }}>
-                    <div style={{ display:"flex", alignItems:"flex-start", gap:12, marginBottom:12 }}>
-                      <div style={{ width:28, height:28, borderRadius:6, background:"var(--accent-bg)", border:"1px solid var(--accent-mid)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:700, color:"var(--accent)", flexShrink:0, fontFamily:"monospace" }}>{idx+1}</div>
-                      <span style={{ fontSize:9, fontWeight:700, padding:"3px 8px", borderRadius:3, textTransform:"uppercase", letterSpacing:".06em", background:q.type==="Technical"?"rgba(37,99,235,.1)":"rgba(124,58,237,.1)", color:q.type==="Technical"?"#2563eb":"#7c3aed", border:`1px solid ${q.type==="Technical"?"rgba(37,99,235,.25)":"rgba(124,58,237,.25)"}`, marginTop:5 }}>{q.type}</span>
+                  <div key={idx} className="ax-card ai-q-card" style={{ padding:"16px 18px" }}>
+                    <div style={{ display:"flex", alignItems:"flex-start", gap:10, marginBottom:10 }}>
+                      <div style={{ width:26, height:26, borderRadius:5, background:"var(--accent-bg)", border:"1px solid var(--accent-mid)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, color:"var(--accent)", flexShrink:0, fontFamily:"monospace" }}>{idx+1}</div>
+                      <span style={{ fontSize:9, fontWeight:700, padding:"3px 7px", borderRadius:3, textTransform:"uppercase", letterSpacing:".06em", background: q.type==="Technical" ? "rgba(0,87,184,.08)" : "rgba(124,58,237,.08)", color: q.type==="Technical" ? "var(--accent)" : "var(--purple)", border:`1px solid ${q.type==="Technical" ? "var(--accent-mid)" : "rgba(124,58,237,.25)"}`, marginTop:5 }}>{q.type}</span>
                     </div>
-                    <h3 style={{ fontSize:14, fontWeight:700, color:"var(--text-1)", marginBottom:14, lineHeight:1.5 }}>{q.question}</h3>
-                    <div style={{ background:"var(--bg-subtle)", borderRadius:8, padding:"13px 15px", border:"1px solid var(--border)", display:"flex", flexDirection:"column", gap:10 }}>
+                    <h3 style={{ fontSize:13, fontWeight:700, color:"var(--text-1)", marginBottom:12, lineHeight:1.5 }}>{q.question}</h3>
+                    <div style={{ background:"var(--bg-subtle)", borderRadius:7, padding:"11px 13px", border:"1px solid var(--border)", display:"flex", flexDirection:"column", gap:8 }}>
                       <div>
-                        <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".07em", marginBottom:5 }}>Intent</div>
-                        <p style={{ fontSize:12, color:"var(--text-2)", lineHeight:1.65, margin:0 }}>{q.intent}</p>
+                        <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".07em", marginBottom:4 }}>Intent</div>
+                        <p style={{ fontSize:12, color:"var(--text-2)", lineHeight:1.6, margin:0 }}>{q.intent}</p>
                       </div>
-                      <div style={{ borderTop:"1px solid var(--border)", paddingTop:10 }}>
-                        <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".07em", marginBottom:5 }}>Model Answer</div>
-                        <p style={{ fontSize:12, color:"var(--text-1)", lineHeight:1.65, margin:0 }}>{q.answer}</p>
+                      <div style={{ borderTop:"1px solid var(--border)", paddingTop:9 }}>
+                        <div style={{ fontSize:9, fontWeight:700, color:"var(--text-3)", textTransform:"uppercase", letterSpacing:".07em", marginBottom:4 }}>Model Answer</div>
+                        <p style={{ fontSize:12, color:"var(--text-1)", lineHeight:1.6, margin:0 }}>{q.answer}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-
-            {/* Solver output */}
             {contentType === "solver" && jsonOutput && (
-              <div style={{ background:"var(--bg-surface)", border:"1px solid var(--border)", borderRadius:12, overflow:"hidden" }}>
-                {/* solver header */}
-                <div style={{ padding:"24px 24px 20px", borderBottom:"1px solid var(--border)", background:"var(--bg-subtle)" }}>
-                  <h2 style={{ fontSize:20, fontWeight:800, color:"var(--text-1)", marginBottom:8, letterSpacing:"-0.02em" }}>{jsonOutput.title||"Solver Output"}</h2>
-                  <p style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.7, margin:0 }}>{jsonOutput.whyItMatters}</p>
+              <div className="ax-card" style={{ overflow:"hidden" }}>
+                <div style={{ padding:"20px 22px 16px", borderBottom:"1px solid var(--border)", background:"var(--bg-subtle)" }}>
+                  <h2 style={{ fontSize:18, fontWeight:800, color:"var(--text-1)", marginBottom:7, letterSpacing:"-0.02em" }}>{jsonOutput.title || "Solution"}</h2>
+                  <p style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.65, margin:0 }}>{jsonOutput.whyItMatters}</p>
                 </div>
-
-                <div style={{ padding:"20px 24px", display:"flex", flexDirection:"column", gap:20 }}>
-                  {/* Challenge */}
+                <div style={{ padding:"18px 22px", display:"flex", flexDirection:"column", gap:18 }}>
                   <div>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-                      <div style={{ width:24, height:24, borderRadius:5, background:"rgba(245,158,11,.1)", border:"1px solid rgba(245,158,11,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                        <Zap size={12} color="#f59e0b"/>
-                      </div>
+                    <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:9 }}>
+                      <Zap size={13} color="var(--orange)"/>
                       <span style={{ fontSize:12, fontWeight:700, color:"var(--text-1)" }}>The Challenge</span>
                     </div>
-                    <p style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.72, paddingLeft:32, borderLeft:"2px solid var(--border)", margin:0 }}>{jsonOutput.challenge}</p>
+                    <p style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.7, margin:0, paddingLeft:20, borderLeft:"2px solid var(--border)" }}>{jsonOutput.challenge}</p>
                   </div>
-
-                  {/* Approach */}
                   <div>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-                      <div style={{ width:24, height:24, borderRadius:5, background:"rgba(5,150,105,.1)", border:"1px solid rgba(5,150,105,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                        <CheckCircle2 size={12} color="#059669"/>
-                      </div>
-                      <span style={{ fontSize:12, fontWeight:700, color:"var(--text-1)" }}>Strategic Approach</span>
+                    <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:9 }}>
+                      <CheckCircle2 size={13} color="var(--green)"/>
+                      <span style={{ fontSize:12, fontWeight:700, color:"var(--text-1)" }}>Approach</span>
                     </div>
-                    <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
                       {jsonOutput.approach?.map((step, i) => (
-                        <div key={i} style={{ display:"flex", gap:10, padding:"10px 13px", borderRadius:7, background:"var(--bg-subtle)", border:"1px solid var(--border)" }}>
+                        <div key={i} style={{ display:"flex", gap:9, padding:"9px 12px", borderRadius:6, background:"var(--bg-subtle)", border:"1px solid var(--border)" }}>
                           <span style={{ fontSize:10, fontWeight:700, color:"var(--accent)", fontFamily:"monospace", flexShrink:0, paddingTop:1 }}>0{i+1}</span>
-                          <span style={{ fontSize:12, color:"var(--text-1)", lineHeight:1.6 }}>{step}</span>
+                          <span style={{ fontSize:12, color:"var(--text-1)", lineHeight:1.55 }}>{step}</span>
                         </div>
                       ))}
                     </div>
                   </div>
-
-                  {/* Implementation */}
                   <div>
-                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-                      <div style={{ width:24, height:24, borderRadius:5, background:"rgba(236,72,153,.1)", border:"1px solid rgba(236,72,153,.3)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                        <Code size={12} color="#ec4899"/>
-                      </div>
+                    <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:9 }}>
+                      <Code size={13} color="var(--purple)"/>
                       <span style={{ fontSize:12, fontWeight:700, color:"var(--text-1)" }}>Implementation</span>
                     </div>
-                    <div style={{ borderRadius:8, overflow:"hidden", border:"1px solid var(--border)" }}>
-                      <div style={{ display:"flex", gap:6, padding:"8px 13px", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)" }}>
-                        {["#ef4444","#f59e0b","#22c55e"].map((c,i)=><div key={i} style={{ width:9, height:9, borderRadius:"50%", background:c, opacity:.7 }}/>)}
-                        <span style={{ marginLeft:6, fontSize:9, color:"var(--text-3)", fontFamily:"monospace" }}>solution.js</span>
+                    <div style={{ borderRadius:7, overflow:"hidden", border:"1px solid var(--border)" }}>
+                      <div style={{ display:"flex", gap:5, padding:"7px 12px", background:"var(--bg-surface)", borderBottom:"1px solid var(--border)" }}>
+                        {["#ef4444","#f59e0b","#22c55e"].map((c,i) => <div key={i} style={{ width:8, height:8, borderRadius:"50%", background:c, opacity:.7 }}/>)}
+                        <span style={{ marginLeft:5, fontSize:9, color:"var(--text-3)", fontFamily:"monospace" }}>solution.js</span>
                       </div>
-                      <div style={{ padding:"16px 18px", background:"var(--bg-page)", fontFamily:"monospace", fontSize:12 }}>
+                      <div style={{ padding:"14px 16px", background:"var(--bg-page)", fontFamily:"monospace", fontSize:12, color:"var(--text-1)" }}>
                         <ReactMarkdown>{`\`\`\`javascript\n${jsonOutput.codeSolution}\n\`\`\``}</ReactMarkdown>
                       </div>
                     </div>

@@ -85,8 +85,8 @@ function Navbar() {
           <span className="ax-logo-text">Axon<span>Hire</span></span>
         </div>
 
-        {/* Desktop links */}
-        <div className="ax-nav-links" style={{ display:"none" }} id="ax-desktop-links">
+        {/* Desktop links — hidden below 768px via CSS */}
+        <div className="ax-nav-links" id="ax-desktop-links">
           {navLinks.map(l => (
             <Link key={l.to} to={l.to} className={`ax-nav-link ${active(l.to)}`}
               style={l.to === "/admin-dashboard" ? { color:"var(--red)" } : {}}>
@@ -167,6 +167,7 @@ function Navbar() {
       )}
 
       <style>{`
+        #ax-desktop-links { display:none; }
         @media (min-width: 768px) {
           #ax-desktop-links { display:flex !important; }
           #ax-hamburger { display:none !important; }

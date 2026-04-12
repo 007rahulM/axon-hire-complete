@@ -162,13 +162,30 @@ export default function FloatingAIBot() {
     ? { left: pos.x + "px", top: pos.y + "px", right: "auto", bottom: "auto" }
     : defaultPos;
 
+  const isDragged = pos.x !== null;
+  const panelStyle = {
+    position: "absolute",
+    bottom: isDragged ? "auto" : "64px",
+    top: isDragged ? "-380px" : "auto",
+    right: isDragged ? "auto" : "0",
+    left: isDragged ? "0" : "auto",
+    width: 320,
+    background: "var(--bg-surface)",
+    border: "1px solid var(--border-strong)",
+    borderRadius: 12,
+    boxShadow: "var(--shadow-lg)",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+  };
+
   return (
     <div ref={widgetRef} style={{ position:"fixed", zIndex:9999, userSelect:"none", ...customPos, cursor: dragging ? "grabbing" : "default" }}>
 
       {/* Panel */}
       {open && (
         <div
-          style={{ position:"absolute", bottom: pos.x !== null ? "auto" : "64px", top: pos.x !== null ? "-380px" : "auto", right: pos.x !== null ? "auto" : "0", left: pos.x !== null ? "0" : "auto", width:320, background:"var(--bg-surface)", border:"1px solid var(--border-strong)", borderRadius:12, boxShadow:"var(--shadow-lg)", display:"flex", flexDirection:"column", overflow:"hidden" }}
+          style={panelStyle}
           onMouseDown={e => e.stopPropagation()}
           onTouchStart={e => e.stopPropagation()}
         >

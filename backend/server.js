@@ -45,6 +45,9 @@ const { refreshSkillCache } = require("./utils/skillMap");
 //const interviewRoutes=require("./routes/interviewRoutes");
 
 
+//import mongo sanitize to prevent nosql injection attacks
+const mongoSanitize=require("express-mongo-sanitize");
+
 
 //add request logging middleware 
 const morgan=require("morgan");
@@ -80,6 +83,14 @@ app.use(
 // Use Express's built-in JSON parser. This lets our server read the JSON data you send from Postman/React.
 app.use(express.json());
 
+//use everything after express json middleare all other middleware comes in 
+
+
+//monodb sanitize to prevent nosql injection attacks 
+//it stripes $ and. from req.body , req.query and req.params
+
+app.use(mongoSanitize());
+
 //use the cookie parser 
 app.use(cookieParser());
 
@@ -109,6 +120,7 @@ app.use(morgan('combined',{stream:logger.stream}));
 const limiter=rateLimit({
   windowMs:15*60*1000, //15 mins
   max:100, //limit each ip to 100 requests per windowMs
+  KeyGenerator:(req)=>req.user?.id || req.ip, //use user id if logged in, otherwise use IP
   message:{
     message:"Too many requests from this IP, please try again later."
   },
@@ -124,7 +136,7 @@ app.use("/api/applications",limiter);
 app.use("/api/admin",limiter);
 app.use("/api/notifications",limiter);
 app.use("/api/alerts",limiter);
-app.use("/api/users",limiter);
+// app.use("/api/users",limiter); //its using both limter so getting less reapest like 50 
 
 
 //stricter limiter for auth endpoints

@@ -20,7 +20,8 @@ const helmet=require("helmet"); //import helmet for security headers
 
 const rateLimit=require("express-rate-limit"); //import rate limiter to prevent brute force attacks
 
-
+//inport the cookie parser
+const cookieParser=require("cookie-parser");
 
 
 // --- 2. IMPORT OUR ROUTE FILES ---
@@ -48,6 +49,7 @@ const { refreshSkillCache } = require("./utils/skillMap");
 //add request logging middleware 
 const morgan=require("morgan");
 const logger=require("./utils/logger");
+const { cookie } = require("express-validator");
 
 logger.info("Server initializing...");
 
@@ -71,12 +73,15 @@ app.use(
     ],
     methods: "GET,POST,PUT,DELETE,PATCH",
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+    credentials: true, //allow cookies to be sent cross-origin
   })
 );
 
 // Use Express's built-in JSON parser. This lets our server read the JSON data you send from Postman/React.
 app.use(express.json());
+
+//use the cookie parser 
+app.use(cookieParser());
 
 
 
@@ -199,22 +204,22 @@ app.use((err,req,res,next)=>{
 
 // --- 7. MONGODB CONNECTION ---
 // Connect to the MongoDB database using the secret URL from our .env file
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(async () => {
-    console.log(" Connected to MongoDB successfully");
+// mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+//   .then(async () => {
+//     console.log(" Connected to MongoDB successfully");
     
-    //  INITIALIZE THE BRAIN
-    // This loads all 500+ skills from the DB into server memory
-    await refreshSkillCache(); 
-  }) 
-  .catch((err) => console.log(" MongoDB connection error:", err.message));
+//     //  INITIALIZE THE BRAIN
+//     // This loads all 500+ skills from the DB into server memory
+//     await refreshSkillCache(); 
+//   }) 
+//   .catch((err) => console.log(" MongoDB connection error:", err.message));
 
 // --- 8. START THE SERVER ---
 // Get the port number from the .env file, or just use 5000 if it's not defined
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 // Tell the app to start "listening" for requests on our port
 
 
@@ -226,36 +231,46 @@ const PORT = process.env.PORT || 5000;
 
 // module.exports=app; //export app for testing
 
+// ... (keep all imports and middleware setup)
+
 let serverInstance = null;
 
-const startServer = () => {
+// Shared initialization function
+async function initialize() {
+  //  Don't reconnect if already connected (e.g., during tests)
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+
+    });
+    console.log("Connected to MongoDB successfully");
+    await refreshSkillCache();
+  }
+}
+
+// Start the HTTP server (only if this file is run directly)
+async function startServer() {
+  await initialize();
   if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
     serverInstance = app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+    logger.info(`🚀 Server started on port ${PORT} with logging`);
   }
   return app;
-};
+}
 
-const closeServer = async () => {
+// Graceful shutdown
+async function closeServer() {
   if (serverInstance) {
     await serverInstance.close();
   }
   await mongoose.disconnect();
-};
+}
 
-// Wait for MongoDB and skill cache to be ready
-const serverReady = new Promise((resolve, reject) => {
-  mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(async () => {
-      console.log(" Connected to MongoDB successfully");
-      await refreshSkillCache();
-      resolve();
-    })
-    .catch((err) => {
-      console.log(" MongoDB connection error:", err.message);
-      reject(err);
-    });
-});
+module.exports = { app, startServer, closeServer, initialize };
 
-startServer();
-
-module.exports = { app, closeServer, serverReady };
+// Only start if this file is run directly (not imported by tests)
+if (require.main === module) {
+  startServer();
+}

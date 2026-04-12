@@ -210,8 +210,8 @@ function Login() {
     setIsSubmitting(true);
     try {
       const res = await axiosInstance.post("/auth/login", { email, password });
-      const { token, user } = res.data;
-      login(user, token);
+      const { user } = res.data;
+      login(user);
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");

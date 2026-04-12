@@ -373,8 +373,8 @@ function Register() {
     setLoading(true);
     try {
       const res = await axiosInstance.post("/auth/verify-otp", { email: formData.email, otp });
-      const { user, token } = res.data;
-      login(user, token);
+      const { user } = res.data;
+      login(user);
       setSuccess("Account verified! Welcome.");
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {

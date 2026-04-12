@@ -26,6 +26,9 @@ import SavedJobs from "./pages/SavedJobs"; // 👈 IMPORT THIS
 
 import Feedback from "./pages/Feedback";
 
+// 👈 Floating AI Bot widget — accessible from every page
+import FloatingAIBot from "./components/FloatingAIBot";
+
 /*
 // function App() {
 //   //state for tracking login
@@ -144,6 +147,9 @@ function App(){
         </Route>
 
  </Routes>
+
+ {/* Floating AI Bot — accessible from every page except /ai-bot */}
+ <FloatingAIBot />
 </div>     
   );
 }

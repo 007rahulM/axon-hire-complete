@@ -147,14 +147,12 @@
 // export default Navbar;
 
 
-
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell";
 
-// ─── LOGO MARK SVG ───
-// "A" inside a circle with node dots — represents Axon (neural/network) + Hire
+// ─── LOGO MARK SVG ─── (Axon Neuron — neural network A shape)
 const AxonLogoMark = () => (
   <svg width="28" height="28" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="15" cy="15" r="13" stroke="var(--accent)" strokeWidth="1.5"/>
@@ -178,7 +176,7 @@ const CloseIcon = () => (
   </svg>
 );
 const SunIcon = () => (
-  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
     <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
     <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
@@ -186,41 +184,58 @@ const SunIcon = () => (
   </svg>
 );
 const MoonIcon = () => (
-  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
   </svg>
 );
+const StarIcon = () => (
+  <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24">
+    <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </svg>
+);
+
+// UpgradeIcon reuses StarIcon shape
+const UpgradeIcon = StarIcon;
+
+// theme cycle: light → dark → premium
+const THEMES = ["light", "dark", "premium"];
+const THEME_LABELS = { light: "Light", dark: "Dark", premium: "Premium" };
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isLoggedIn, user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [theme, setTheme] = useState("light");
 
   // Close mobile menu on route change
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   // Sync theme on mount
   useEffect(() => {
-    const saved = localStorage.getItem("ax-theme");
-    if (saved === "dark") {
-      document.documentElement.setAttribute("data-theme", "dark");
-      setIsDark(true);
-    }
+    const saved = localStorage.getItem("ax-theme") || "light";
+    applyTheme(saved);
   }, []);
 
-  const toggleTheme = () => {
-    const next = isDark ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("ax-theme", next);
-    setIsDark(!isDark);
+  const applyTheme = (t) => {
+    document.documentElement.setAttribute("data-theme", t === "light" ? "" : t);
+    localStorage.setItem("ax-theme", t);
+    setTheme(t);
+  };
+
+  const cycleTheme = () => {
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    applyTheme(next);
   };
 
   const handleLogout = () => { logout(); navigate("/login"); };
   const isRecruiter = user?.role === "admin" || user?.role === "recruiter";
+  const isCandidate = isLoggedIn && user?.role === "user";
 
   const isActive = (path) => location.pathname === path;
+
+  const ThemeIcon = theme === "dark" ? MoonIcon : theme === "premium" ? StarIcon : SunIcon;
+  const themeColor = theme === "premium" ? "var(--purple)" : theme === "dark" ? "var(--cyan)" : "var(--orange)";
 
   return (
     <nav className="ax-nav">
@@ -253,9 +268,14 @@ function Navbar() {
 
         {/* DESKTOP ACTIONS */}
         <div className="ax-nav-actions hidden md:flex">
-          {/* Theme toggle */}
-          <button className="ax-theme-btn" onClick={toggleTheme} title={isDark ? "Switch to light" : "Switch to dark"}>
-            {isDark ? <SunIcon /> : <MoonIcon />}
+          {/* Theme cycle button */}
+          <button
+            className="ax-theme-btn"
+            onClick={cycleTheme}
+            title={`Theme: ${THEME_LABELS[theme]} — click to switch`}
+            style={{ color: themeColor }}
+          >
+            <ThemeIcon />
           </button>
 
           {!isLoggedIn ? (
@@ -266,6 +286,24 @@ function Navbar() {
           ) : (
             <>
               <NotificationBell />
+
+              {/* Recruiter upgrade button — visible ONLY for candidates */}
+              {isCandidate && (
+                <button
+                  onClick={() => navigate("/register-recruiter")}
+                  className="ax-btn"
+                  style={{
+                    fontSize: "0.75rem",
+                    background: "linear-gradient(135deg, #7c3aed 0%, #0057B8 100%)",
+                    color: "white",
+                    gap: 5,
+                    padding: "0.4rem 0.875rem",
+                  }}
+                  title="Upgrade to recruiter to post jobs and access AI resume analysis"
+                >
+                  <UpgradeIcon /> Become Recruiter
+                </button>
+              )}
 
               {isRecruiter && (
                 <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ fontSize: "0.75rem" }}>
@@ -284,8 +322,8 @@ function Navbar() {
 
         {/* MOBILE: theme + bell + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
-          <button className="ax-theme-btn" onClick={toggleTheme}>
-            {isDark ? <SunIcon /> : <MoonIcon />}
+          <button className="ax-theme-btn" onClick={cycleTheme} style={{ color: themeColor }}>
+            <ThemeIcon />
           </button>
           {isLoggedIn && <NotificationBell />}
           <button
@@ -347,6 +385,16 @@ function Navbar() {
               </>
             ) : (
               <>
+                {/* Recruiter upgrade button in mobile menu for candidates */}
+                {isCandidate && (
+                  <button
+                    onClick={() => navigate("/register-recruiter")}
+                    className="ax-btn"
+                    style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#0057B8)", color: "white", gap: 6 }}
+                  >
+                    <UpgradeIcon /> Become a Recruiter
+                  </button>
+                )}
                 {isRecruiter && (
                   <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline" style={{ width: "100%", justifyContent: "center" }}>Post a job</button>
                 )}

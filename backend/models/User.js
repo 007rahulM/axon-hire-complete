@@ -68,7 +68,16 @@ const userSchema = new mongoose.Schema({
 // 👇 NEW FIELDS FOR OTP
   isVerified: { type: Boolean, default: false }, // Cannot login if false
   otp: { type: String }, // The 6-digit code
-  otpExpires: { type: Date } // Code expires in 10 mins
+  otpExpires: { type: Date }, // Code expires in 10 mins
+
+  // 👇 AI USAGE TRACKING (rate limiting)
+  // candidates: 3 AI question/stream requests per month
+  // recruiters: 10 AI resume analyze requests per month (without AI = unlimited)
+  aiUsage: {
+    month:         { type: String,  default: "" }, // format: "2026-04"
+    questionCount: { type: Number,  default: 0  }, // /generate-questions + /generate-questions-stream
+    analyzeCount:  { type: Number,  default: 0  }, // /analyze (AI mode only)
+  },
 });
 
 //indexing for faster accessing

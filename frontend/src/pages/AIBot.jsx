@@ -364,7 +364,6 @@ import {
 function AIBot() {
   const { token } = useAuth();
 
-  // ── ALL ORIGINAL STATE — untouched ──
   const [jobTitle, setJobTitle] = useState("");
   const [contentType, setContentType] = useState("questions");
   const [deliveryMode, setDeliveryMode] = useState("stream");
@@ -372,11 +371,19 @@ function AIBot() {
   const [streamOutput, setStreamOutput] = useState("");
   const [jsonOutput, setJsonOutput] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [limitHit, setLimitHit] = useState(false);
+  const [usage, setUsage] = useState(null); // { questionCount, questionLimit, role }
 
   const abortControllerRef = useRef(null);
   const endOfContentRef = useRef(null);
 
-  // ── ALL ORIGINAL HANDLERS — untouched ──
+  // Fetch usage on mount
+  useEffect(() => {
+    axiosInstance.get("/ai/usage")
+      .then(res => setUsage(res.data))
+      .catch(() => {});
+  }, []);
+
   const handleGenerate = async (e) => {
     e.preventDefault();
     if (!jobTitle.trim()) return;
@@ -384,6 +391,7 @@ function AIBot() {
     setStreamOutput("");
     setJsonOutput(null);
     setCopied(false);
+    setLimitHit(false);
 
     if (deliveryMode === "stream") {
       abortControllerRef.current = new AbortController();
@@ -394,6 +402,16 @@ function AIBot() {
           body: JSON.stringify({ jobTitle, mode: contentType }),
           signal: abortControllerRef.current.signal,
         });
+
+        // Rate limit hit
+        if (response.status === 429) {
+          setLimitHit(true);
+          setIsLoading(false);
+          // Refresh usage
+          axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
+          return;
+        }
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         while (true) {
@@ -401,6 +419,8 @@ function AIBot() {
           if (done) break;
           setStreamOutput((prev) => prev + decoder.decode(value, { stream: true }));
         }
+        // Refresh usage after successful call
+        axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
       } catch (err) {
         if (err.name !== "AbortError") {
           setStreamOutput((prev) => prev + "\n\n**[System Error: Connection Interrupted]**");
@@ -412,9 +432,15 @@ function AIBot() {
         let data = res.data.data;
         if (contentType === "solver" && Array.isArray(data)) data = data[0];
         setJsonOutput(data);
+        axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
       } catch (err) {
-        console.error(err);
-        alert("Failed to generate content.");
+        if (err.response?.status === 429) {
+          setLimitHit(true);
+          axiosInstance.get("/ai/usage").then(r => setUsage(r.data)).catch(() => {});
+        } else {
+          console.error(err);
+          alert("Failed to generate content.");
+        }
       } finally { setIsLoading(false); }
     }
   };
@@ -437,6 +463,12 @@ function AIBot() {
 
   const hasOutput = (deliveryMode === "stream" && (streamOutput || isLoading)) ||
                     (deliveryMode === "normal" && jsonOutput);
+
+  // Usage display helpers
+  const remaining = usage
+    ? (usage.questionLimit === null ? null : Math.max(0, usage.questionLimit - usage.questionCount))
+    : null;
+  const isUnlimited = usage?.questionLimit === null;
 
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg-page)", fontFamily:"Inter,sans-serif", overflowX:"hidden" }}>
@@ -504,14 +536,65 @@ function AIBot() {
               <span style={{ position:"absolute", bottom:-4, left:0, right:0, height:3, borderRadius:2, background:"linear-gradient(90deg,var(--accent),#7c3aed)", opacity:.6 }}/>
             </span>
           </h1>
-          <p style={{ fontSize:14, color:"var(--text-3)", lineHeight:1.7, maxWidth:440, margin:"0 auto" }}>
+          <p style={{ fontSize:14, color:"var(--text-3)", lineHeight:1.7, maxWidth:440, margin:"0 auto 20px" }}>
             Generate interview protocols or solve complex engineering challenges — powered by Axon AI.
           </p>
+
+          {/* ── USAGE METER ── */}
+          {usage && !isUnlimited && (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:10, padding:"8px 16px", borderRadius:10, background:"var(--bg-subtle)", border:"1px solid var(--border)", marginBottom:4 }}>
+              <div style={{ display:"flex", gap:4 }}>
+                {Array.from({ length: usage.questionLimit || 3 }).map((_,i) => (
+                  <div key={i} style={{
+                    width:10, height:10, borderRadius:3,
+                    background: i < (usage.questionCount || 0) ? "var(--text-3)" : "var(--accent)",
+                    opacity: i < (usage.questionCount || 0) ? 0.3 : 1,
+                  }}/>
+                ))}
+              </div>
+              <span style={{ fontSize:11, color: remaining === 0 ? "var(--red)" : "var(--text-3)" }}>
+                {remaining === 0
+                  ? "Monthly limit reached — upgrade to continue"
+                  : `${remaining} of ${usage.questionLimit} free requests remaining this month`
+                }
+              </span>
+            </div>
+          )}
+          {usage && isUnlimited && (
+            <div style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"5px 12px", borderRadius:8, background:"var(--green-bg)", border:"1px solid rgba(5,150,105,.25)", marginBottom:4 }}>
+              <svg width="10" height="10" fill="none" stroke="var(--green)" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style={{ fontSize:11, color:"var(--green)", fontWeight:600 }}>Unlimited AI requests</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* ── MAIN CONTENT ── */}
       <div style={{ maxWidth:760, margin:"0 auto", padding:"32px 20px 48px" }}>
+
+        {/* ── PAYWALL CARD (limit reached) ── */}
+        {limitHit && (
+          <div style={{ animation:"ai-in .35s ease-out", marginBottom:20, background:"var(--bg-surface)", border:"1px solid var(--red)", borderRadius:14, overflow:"hidden" }}>
+            <div style={{ background:"var(--red-bg)", padding:"20px 24px", textAlign:"center" }}>
+              <div style={{ fontSize:32, marginBottom:10 }}>🚀</div>
+              <div style={{ fontSize:16, fontWeight:800, color:"var(--text-1)", marginBottom:6 }}>You've reached your monthly limit</div>
+              <div style={{ fontSize:13, color:"var(--text-2)", lineHeight:1.7, marginBottom:18, maxWidth:380, margin:"0 auto 18px" }}>
+                Candidates get <strong>{usage?.questionLimit || 3} free AI requests</strong> per month.
+                Upgrade to a recruiter account for <strong>unlimited access</strong> to AI tools, resume analysis, and more.
+              </div>
+              <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
+                <a href="/register-recruiter"
+                  style={{ padding:"10px 24px", background:"var(--accent)", color:"white", border:"none", borderRadius:7, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", textDecoration:"none" }}>
+                  Upgrade to Recruiter →
+                </a>
+                <button onClick={() => setLimitHit(false)}
+                  style={{ padding:"10px 20px", background:"var(--bg-surface)", color:"var(--text-2)", border:"1px solid var(--border-strong)", borderRadius:7, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
+                  Maybe later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── COMMAND CARD ── */}
         <div className="ai-card" style={{ background:"var(--bg-surface)", border:"1px solid var(--border)", borderRadius:14, overflow:"hidden", marginBottom:20 }}>
@@ -535,9 +618,11 @@ function AIBot() {
               />
               <div style={{ padding:6 }}>
                 {!isLoading ? (
-                  <button className="ai-submit" onClick={handleGenerate} disabled={!jobTitle.trim()}
-                    style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", background:"var(--accent)", color:"white", border:"none", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit", transition:"all .15s" }}>
-                    <Play size={13} fill="white" stroke="none"/> Initialize
+                  <button className="ai-submit" onClick={handleGenerate} disabled={!jobTitle.trim() || (remaining === 0)}
+                    style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", background: remaining === 0 ? "var(--bg-subtle)" : "var(--accent)", color: remaining === 0 ? "var(--text-3)" : "white", border: remaining === 0 ? "1px solid var(--border)" : "none", borderRadius:6, fontSize:12, fontWeight:700, cursor: remaining === 0 ? "not-allowed" : "pointer", fontFamily:"inherit", transition:"all .15s" }}
+                    title={remaining === 0 ? "Monthly limit reached — upgrade to continue" : undefined}
+                  >
+                    <Play size={13} fill={remaining === 0 ? "currentColor" : "white"} stroke="none"/> Initialize
                   </button>
                 ) : (
                   <button onClick={stopGeneration}

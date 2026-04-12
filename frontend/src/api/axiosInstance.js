@@ -33,30 +33,42 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+withCredentials: true, // include cookies in request // send cookies with every request
+
 });
-// 3. REQUEST Interceptor (Runs BEFORE sending any request)
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // 4. Get the token from localStorage
-    const token = localStorage.getItem("token");
 
-    // 5. Log for debugging
-    console.log("Sending request:", config.url);
-    console.log("Attaching token:", token ? "token found" : "no token");
 
-    // 6. If the token exists, add it to the 'Authorization' header
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+ //=======================================================///
+
+//   remove the intercerote request becusae we dont have the token in the local sotreag anymore to see here so we just removed 
+
+
+// // 3. REQUEST Interceptor (Runs BEFORE sending any request)
+// axiosInstance.interceptors.request.use(
+//   (config) => {
+//     // 4. Get the token from localStorage
+//     const token = localStorage.getItem("token");
+
+//     // 5. Log for debugging
+//     console.log("Sending request:", config.url);
+//     console.log("Attaching token:", token ? "token found" : "no token");
+
+//     // 6. If the token exists, add it to the 'Authorization' header
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
     
-    // 7. Send the request
-    return config;
-  },
-  (error) => {
-    console.error("Request setup error:", error);
-    return Promise.reject(error);
-  }
-);
+//     // 7. Send the request
+//     return config;
+//   },
+//   (error) => {
+//     console.error("Request setup error:", error);
+//     return Promise.reject(error);
+//   }
+// );
+
+//===================================================
+
 
 // 8. RESPONSE Interceptor (Runs AFTER receiving a response)
 axiosInstance.interceptors.response.use(
@@ -72,10 +84,13 @@ axiosInstance.interceptors.response.use(
     if (status === 401 || status === 403) {
       console.warn("Token expired or invalid, redirecting to login...");
       
-      // 12. Clear the broken token from storage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("isLoggedIn");
+
+      //remove the clearing local storage because we are now using cookies to store the token so we dont need to clear the local storage because we are not storing the token in local storage anymore
+
+      // // 12. Clear the broken token from storage
+      // localStorage.removeItem("token");
+      // localStorage.removeItem("user");
+      // localStorage.removeItem("isLoggedIn");
 
       // 13. Redirect to login, but NOT if we are already on login/register
       if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
@@ -89,7 +104,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// 15.  THE FIX:
+// 15.  
 // This line "exports" the axiosInstance as the "default" thing from this file.
 // This is the line that was missing and causing your crash.
 export default axiosInstance;

@@ -14,6 +14,7 @@ const verifyToken = require("../middleware/authMiddleware");
 const crypto=require("crypto");
 const {body,validationResult}=require("express-validator");
 const logger=require("../utils/logger");
+const { toBinaryUploadRequest } = require("cohere-ai/core/file");
 
 router.post("/register",[
   body('name').notEmpty().withMessage('Name is required'),
@@ -126,11 +127,21 @@ router.post("/verify-otp", async (req, res) => {
       { expiresIn: "12h" }
     );
 
+//adding token in the cookies for secruity purpose
+
+res.cookie("token",token,{
+  httpOnly:true,
+  secure:process.env.NODE_ENV==="production",
+  sameSite:"strict",
+  maxAge:12*60*60*1000, //12 hours
+});
+
+
     // Send the nice Welcome Email now
     await sendWelcomeEmail(user);
 res.status(200).json({ 
       message: "Account verified successfully!",
-      token, 
+      // token,  //removed tooken from the resopse 
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
 
@@ -303,10 +314,22 @@ if(!user.isVerified){
       { expiresIn: "12h" } // expires in 12 hour
     );
 
+    //so we are storaing it in the cookies her for to securitry from xxs attacks
+
+    res.cookie("token",token,{
+    httpOnly:true,
+      secure:process.env.NODE_ENV==="production",
+      sameSite:"strict",
+      maxAge:12*60*60*1000, //12 hours
+    })
+
+
+
+
     // send toke +user data to the frontend
     res.status(200).json({
       message: "Login successful",
-      token,
+      //token, //lets comment token we dont need the token in the terminal now 
       user: {
         id: user._id,
         name: user.name,
@@ -372,10 +395,18 @@ router.post("/google", async (req, res) => {
        { expiresIn: "1d" }
     );
 
+    //the token is now stored in the cookies 
+    res.cookie("token",appToken,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV=="production",
+      sameSite:"strict",
+      maxAge:24*60*60*1000, //24 hours
+    })
+
     // Send success response
     res.json({ 
         message: "Google Login Successful",
-        token: appToken, 
+        // token: appToken,  //remove this we dont want to see the token inthe terminal now 
         user: { id: user._id, name: user.name, role: user.role, email: user.email } 
     });
 
@@ -449,10 +480,19 @@ router.put("/onboard-recruiter", [
       { expiresIn: "12h" }
     );
 
+//update token in cookies
+res.cookie("token",newToken,{
+  httpOnly:true,
+  secure:process.env.NODE_ENV==="production",
+  sameSite:"strict",
+  maxAge:12*60*60*1000, //12 hours
+
+})
+
     res.json({
       message: "Upgrade successful",
       user: updatedUser,
-      token: newToken,
+      // token: newToken,  //removed this from terminal response
       company: newCompany
     });
 
@@ -461,5 +501,18 @@ router.put("/onboard-recruiter", [
     res.status(500).json({ message: "Server Error during onboarding" });
   }
 });
+
+
+//logout route 
+router.post("/logout",(req,res)=>{
+  res.clearCookie("token",{
+    httpOnly:true,
+    secure:process.env.NODE_ENV==="production",
+    sameSite:"strict",
+  });
+  res.json({message:"Logged out successfully"});
+});
+
+
 
 module.exports = router;

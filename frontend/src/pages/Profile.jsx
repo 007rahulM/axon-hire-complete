@@ -590,7 +590,7 @@ function Profile() {
       });
       setResumeUrl(res.data.resumeUrl);
       setMessage("Success!");
-      if (login) login(res.data.user, localStorage.getItem("token"));
+      if (login) login(res.data.user); // Update user context with new resume URL
     } catch { setMessage("Failed."); }
     finally { setLoading(false); setTimeout(() => setUploadProgress(0), 2000); }
   };

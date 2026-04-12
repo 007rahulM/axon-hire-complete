@@ -402,8 +402,8 @@ function RegisterRecruiter() {
         otp,
         companyData: { companyName, contactEmail, website, companyDescription },
       });
-      const { user, token } = res.data;
-      login(user, token);
+      const { user} = res.data;
+      login(user);
       setSuccess("Account verified! Redirecting…");
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {

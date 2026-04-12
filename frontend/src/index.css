@@ -492,6 +492,8 @@ body {
 }
 .ax-slide-in { animation: ax-slide-in 0.2s ease-out forwards; }
 
+@keyframes ax-caret { 0%,100%{opacity:1} 50%{opacity:0} }
+
 /* ─────────────────────────────────────────
    TAILWIND OVERRIDES
    Keep Tailwind working but make our

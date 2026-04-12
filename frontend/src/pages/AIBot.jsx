@@ -443,7 +443,7 @@ function AIBot() {
         @keyframes ai-spin { to{transform:rotate(360deg)} }
         @keyframes ai-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
         @keyframes ai-caret { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes ai-bar { 0%{width:0%} 60%{width:80%} 100%{width:100%} }
+        @keyframes ai-bar { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
         .ai-card { transition:border-color .2s; }
         .ai-card:hover { border-color:var(--border-strong) !important; }
         .ai-tab { transition:all .15s; }
@@ -544,7 +544,7 @@ function AIBot() {
           {/* Progress bar */}
           {isLoading && (
             <div style={{ height:2, background:"var(--bg-subtle)", overflow:"hidden" }}>
-              <div style={{ height:"100%", background:"var(--accent)", animation:"ai-bar 2s ease-in-out infinite", width:"60%" }}/>
+              <div style={{ height:"100%", width:"30%", background:"var(--accent)", animation:"ai-bar 1.5s ease-in-out infinite" }}/>
             </div>
           )}
         </div>

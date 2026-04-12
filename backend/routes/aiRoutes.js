@@ -925,107 +925,10 @@ const { normalizeSkill, getSkillWeight, refreshSkillCache } = require("../utils/
 const Job = require("../models/Job");
 const Application = require("../models/Application");
 const Skill = require("../models/Skill");
-const User = require("../models/User");
 const { generateJSON, generateStream } = require("../utils/aiServices");
 const { calculateV3Score } = require("../utils/matchingEngine");
 const { calculateExperienceMonths } = require("../utils/durationMath");
 const logger=require("../utils/logger");
-
-// ----------------------------------------------------------------------------
-// AI Usage Rate Limits
-//   Candidates  : 3 question/stream requests per calendar month
-//   Recruiters  : 10 resume AI-analyze requests per calendar month
-//                 (standard/local analyze is always free)
-// ----------------------------------------------------------------------------
-const QUESTION_LIMIT = 3;   // per month, per candidate
-const ANALYZE_LIMIT  = 10;  // per month, per recruiter
-
-function currentMonth() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
-/** Increments questionCount for a user, enforcing the monthly cap.
- *  Returns { allowed: true } or { allowed: false, remaining: 0 }      */
-async function checkAndIncrementQuestion(userId) {
-  const month = currentMonth();
-  const user  = await User.findById(userId);
-  if (!user) return { allowed: false, remaining: 0 };
-
-  // Reset counter when the month rolls over
-  if (user.aiUsage.month !== month) {
-    user.aiUsage.month         = month;
-    user.aiUsage.questionCount = 0;
-  }
-
-  // Admins / recruiters have unlimited questions
-  if (user.role === "admin" || user.role === "recruiter") {
-    user.aiUsage.questionCount += 1;
-    await user.save();
-    return { allowed: true, remaining: null };
-  }
-
-  if (user.aiUsage.questionCount >= QUESTION_LIMIT) {
-    return { allowed: false, remaining: 0 };
-  }
-
-  user.aiUsage.questionCount += 1;
-  await user.save();
-  return { allowed: true, remaining: QUESTION_LIMIT - user.aiUsage.questionCount };
-}
-
-/** Increments analyzeCount for a recruiter, enforcing the monthly cap.
- *  Always returns { allowed: true } for non-AI modes.                  */
-async function checkAndIncrementAnalyze(userId, isAiMode) {
-  if (!isAiMode) return { allowed: true, remaining: null };
-
-  const month = currentMonth();
-  const user  = await User.findById(userId);
-  if (!user) return { allowed: false, remaining: 0 };
-
-  // Admins are unlimited
-  if (user.role === "admin") {
-    user.aiUsage.analyzeCount += 1;
-    await user.save();
-    return { allowed: true, remaining: null };
-  }
-
-  if (user.aiUsage.month !== month) {
-    user.aiUsage.month        = month;
-    user.aiUsage.analyzeCount = 0;
-  }
-
-  if (user.aiUsage.analyzeCount >= ANALYZE_LIMIT) {
-    return { allowed: false, remaining: 0 };
-  }
-
-  user.aiUsage.analyzeCount += 1;
-  await user.save();
-  return { allowed: true, remaining: ANALYZE_LIMIT - user.aiUsage.analyzeCount };
-}
-
-// ----------------------------------------------------------------------------
-// Route: GET /api/ai/usage  — returns current month usage for the caller
-// ----------------------------------------------------------------------------
-router.get("/usage", verifyToken, async (req, res) => {
-  try {
-    const month = currentMonth();
-    const user  = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    const sameMonth = user.aiUsage.month === month;
-    res.json({
-      month,
-      questionCount: sameMonth ? user.aiUsage.questionCount : 0,
-      analyzeCount:  sameMonth ? user.aiUsage.analyzeCount  : 0,
-      questionLimit: (user.role === "admin" || user.role === "recruiter") ? null : QUESTION_LIMIT,
-      analyzeLimit:  user.role === "admin" ? null : ANALYZE_LIMIT,
-      role: user.role,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Could not fetch usage." });
-  }
-});
 // ----------------------------------------------------------------------------
 // Helper: deterministic scoring (used when AI fails or for local fallback)
 // ----------------------------------------------------------------------------
@@ -1228,19 +1131,6 @@ RETURN VALID JSON ONLY (no markdown, no code fences):
 router.post("/analyze", verifyToken, async (req, res) => {
   try {
     const { resumeUrl, jobId, applicationId, mode = "auto" } = req.body;
-
-    // Rate limit AI-mode analyze for recruiters (standard/local always allowed)
-    const isAiMode = mode !== "standard";
-    const usageCheck = await checkAndIncrementAnalyze(req.user.id, isAiMode);
-    if (!usageCheck.allowed) {
-      return res.status(429).json({
-        success: false,
-        error: "ANALYZE_LIMIT_REACHED",
-        message: `You have used all ${ANALYZE_LIMIT} free AI resume analyses this month. Upgrade for unlimited access.`,
-        remaining: 0,
-      });
-    }
-
     const result = await performAnalysis(resumeUrl, jobId, mode);
 
     if (result.success) {
@@ -1249,7 +1139,6 @@ router.post("/analyze", verifyToken, async (req, res) => {
       application.aiAnalysis = [result.analysis, ...(application.aiAnalysis || [])];
       await application.save();
     }
-    if (usageCheck.remaining !== null) result.remaining = usageCheck.remaining;
     res.json(result);
   } catch (error) {
     console.error("❌ BACKEND CRASH PREVENTED:", error.message);
@@ -1264,16 +1153,6 @@ router.post("/generate-questions", verifyToken, async (req, res) => {
   try {
     const { jobTitle, mode } = req.body;
     if (!jobTitle) return res.status(400).json({ message: "Input required." });
-
-    // Rate limit: candidates get 3 AI question requests per month
-    const usageCheck = await checkAndIncrementQuestion(req.user.id);
-    if (!usageCheck.allowed) {
-      return res.status(429).json({
-        message: "QUESTION_LIMIT_REACHED",
-        error: `You have used all ${QUESTION_LIMIT} free AI requests this month. Upgrade to continue.`,
-        remaining: 0,
-      });
-    }
 
     let systemPrompt = "";
     let userPrompt = "";
@@ -1302,7 +1181,6 @@ router.post("/generate-questions", verifyToken, async (req, res) => {
         [{ "type": "Technical", "question": "...", "intent": "...", "answer": "..." }]
       `;
       userPrompt = `Questions for: "${jobTitle}"`;
-
     }
 
     const result = await generateJSON(systemPrompt, userPrompt);
@@ -1326,16 +1204,6 @@ router.post("/generate-questions-stream", verifyToken, async (req, res) => {
   try {
     const { jobTitle, mode } = req.body;
     if (!jobTitle) return res.status(400).json({ message: "Input required." });
-
-    // Rate limit check BEFORE setting streaming headers so we can return JSON error
-    const usageCheck = await checkAndIncrementQuestion(req.user.id);
-    if (!usageCheck.allowed) {
-      return res.status(429).json({
-        message: "QUESTION_LIMIT_REACHED",
-        error: `You have used all ${QUESTION_LIMIT} free AI requests this month. Upgrade to continue.`,
-        remaining: 0,
-      });
-    }
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");

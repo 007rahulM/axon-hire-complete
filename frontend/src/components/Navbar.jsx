@@ -56,9 +56,9 @@ function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    const next = isDark ? "" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("ax-theme", next === "" ? "light" : next);
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next === "dark" ? "dark" : "");
+    localStorage.setItem("ax-theme", next);
     setIsDark(!isDark);
   };
 

@@ -27,7 +27,26 @@ const storage = new CloudinaryStorage({
   },
 });
 
-// 3. Initialize Multer
-const upload = multer({ storage: storage });
+
+//3 create the file filter 
+//this checks the MIME type of the file If its not a PDf it throws an error
+const fileFilter=(req,file,cb)=>{
+  if(file.mimetype!=="application/pdf"){
+    //reject the file and send an error messahe
+    return cb(new Error("Only PDF files are allowed"),false);
+  }
+  //accept the file
+  cb(null,true);
+};
+
+//4 initialize multer with filter and limits (UPPATEed one)
+
+const upload=multer({
+  storage:storage,
+  fileFilter:fileFilter, //apply the pdf restriction 
+  limits:{fileSize:2*1024*1024} //limit file size to 2MB (prevents server crashes from huge files)
+
+})
+
 
 module.exports = upload;

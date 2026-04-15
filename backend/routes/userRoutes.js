@@ -66,15 +66,18 @@ router.post("/upload-resume", verifyToken, (req, res) => {
     const uploadSingle = upload.single("resume");
 
     uploadSingle(req, res, async (err) => {
+      //catch multer errors (like wrong file type or file too large)
         if (err) {
             console.error("Upload Middleware Error:", err);
-            return res.status(500).json({ message: "File upload failed", error: err.message });
+            return res.status(400).json({ message: "File upload failed", error: err.message });
         }
 
         try {
+          //check if a file was actually provided
             if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-            // LEGACY CODE: req.file.path comes from Cloudinary Storage
+            //  req.file.path comes from Cloudinary Storage
+            //save to database
             const cloudUrl = req.file.path;
             
             const user = await User.findById(req.user.id);
@@ -83,6 +86,7 @@ router.post("/upload-resume", verifyToken, (req, res) => {
             user.resumeUrl = cloudUrl;
             await user.save();
 
+            //success reponse
             res.status(200).json({
                 message: "Resume uploaded successfully",
                 user: user,

@@ -3,6 +3,7 @@
 //import mongoose to create schema
 const { min } = require("moment");
 const mongoose = require("mongoose");
+const { use } = require("react");
 
 //create user schema(structure of a user document)
 const userSchema = new mongoose.Schema({
@@ -35,6 +36,10 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin","recruiter"], //the only possible values
     default: "user", //new sinups are user by default
   },
+
+  //account lockout fields
+  loginAttempts:{type:Number,default:0}, //number of failed login attempts
+  lockUntil:{type:Date}, //if account is locked, when does the lock expire?
 
   //resume url 
   //this will store the path to the the user's master resume
@@ -74,6 +79,11 @@ const userSchema = new mongoose.Schema({
 //indexing for faster accessing
 userSchema.index({ email: 1 });//to quickly find a user by email (for login)
 userSchema.index({ savedJobs: 1 }); //to quickly find all users who saved a particular job
+
+//stactic contracts for the whole app can use
+userSchema.statics_DURATION=5;
+userSchema.statics.LOCK_DURATION=15*60*1000; //15 minutes in ms 
+
 
 //export the model to use in other files
 module.exports = mongoose.model("User", userSchema);

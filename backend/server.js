@@ -18,7 +18,7 @@ const fs=require("fs");//import file system tool
 const helmet=require("helmet"); //import helmet for security headers
 
 
-const rateLimit=require("express-rate-limit"); //import rate limiter to prevent brute force attacks
+const {rateLimit,ipKeyGenerator }=require("express-rate-limit"); //import rate limiter to prevent brute force attacks
 
 //inport the cookie parser
 const cookieParser=require("cookie-parser");
@@ -46,7 +46,7 @@ const { refreshSkillCache } = require("./utils/skillMap");
 
 
 //import mongo sanitize to prevent nosql injection attacks
-const mongoSanitize=require("express-mongo-sanitize");
+// const mongoSanitize=require("express-mongo-sanitize");
 
 
 //add request logging middleware 
@@ -89,7 +89,7 @@ app.use(express.json());
 //monodb sanitize to prevent nosql injection attacks 
 //it stripes $ and. from req.body , req.query and req.params
 
-app.use(mongoSanitize());
+// app.use(mongoSanitize()); //uncomment this line to enable mongo sanitize but it is causing some issue with the login and register so i just commented it out for now but you can enable it if you want to prevent nosql injection attacks but you have to fix the issue with the login and register first
 
 //use the cookie parser 
 app.use(cookieParser());
@@ -120,7 +120,7 @@ app.use(morgan('combined',{stream:logger.stream}));
 const limiter=rateLimit({
   windowMs:15*60*1000, //15 mins
   max:100, //limit each ip to 100 requests per windowMs
-  KeyGenerator:(req)=>req.user?.id || req.ip, //use user id if logged in, otherwise use IP
+keyGenerator:(req)=>req.user?.id || ipKeyGenerator(req), //use user id if logged in, otherwise use IP
   message:{
     message:"Too many requests from this IP, please try again later."
   },

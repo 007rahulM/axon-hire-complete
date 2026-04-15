@@ -16,6 +16,11 @@ const {body,validationResult}=require("express-validator");
 const logger=require("../utils/logger");
 const { toBinaryUploadRequest } = require("cohere-ai/core/file");
 
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.post("/register",[
   body('name').notEmpty().withMessage('Name is required'),
     body("email").notEmpty().withMessage("Valid email is required"),
@@ -89,6 +94,9 @@ if(!erros.isEmpty()){
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 // --- 2. VERIFY OTP (Step 2: Activate Account) ---
 router.post("/verify-otp", async (req, res) => {
@@ -228,43 +236,8 @@ body("confirm").custom((value,{req})=>value==req.body.password).withMessage("Pas
   }
 });
 
-//     // create the user role:recruiter
-//     const hashedPassword=await bcrypt.hash(password,10);
-//     const newUser=new User(
-//       {name,email,password:hashedPassword,confirm,role:"recruiter" } //here force role to be recruiter
-//     );
-//     const savedUser=await newUser.save();
 
-//     // create the company linled to the user
-//     const newCompany=new Company({
-//       owner:savedUser._id,  //link to the new recruiter
-//       name:companyName,
-//       contactEmail:contactEmail,
-//       website:website ||"",
-//       description:companyDescription || ""  
-    
-//     });
-
-//     await newCompany.save();
-//     //send success response auto-login logic
-//     const payload={ id:savedUser._id,email:savedUser.email,role:savedUser.role};
-//     const token=jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:"12h"});
-
-//     res.status(201).json({
-//       message:"Recruiter registered successfully",
-//       token,
-//       user:{id:savedUser._id,name:savedUser.name,email:savedUser.email,role:savedUser.role},
-//       Company:newCompany
-//     });
-//    }catch(err){
-//     console.error("Recruiter registration error:",err);
-//     res.status(500).json({message:"Server error during registration"});
-//    }
-// });
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////
 
 // login with JWT
 router.post("/login",[
@@ -285,7 +258,24 @@ logger.error(`Validation failed :${JSON.stringify(errors.array())}`,{email:req.b
     //check if the user exists
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" }); // This is the 400 Bad Request you see
-    
+   
+    //is the account currently locked ?
+    const isLocked=user.lockUntil && user.lockUntil > Date.now();
+    if(isLocked){
+      const minutesLeft=Math.ceil((user.lockUntil - Date.now())/60000);
+      return res.status(423).json({message:`Account locked try again in ${minutesLeft} minute(s)`});
+
+    }
+
+    //if lock has expired rest the counters before prceeding
+    const lockExpired= user.lockUntil && user.lockUntil <=Date.now();
+    if(lockExpired){
+      user.loginAttempts=0;
+      user.lockUntil=undefined;
+      //we don't save yet, we will save later depending on if the password matches or not
+
+    }
+
 //we check isVerified before we run bcrypt.compare
 //this saves cpu resorces on unverifed accounts
 if(!user.isVerified){
@@ -299,8 +289,31 @@ if(!user.isVerified){
 
     //comapre password with hashed one
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" }); // This is also a 400 Bad Request
+    if (!isMatch){
+      //increment failed attempts counter
+    user.loginAttempts =(user.loginAttempts || 0)+1;
+    //check if they  hit the limit
+    if(user.loginAttempts >=User.MAX_LOGIN_ATTEMPTS){
+      //lock the account
+      user.lockUntil=new Date(Date.now()+User.LOCK_DURATION);
+      await user.save(); //save the lock to the db
+      return res.status(423).json({
+        message:"too many failed attempts. Account locked for 15 minutes"
+      });
+    }
+
+    //if they haven't hit the limit ,just save the incremented attempt and return error
+    await user.save();
+      return res.status(400).json({ 
+        // message: `Invalid credentials  ${User.MAX_LOGIN_ATTEMPTS - user.loginAttempts}attempts remaining`
+        message: "Invalid credentials",
+       }); // This is also a 400 Bad Request
+    }
+
+ //success - reset the counters
+ user.loginAttempts =0;
+ user.lockUntil=undefined;
+ await user.save();
 
     //check jwt token
     const payload = {
@@ -342,6 +355,8 @@ if(!user.isVerified){
     res.status(500).json({ message: "Server error" });
   }
 });
+
+///////////////////////////////////////////////////////////////////////////////////
 
 //  POST /api/auth/google 
 router.post("/google", async (req, res) => {
@@ -417,6 +432,9 @@ router.post("/google", async (req, res) => {
   }
 });
 
+
+
+//////////////////////////////////////////////////////////////////////////
 // ------------------------------------------------------------------
 // NEW ROUTE: UPGRADE USER TO RECRUITER (Onboarding)
 // ------------------------------------------------------------------
@@ -503,6 +521,8 @@ res.cookie("token",newToken,{
 });
 
 
+/////////////////////////////////////////////////////////////////////////////////////
+
 //logout route 
 router.post("/logout",(req,res)=>{
   res.clearCookie("token",{
@@ -513,6 +533,15 @@ router.post("/logout",(req,res)=>{
   res.json({message:"Logged out successfully"});
 });
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+//// GET /api/csrf-token — frontend calls this first to get a CSRF token
+router.get("/csrf-token", (req, res) => {
+  const token = generateToken(req, res); // Sets the cookie too
+  res.json({ csrfToken: token });
+});
 
 
 module.exports = router;

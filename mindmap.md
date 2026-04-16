@@ -487,8 +487,8 @@ These areas affect the most files. Extra care required:
 <!-- AUTO:TIMESTAMP:START -->
 ## 🕐 Last Auto-Updated
 
-**Date:** 2026-04-06T18:55:50.199Z  
-**Commit:** `97642892`  
-**Message:** fix: typo analyse→analyze in script, document pre-existing interviewApi cross-boundary import bug  
-**Branch:** copilot/create-mindmap-for-code-references
+**Date:** 2026-04-16T15:06:39.693Z  
+**Commit:** `cf65484e`  
+**Message:** Revert "we added the upload filter method for pdf and file size and account lockout for 15 minutes after 5 attempts on login route and added noSQL incetion protection"  
+**Branch:** revert-cf65484
 <!-- AUTO:TIMESTAMP:END -->

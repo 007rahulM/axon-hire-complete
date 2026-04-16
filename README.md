@@ -54,13 +54,14 @@
 - ✅ View platform-wide stats (users, jobs, applications)
 - ✅ Manage users (delete accounts, change roles)
 - ✅ Moderate jobs (force delete)
-- ✅ **Skill Map** — approve new skills into the global taxonomy
+- ✅ **Skill Map** — approve new skills into the global taxonomy (includes AI “learning loop” for new synonyms)
 
 ### AI & Intelligence
 - 🤖 **Multi-Model AI Carousel**: Tries OpenRouter (Mistral 7B) → Groq (LLaMA 3.3) → Gemini 2.5 with automatic fallback
 - 🧮 **Deterministic Scoring**: 60 pts skills + 30 pts experience + 10 pts integrity = 100
 - 📑 **Resume Parsing**: Extracts experience, education, and skill sections from PDF resumes
 - 🏷️ **Skill Normalization**: 500+ canonical skills with synonym mapping (e.g., "React" = "React.js" = "ReactJS")
+- 🧠 **Learning Loop**: AI-discovered skills/synonyms are upserted into the skill map with throttled cache refresh
 
 ---
 
@@ -125,7 +126,7 @@ axon-hire-complete/
 │   │   ├── aiRoutes.js            # AI analysis orchestration
 │   │   ├── notificationRoutes.js  # Notification management
 │   │   ├── alertRoutes.js         # Job alert subscriptions
-│   │   └── interviewRoutes.js     # Interview management
+│   │   └── interviewRoutes.js     # Interview management (present, currently not mounted)
 │   ├── middleware/
 │   │   ├── authMiddleware.js      # JWT verification
 │   │   ├── adminMiddleware.js     # Admin role check
@@ -193,7 +194,7 @@ axon-hire-complete/
 - **MongoDB** — [MongoDB Atlas](https://www.mongodb.com/atlas) (free tier) or a local instance
 - **Cloudinary** account — [Sign up free](https://cloudinary.com/)
 - **Gmail** account with [App Password](https://support.google.com/accounts/answer/185833) enabled
-- **Google Cloud** project with OAuth 2.0 Client ID — [Console](https://console.cloud.google.com/)
+- **Google Cloud** project with OAuth 2.0 Client ID — [Console](https://console.cloud.google.com/) (Frontend needs `VITE_GOOGLE_CLIENT_ID`)
 - AI API keys (at least one): [OpenRouter](https://openrouter.ai/), [Groq](https://console.groq.com/), or [Google AI Studio](https://aistudio.google.com/)
 
 ### 1. Clone the Repository
@@ -214,6 +215,11 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 # Database
+
+<!-- AUTO:README_BADGE:START -->
+![Docs Updated](https://img.shields.io/badge/docs%20updated-2026-04-06-blue)  
+_Mindmap last regenerated: **2026-04-06T18:55:50.206Z** · commit `97642892`_
+<!-- AUTO:README_BADGE:END -->
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/axon-hire
 
 # Authentication
@@ -253,7 +259,7 @@ npm run dev
 npm start
 ```
 
-> **Optional**: Seed the initial skill taxonomy:
+> **Required once for accurate skill scoring**: Seed the initial skill taxonomy:
 > ```bash
 > node scripts/seedSkills.js
 > ```
@@ -263,6 +269,12 @@ npm start
 ```bash
 cd ../frontend
 npm install
+```
+
+Create a `.env.local` (or `.env`) file in `frontend/`:
+
+```env
+VITE_GOOGLE_CLIENT_ID=your-google-oauth-client-id
 ```
 
 Start the frontend:
@@ -284,6 +296,7 @@ npm run preview
 |----------|-----|
 | Frontend | http://localhost:5173 |
 | Backend  | http://localhost:5000 |
+| Deployed API (prod) | https://axon-hire-mvp.onrender.com/api |
 
 ---
 
@@ -360,6 +373,13 @@ npm run preview
 | PUT | `/api/notifications/:id/read` | Mark notification as read | Yes |
 | PUT | `/api/notifications/read-all` | Mark all as read | Yes |
 | POST | `/api/alerts/subscribe` | Subscribe to job alerts | Yes |
+
+### AI Scoring
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/ai/analyze` | Run AI carousel + deterministic scoring on a resume URL | Yes |
+| POST | `/api/ai/analyze-v3` | Deterministic v3 scoring (60/30/10) with AI discovery | Yes |
 
 ### Admin
 

@@ -323,7 +323,7 @@ Admin-only routes ──► adminMiddleware.js (checks req.user.role)
 
 | File You Change | Direct Importers (will be affected) |
 |---|---|
-| `frontend/src/api/axiosInstance.js` | `frontend/src/api/interviewApi.js`, `frontend/src/components/NotificationBell.jsx`, `frontend/src/components/RecruiterOnboardingModal.jsx`, `frontend/src/context/AuthContext.jsx`, `frontend/src/pages/AIBot.jsx`, `frontend/src/pages/AdminDashboard.jsx`, `frontend/src/pages/Feedback.jsx`, `frontend/src/pages/Jobs.jsx`, `frontend/src/pages/Login.jsx`, `frontend/src/pages/MyApplications.jsx`, `frontend/src/pages/PostJob.jsx`, `frontend/src/pages/Profile.jsx`, `frontend/src/pages/RecruiterDashboard.jsx`, `frontend/src/pages/Register.jsx`, `frontend/src/pages/RegisterRecruiter.jsx`, `frontend/src/pages/SavedJobs.jsx` |
+| `frontend/src/api/axiosInstance.js` | `frontend/src/api/interviewApi.js`, `frontend/src/components/Navbar.jsx`, `frontend/src/components/NotificationBell.jsx`, `frontend/src/components/RecruiterOnboardingModal.jsx`, `frontend/src/context/AuthContext.jsx`, `frontend/src/pages/AIBot.jsx`, `frontend/src/pages/AdminDashboard.jsx`, `frontend/src/pages/Feedback.jsx`, `frontend/src/pages/Jobs.jsx`, `frontend/src/pages/Login.jsx`, `frontend/src/pages/MyApplications.jsx`, `frontend/src/pages/PostJob.jsx`, `frontend/src/pages/Profile.jsx`, `frontend/src/pages/RecruiterDashboard.jsx`, `frontend/src/pages/Register.jsx`, `frontend/src/pages/RegisterRecruiter.jsx`, `frontend/src/pages/SavedJobs.jsx` |
 | `frontend/src/context/AuthContext.jsx` | `frontend/src/components/Navbar.jsx`, `frontend/src/components/RecruiterOnboardingModal.jsx`, `frontend/src/main.jsx`, `frontend/src/pages/AIBot.jsx`, `frontend/src/pages/Home.jsx`, `frontend/src/pages/Jobs.jsx`, `frontend/src/pages/Login.jsx`, `frontend/src/pages/PostJob.jsx`, `frontend/src/pages/Profile.jsx`, `frontend/src/pages/Register.jsx`, `frontend/src/pages/RegisterRecruiter.jsx`, `frontend/src/routes/AdminRoute.jsx`, `frontend/src/routes/ProtectedRoute.jsx` |
 | `backend/middleware/authMiddleware.js` | `backend/routes/adminRoutes.js`, `backend/routes/aiRoutes.js`, `backend/routes/alertRoutes.js`, `backend/routes/applicationRoutes.js`, `backend/routes/authRoutes.js`, `backend/routes/interviewRoutes.js`, `backend/routes/jobRoutes.js`, `backend/routes/notificationRoutes.js`, `backend/routes/userRoutes.js`, `backend/server.js` |
 | `backend/models/Job.js` | `backend/routes/adminRoutes.js`, `backend/routes/aiRoutes.js`, `backend/routes/applicationRoutes.js`, `backend/routes/interviewRoutes.js`, `backend/routes/jobRoutes.js`, `frontend/src/api/interviewApi.js` |
@@ -433,7 +433,7 @@ Admin-only routes ──► adminMiddleware.js (checks req.user.role)
 | `frontend/src/api/config.js` | _(no local imports)_ |
 | `frontend/src/api/interviewApi.js` | `backend/models/Interview.js`, `backend/models/Job.js`, `frontend/src/api/axiosInstance.js` |
 | `frontend/src/App.jsx` | `frontend/src/components/Navbar.jsx`, `frontend/src/pages/AIBot.jsx`, `frontend/src/pages/AdminDashboard.jsx`, `frontend/src/pages/Feedback.jsx`, `frontend/src/pages/Home.jsx`, `frontend/src/pages/Jobs.jsx`, `frontend/src/pages/Login.jsx`, `frontend/src/pages/MyApplications.jsx`, `frontend/src/pages/PostJob.jsx`, `frontend/src/pages/Profile.jsx`, `frontend/src/pages/RecruiterDashboard.jsx`, `frontend/src/pages/Register.jsx`, `frontend/src/pages/RegisterRecruiter.jsx`, `frontend/src/pages/SavedJobs.jsx`, `frontend/src/routes/AdminRoute.jsx`, `frontend/src/routes/ProtectedRoute.jsx` |
-| `frontend/src/components/Navbar.jsx` | `frontend/src/components/NotificationBell.jsx`, `frontend/src/context/AuthContext.jsx` |
+| `frontend/src/components/Navbar.jsx` | `frontend/src/api/axiosInstance.js`, `frontend/src/components/NotificationBell.jsx`, `frontend/src/context/AuthContext.jsx` |
 | `frontend/src/components/NotificationBell.jsx` | `frontend/src/api/axiosInstance.js` |
 | `frontend/src/components/RecruiterOnboardingModal.jsx` | `frontend/src/api/axiosInstance.js`, `frontend/src/context/AuthContext.jsx` |
 | `frontend/src/components/ScheduleModal.jsx` | _(no local imports)_ |
@@ -487,8 +487,8 @@ These areas affect the most files. Extra care required:
 <!-- AUTO:TIMESTAMP:START -->
 ## 🕐 Last Auto-Updated
 
-**Date:** 2026-04-06T18:55:50.199Z  
-**Commit:** `97642892`  
-**Message:** fix: typo analyse→analyze in script, document pre-existing interviewApi cross-boundary import bug  
-**Branch:** copilot/create-mindmap-for-code-references
+**Date:** 2026-04-16T19:25:33.413Z  
+**Commit:** `dbcff611`  
+**Message:** Bump picomatch from 2.3.1 to 2.3.2  
+**Branch:** dependabot/npm_and_yarn/picomatch-2.3.2
 <!-- AUTO:TIMESTAMP:END -->

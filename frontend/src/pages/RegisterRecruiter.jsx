@@ -461,11 +461,11 @@ function RegisterRecruiter() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                       <Label>Full name *</Label>
-                      <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Your Name" required style={inp} onFocus={onF} onBlur={onB} />
+                      <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Rahul M" required style={inp} onFocus={onF} onBlur={onB} />
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                       <Label>Work email *</Label>
-                      <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="your@companyexample.com" required style={inp} onFocus={onF} onBlur={onB} />
+                      <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="rahul@company.com" required style={inp} onFocus={onF} onBlur={onB} />
                     </div>
                   </div>
 

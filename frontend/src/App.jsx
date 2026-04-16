@@ -115,7 +115,6 @@ function App(){
       {/*public routes */}
       <Route path="/login" element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>
-      <Route path="/feedback" element={<Feedback/>}/>
       {/*here added the new public route register recuriter route */}
       <Route path="/register-recruiter" element={<RegisterRecruiter/>}/>     
       <Route path="/" element={<Home/>}/>

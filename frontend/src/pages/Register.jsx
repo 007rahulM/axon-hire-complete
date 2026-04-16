@@ -427,7 +427,7 @@ function Register() {
                 {/* Name */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                   <label style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-2)" }}>Full name</label>
-                  <input name="name" type="text" value={formData.name} onChange={handleChange} placeholder="Rahul M" required style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                  <input name="name" type="text" value={formData.name} onChange={handleChange} placeholder="Your Name" required style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
                 </div>
 
                 {/* Email */}

@@ -1249,11 +1249,734 @@
 
 
 
+////////////////////////////////////////////////////////////////
+// import React, { useState, useEffect, useRef } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useAuth } from "../context/AuthContext";
+
+// function useVisible(thresh = 0.12) {
+//   const ref = useRef(null);
+//   const [vis, setVis] = useState(false);
+//   useEffect(() => {
+//     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: thresh });
+//     if (ref.current) obs.observe(ref.current);
+//     return () => obs.disconnect();
+//   }, [thresh]);
+//   return [ref, vis];
+// }
+
+// function useCountUp(target, dur = 1400, go = false) {
+//   const [v, setV] = useState(0);
+//   useEffect(() => {
+//     if (!go) return;
+//     let t0 = null;
+//     const step = (ts) => { if (!t0) t0 = ts; const p = Math.min((ts - t0) / dur, 1); setV(Math.floor(p * target)); if (p < 1) requestAnimationFrame(step); };
+//     requestAnimationFrame(step);
+//   }, [target, dur, go]);
+//   return v;
+// }
+
+// // ── SVG ILLUSTRATION: AI Brain / Neural Network ──
+// function AIBrainIllustration() {
+//   return (
+//     <svg viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "100%" }}>
+//       <style>{`
+//         @keyframes pulse-node { 0%,100%{r:7;opacity:1} 50%{r:9;opacity:.7} }
+//         @keyframes pulse-node2 { 0%,100%{r:5;opacity:.8} 50%{r:7;opacity:.5} }
+//         @keyframes flow-line { 0%{stroke-dashoffset:200} 100%{stroke-dashoffset:0} }
+//         @keyframes orbit { from{transform:rotate(0deg) translateX(58px) rotate(0deg)} to{transform:rotate(360deg) translateX(58px) rotate(-360deg)} }
+//         @keyframes orbit2 { from{transform:rotate(120deg) translateX(42px) rotate(-120deg)} to{transform:rotate(480deg) translateX(42px) rotate(-480deg)} }
+//         @keyframes orbit3 { from{transform:rotate(240deg) translateX(34px) rotate(-240deg)} to{transform:rotate(600deg) translateX(34px) rotate(-600deg)} }
+//         @keyframes float-card { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+//         @keyframes score-fill { from{width:0} to{width:88%} }
+//         @keyframes score-fill2 { from{width:0} to{width:72%} }
+//         @keyframes score-fill3 { from{width:0} to{width:94%} }
+//         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+//         .n1{animation:pulse-node 2.2s ease-in-out infinite}
+//         .n2{animation:pulse-node 2.2s .4s ease-in-out infinite}
+//         .n3{animation:pulse-node 2.2s .8s ease-in-out infinite}
+//         .n4{animation:pulse-node 2.2s 1.2s ease-in-out infinite}
+//         .n5{animation:pulse-node2 2.8s .6s ease-in-out infinite}
+//         .n6{animation:pulse-node2 2.8s 1.1s ease-in-out infinite}
+//         .n7{animation:pulse-node2 2.8s 1.6s ease-in-out infinite}
+//         .l1{stroke-dasharray:200;animation:flow-line 3s linear infinite}
+//         .l2{stroke-dasharray:200;animation:flow-line 3s .5s linear infinite}
+//         .l3{stroke-dasharray:200;animation:flow-line 3s 1s linear infinite}
+//         .l4{stroke-dasharray:200;animation:flow-line 3s 1.5s linear infinite}
+//         .card1{animation:float-card 4s ease-in-out infinite}
+//         .card2{animation:float-card 4s .8s ease-in-out infinite}
+//         .sf1{animation:score-fill 2s .5s both}
+//         .sf2{animation:score-fill2 2s .8s both}
+//         .sf3{animation:score-fill3 2s 1.1s both}
+//       `}</style>
+
+//       {/* Background grid */}
+//       <defs>
+//         <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+//           <path d="M28 0H0V28" fill="none" stroke="#0057B812" strokeWidth="0.5"/>
+//         </pattern>
+//       </defs>
+//       <rect width="420" height="320" fill="url(#grid)" rx="16"/>
+
+//       {/* Center brain circle */}
+//       <circle cx="210" cy="155" r="52" fill="#0057B808" stroke="#0057B830" strokeWidth="1.5"/>
+//       <circle cx="210" cy="155" r="38" fill="#0057B810" stroke="#0057B840" strokeWidth="1"/>
+//       <circle cx="210" cy="155" r="24" fill="#0057B818" stroke="#0057B860" strokeWidth="1"/>
+
+//       {/* Orbiting dots */}
+//       <g style={{ transformOrigin: "210px 155px" }}>
+//         <circle className="n1" cx="268" cy="155" r="7" fill="#0057B8" opacity=".9"/>
+//       </g>
+//       <g style={{ transformOrigin: "210px 155px", animation: "orbit2 5s linear infinite" }}>
+//         <circle cx="252" cy="119" r="5" fill="#7c3aed" opacity=".8"/>
+//       </g>
+//       <g style={{ transformOrigin: "210px 155px", animation: "orbit3 7s linear infinite" }}>
+//         <circle cx="176" cy="130" r="4" fill="#059669" opacity=".7"/>
+//       </g>
+
+//       {/* Neural connection lines */}
+//       <line className="l1" x1="80" y1="80" x2="210" y2="155" stroke="#0057B850" strokeWidth="1.2"/>
+//       <line className="l2" x1="340" y1="70" x2="210" y2="155" stroke="#7c3aed50" strokeWidth="1.2"/>
+//       <line className="l3" x1="60" y1="240" x2="210" y2="155" stroke="#0057B850" strokeWidth="1.2"/>
+//       <line className="l4" x1="360" y1="250" x2="210" y2="155" stroke="#05966950" strokeWidth="1.2"/>
+//       <line className="l1" x1="210" y1="30" x2="210" y2="155" stroke="#7c3aed40" strokeWidth="1"/>
+
+//       {/* Nodes */}
+//       <circle className="n2" cx="80" cy="80" r="7" fill="#0057B8"/>
+//       <circle className="n3" cx="340" cy="70" r="6" fill="#7c3aed"/>
+//       <circle className="n4" cx="60" cy="240" r="7" fill="#0057B8"/>
+//       <circle className="n5" cx="360" cy="250" r="5" fill="#059669"/>
+//       <circle className="n6" cx="210" cy="30" r="6" fill="#7c3aed"/>
+//       <circle className="n7" cx="380" cy="155" r="5" fill="#0057B8"/>
+
+//       {/* Secondary connections */}
+//       <line x1="80" y1="80" x2="340" y2="70" stroke="#0057B820" strokeWidth="0.8"/>
+//       <line x1="60" y1="240" x2="360" y2="250" stroke="#0057B820" strokeWidth="0.8"/>
+//       <line x1="80" y1="80" x2="60" y2="240" stroke="#0057B815" strokeWidth="0.6"/>
+
+//       {/* Brain icon in center */}
+//       <g transform="translate(197,143)">
+//         <path d="M13 2C9.5 2 7 4.5 7 7.5c0 .5.1 1 .2 1.5C5.4 9.7 4 11.2 4 13c0 2.2 1.8 4 4 4h10c2.2 0 4-1.8 4-4 0-1.8-1.4-3.3-3.2-3.9.1-.5.2-1 .2-1.5C19 4.5 16.5 2 13 2z" fill="#0057B8" opacity=".9"/>
+//         <line x1="13" y1="6" x2="13" y2="10" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+//         <line x1="10" y1="9" x2="16" y2="9" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+//       </g>
+
+//       {/* Floating card 1 — Resume score */}
+//       <g className="card1" transform="translate(0,0)">
+//         <rect x="12" y="108" width="120" height="72" rx="9" fill="white" stroke="#0057B825" strokeWidth="1"/>
+//         <rect x="12" y="108" width="120" height="72" rx="9" fill="#0057B806"/>
+//         <circle cx="32" cy="128" r="10" fill="#0057B815"/>
+//         <path d="M28 128.5 l3 3 5-5" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//         <rect x="48" y="122" width="60" height="4" rx="2" fill="#0057B820"/>
+//         <rect x="48" y="130" width="40" height="3" rx="1.5" fill="#0057B810"/>
+//         <text x="22" y="156" fontSize="8" fill="#0057B880" fontFamily="Inter,sans-serif" fontWeight="600">MATCH SCORE</text>
+//         <rect x="22" y="160" width="82" height="6" rx="3" fill="#0057B815"/>
+//         <rect x="22" y="160" className="sf3" height="6" rx="3" fill="#0057B8"/>
+//         <text x="108" y="166" fontSize="8" fill="#059669" fontFamily="monospace" fontWeight="700">94%</text>
+//       </g>
+
+//       {/* Floating card 2 — AI ranked */}
+//       <g className="card2" transform="translate(0,0)">
+//         <rect x="288" y="98" width="118" height="80" rx="9" fill="white" stroke="#7c3aed25" strokeWidth="1"/>
+//         <rect x="288" y="98" width="118" height="80" rx="9" fill="#7c3aed05"/>
+//         <text x="298" y="115" fontSize="8" fill="#7c3aed" fontFamily="Inter,sans-serif" fontWeight="700">AI RANKED</text>
+//         {[
+//           { name: "B. Jones", score: "92%", w: "sf3", color: "#059669", y: 0 },
+//           { name: "A. Smith", score: "85%", w: "sf1", color: "#0057B8", y: 20 },
+//           { name: "C. Lee",   score: "71%", w: "sf2", color: "#f59e0b", y: 40 },
+//         ].map((r, i) => (
+//           <g key={i} transform={`translate(0,${r.y})`}>
+//             <circle cx="302" cy="129" r="7" fill={r.color} opacity=".15"/>
+//             <text x="299" y="132" fontSize="7" fill={r.color} fontFamily="Inter,sans-serif" fontWeight="700">{i+1}</text>
+//             <text x="314" y="132" fontSize="8" fill="#1e293b" fontFamily="Inter,sans-serif">{r.name}</text>
+//             <text x="378" y="132" fontSize="8" fill={r.color} fontFamily="monospace" fontWeight="700">{r.score}</text>
+//           </g>
+//         ))}
+//       </g>
+
+//       {/* Bottom card — live hiring */}
+//       <rect x="110" y="244" width="200" height="52" rx="9" fill="white" stroke="#05966925" strokeWidth="1"/>
+//       <circle cx="130" cy="262" r="8" fill="#05966915"/>
+//       <path d="M127 262 l2.5 2.5 4-4" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//       <text x="144" y="258" fontSize="9" fill="#059669" fontFamily="Inter,sans-serif" fontWeight="700">HIRE FASTER</text>
+//       <text x="144" y="270" fontSize="8" fill="#64748b" fontFamily="Inter,sans-serif">4,200+ jobs · AI-matched</text>
+//       <rect x="120" y="278" width="160" height="4" rx="2" fill="#05966915"/>
+//       <rect x="120" y="278" width="140" height="4" rx="2" fill="#059669" opacity=".5"/>
+//     </svg>
+//   );
+// }
+
+// // ── SVG ILLUSTRATION: How AI Scoring Works ──
+// function ScoringIllustration() {
+//   return (
+//     <svg viewBox="0 0 380 240" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%" }}>
+//       <style>{`
+//         @keyframes scanline { 0%{transform:translateY(-100%)} 100%{transform:translateY(400%)} }
+//         @keyframes check-draw { from{stroke-dashoffset:30} to{stroke-dashoffset:0} }
+//         @keyframes fade-tag { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:none} }
+//         .sl{animation:scanline 2.5s linear infinite}
+//         .ck{stroke-dasharray:30;animation:check-draw .4s 1.5s both}
+//         .ck2{stroke-dasharray:30;animation:check-draw .4s 1.8s both}
+//         .ck3{stroke-dasharray:30;animation:check-draw .4s 2.1s both}
+//         .tg1{animation:fade-tag .4s 1.5s both}
+//         .tg2{animation:fade-tag .4s 1.8s both}
+//         .tg3{animation:fade-tag .4s 2.1s both}
+//       `}</style>
+
+//       {/* Resume doc */}
+//       <rect x="20" y="30" width="100" height="128" rx="8" fill="white" stroke="#e2e8f0" strokeWidth="1.5"/>
+//       <circle cx="44" cy="52" r="10" fill="#0057B815"/>
+//       <rect x="60" y="46" width="50" height="5" rx="2.5" fill="#0057B820"/>
+//       <rect x="60" y="55" width="35" height="3" rx="1.5" fill="#e2e8f0"/>
+//       <rect x="28" y="74" width="84" height="3" rx="1.5" fill="#e2e8f0"/>
+//       <rect x="28" y="82" width="84" height="3" rx="1.5" fill="#e2e8f0"/>
+//       <rect x="28" y="90" width="60" height="3" rx="1.5" fill="#e2e8f0"/>
+//       <rect x="28" y="104" width="84" height="3" rx="1.5" fill="#0057B815"/>
+//       <rect x="28" y="112" width="70" height="3" rx="1.5" fill="#0057B815"/>
+//       <rect x="28" y="120" width="84" height="3" rx="1.5" fill="#7c3aed15"/>
+//       <rect x="28" y="128" width="50" height="3" rx="1.5" fill="#7c3aed15"/>
+//       {/* scan line */}
+//       <clipPath id="docClip"><rect x="20" y="30" width="100" height="128" rx="8"/></clipPath>
+//       <rect x="20" y="30" width="100" height="3" fill="#0057B840" clipPath="url(#docClip)" className="sl"/>
+
+//       {/* Arrow */}
+//       <path d="M128 94 L158 94" stroke="#0057B850" strokeWidth="1.5" strokeDasharray="4 3"/>
+//       <path d="M153 90 L158 94 L153 98" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+
+//       {/* AI Box */}
+//       <rect x="162" y="68" width="56" height="52" rx="10" fill="#0057B8"/>
+//       <text x="190" y="88" fontSize="9" fill="white" fontFamily="Inter,sans-serif" fontWeight="700" textAnchor="middle">AI</text>
+//       <text x="190" y="100" fontSize="7" fill="white" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">scoring</text>
+//       <text x="190" y="112" fontSize="7" fill="white" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">engine</text>
+//       {/* pulsing ring */}
+//       <circle cx="190" cy="94" r="28" fill="none" stroke="#0057B840" strokeWidth="8" opacity=".5"/>
+
+//       {/* Arrow out */}
+//       <path d="M222 94 L252 94" stroke="#0057B850" strokeWidth="1.5" strokeDasharray="4 3"/>
+//       <path d="M247 90 L252 94 L247 98" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+
+//       {/* Output tags */}
+//       <g className="tg1">
+//         <rect x="256" y="34" width="100" height="22" rx="5" fill="#05966910" stroke="#05966940" strokeWidth="1"/>
+//         <polyline className="ck" points="266,45 270,49 278,41" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//         <text x="284" y="49" fontSize="9" fill="#059669" fontFamily="Inter,sans-serif" fontWeight="600">Skills match</text>
+//       </g>
+//       <g className="tg2">
+//         <rect x="256" y="62" width="100" height="22" rx="5" fill="#0057B810" stroke="#0057B840" strokeWidth="1"/>
+//         <polyline className="ck2" points="266,73 270,77 278,69" stroke="#0057B8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//         <text x="284" y="77" fontSize="9" fill="#0057B8" fontFamily="Inter,sans-serif" fontWeight="600">Experience</text>
+//       </g>
+//       <g className="tg3">
+//         <rect x="256" y="90" width="100" height="22" rx="5" fill="#7c3aed10" stroke="#7c3aed40" strokeWidth="1"/>
+//         <polyline className="ck3" points="266,101 270,105 278,97" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//         <text x="284" y="105" fontSize="9" fill="#7c3aed" fontFamily="Inter,sans-serif" fontWeight="600">Culture fit</text>
+//       </g>
+
+//       {/* Score badge */}
+//       <rect x="276" y="126" width="60" height="36" rx="8" fill="#0057B8"/>
+//       <text x="306" y="140" fontSize="8" fill="white" opacity=".8" fontFamily="Inter,sans-serif" textAnchor="middle">SCORE</text>
+//       <text x="306" y="155" fontSize="16" fill="white" fontFamily="monospace" fontWeight="700" textAnchor="middle">94%</text>
+
+//       {/* Bottom label */}
+//       <text x="190" y="210" fontSize="10" fill="#64748b" fontFamily="Inter,sans-serif" textAnchor="middle">Resume → AI Analysis → Match Score</text>
+//     </svg>
+//   );
+// }
+
+// // ── SVG ILLUSTRATION: Pipeline / Kanban preview ──
+// function PipelineIllustration() {
+//   return (
+//     <svg viewBox="0 0 400 230" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%" }}>
+//       <style>{`
+//         @keyframes card-move { 0%{transform:translateX(0)} 60%{transform:translateX(82px)} 100%{transform:translateX(82px)} }
+//         @keyframes card-appear { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+//         @keyframes highlight-col { 0%,100%{fill:#0057B808} 50%{fill:#0057B815} }
+//         .cm1{animation:card-move 4s 1s ease-in-out infinite}
+//         .ca1{animation:card-appear .5s .3s both}
+//         .ca2{animation:card-appear .5s .5s both}
+//         .ca3{animation:card-appear .5s .7s both}
+//         .ca4{animation:card-appear .5s .9s both}
+//       `}</style>
+
+//       {/* Column headers */}
+//       {[
+//         { x: 8,   label: "New",         color: "#6366f1", count: 3 },
+//         { x: 90,  label: "Viewed",      color: "#3b82f6", count: 2 },
+//         { x: 172, label: "Shortlisted", color: "#10b981", count: 2 },
+//         { x: 254, label: "Interview",   color: "#a855f7", count: 1 },
+//         { x: 336, label: "Hired",       color: "#06b6d4", count: 1 },
+//       ].map((col, i) => (
+//         <g key={i}>
+//           <rect x={col.x} y="8" width="74" height="182" rx="7" fill={`${col.color}08`} stroke={`${col.color}25`} strokeWidth="1"/>
+//           <rect x={col.x} y="8" width="74" height="26" rx="7" fill={`${col.color}15`}/>
+//           <rect x={col.x + 7} y="8" width="74" height="8" rx="0" fill={`${col.color}15`}/>
+//           <text x={col.x + 37} y="24" fontSize="8" fill={col.color} fontFamily="Inter,sans-serif" fontWeight="700" textAnchor="middle">{col.label}</text>
+//           <circle cx={col.x + 60} cy="20" r="7" fill={`${col.color}20`}/>
+//           <text x={col.x + 60} y="23" fontSize="8" fill={col.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{col.count}</text>
+//         </g>
+//       ))}
+
+//       {/* Cards in New column */}
+//       {[
+//         { y: 42,  name: "A. Smith", score: 94, color: "#059669" },
+//         { y: 76,  name: "B. Jones", score: 87, color: "#0057B8" },
+//         { y: 110, name: "C. Lee",   score: 71, color: "#f59e0b" },
+//       ].map((card, i) => (
+//         <g key={i} className={`ca${i+1}`}>
+//           <rect x="12" y={card.y} width="66" height="28" rx="5" fill="white" stroke="#e2e8f0" strokeWidth="1"/>
+//           <circle cx="24" cy={card.y + 14} r="7" fill={`${card.color}20`}/>
+//           <text x="24" y={card.y + 17} fontSize="7" fill={card.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{card.name[0]}</text>
+//           <text x="34" y={card.y + 12} fontSize="7" fill="#334155" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
+//           <text x="34" y={card.y + 22} fontSize="7" fill={card.color} fontFamily="monospace" fontWeight="700">{card.score}%</text>
+//         </g>
+//       ))}
+
+//       {/* Moving card animation */}
+//       <g className="cm1">
+//         <rect x="12" y="42" width="66" height="28" rx="5" fill="#0057B8" stroke="#0057B8" strokeWidth="1" opacity=".15"/>
+//       </g>
+
+//       {/* Cards in Shortlisted */}
+//       {[
+//         { y: 42, name: "X. Wang", score: 91 },
+//         { y: 76, name: "D. Patel", score: 83 },
+//       ].map((card, i) => (
+//         <g key={i} className="ca3">
+//           <rect x="176" y={card.y} width="66" height="28" rx="5" fill="white" stroke="#e2e8f0" strokeWidth="1"/>
+//           <circle cx="188" cy={card.y + 14} r="7" fill="#10b98120"/>
+//           <text x="188" y={card.y + 17} fontSize="7" fill="#10b981" fontFamily="monospace" fontWeight="700" textAnchor="middle">{card.name[0]}</text>
+//           <text x="198" y={card.y + 12} fontSize="7" fill="#334155" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
+//           <text x="198" y={card.y + 22} fontSize="7" fill="#10b981" fontFamily="monospace" fontWeight="700">{card.score}%</text>
+//         </g>
+//       ))}
+
+//       {/* Hired card */}
+//       <g className="ca4">
+//         <rect x="340" y="42" width="66" height="28" rx="5" fill="#06b6d410" stroke="#06b6d440" strokeWidth="1"/>
+//         <circle cx="352" cy="56" r="7" fill="#06b6d420"/>
+//         <path d="M349 56 l2.5 2.5 4-4" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+//         <text x="362" y="53" fontSize="7" fill="#06b6d4" fontFamily="Inter,sans-serif" fontWeight="600">E. Kim</text>
+//         <text x="362" y="63" fontSize="7" fill="#06b6d4" fontFamily="monospace" fontWeight="700">HIRED ✓</text>
+//       </g>
+//     </svg>
+//   );
+// }
+
+// // ── LOGO SVG ──
+// function AxonLogo({ size = 28, showText = true }) {
+//   return (
+//     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+//       <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+//         <circle cx="16" cy="16" r="14" stroke="#0057B8" strokeWidth="1.5" fill="#0057B808"/>
+//         {/* A shape made of neural nodes */}
+//         <circle cx="16" cy="7" r="2.5" fill="#0057B8"/>
+//         <circle cx="9" cy="23" r="2" fill="#0057B8"/>
+//         <circle cx="23" cy="23" r="2" fill="#0057B8"/>
+//         <circle cx="12.5" cy="17" r="1.5" fill="#7c3aed"/>
+//         <circle cx="19.5" cy="17" r="1.5" fill="#7c3aed"/>
+//         {/* Lines */}
+//         <line x1="16" y1="9.5" x2="9" y2="21" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round"/>
+//         <line x1="16" y1="9.5" x2="23" y2="21" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round"/>
+//         <line x1="11.8" y1="17.5" x2="20.2" y2="17.5" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round"/>
+//       </svg>
+//       {showText && (
+//         <span style={{ fontSize: size * 0.57, fontWeight: 800, letterSpacing: "-0.04em", fontFamily: "Inter,sans-serif", color: "var(--text-1)" }}>
+//           Axon<span style={{ color: "#0057B8" }}>Hire</span>
+//         </span>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default function Home() {
+//   const { isLoggedIn, user } = useAuth();
+//   const navigate = useNavigate();
+//   const [search, setSearch] = useState("");
+//   const [statsRef, statsVis] = useVisible(0.2);
+//   const [heroRef, heroVis] = useVisible(0.1);
+//   const [howRef, howVis] = useVisible(0.1);
+//   const [pipeRef, pipeVis] = useVisible(0.1);
+//   const [whoRef, whoVis] = useVisible(0.1);
+
+//   const j = useCountUp(4200, 1400, statsVis);
+//   const c = useCountUp(1800, 1600, statsVis);
+//   const a = useCountUp(94, 1000, statsVis);
+
+//   const go = () => {
+//     if (isLoggedIn) { user?.role === "recruiter" ? navigate("/recruiter-dashboard") : navigate("/jobs"); }
+//     else navigate("/register");
+//   };
+
+//   return (
+//     <div style={{ minHeight: "100vh", background: "var(--bg-page)", fontFamily: "Inter,sans-serif" }}>
+//       <style>{`
+//         @keyframes hf { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+//         @keyframes hb { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+//         @keyframes hp { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)} 50%{box-shadow:0 0 0 7px rgba(34,197,94,.04)} }
+//         @keyframes hglow { 0%,100%{opacity:.5} 50%{opacity:1} }
+//         .ha0{animation:hf .55s .05s both} .ha1{animation:hf .55s .15s both}
+//         .ha2{animation:hf .55s .25s both} .ha3{animation:hf .55s .35s both}
+//         .ha4{animation:hf .55s .45s both} .ha5{animation:hf .55s .55s both}
+//         .hbtn{transition:all .15s}
+//         .hbtn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,87,184,.28)!important}
+//         .hsec{transition:all .15s;cursor:pointer}
+//         .hsec:hover{border-color:#0057B8!important;transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,87,184,.09)!important}
+//         .hjob{transition:all .15s;cursor:pointer}
+//         .hjob:hover{border-color:#0057B8!important;transform:translateX(4px)}
+//         .hlink{transition:all .15s}
+//         .hlink:hover{border-color:#0057B8!important;color:#0057B8!important}
+//         .hft{transition:color .15s}
+//         .hft:hover{color:#0057B8!important}
+//         @media(max-width:860px){
+//           .hgrid{grid-template-columns:1fr!important}
+//           .hleft{border-right:none!important;border-bottom:1px solid var(--border);padding:36px 20px!important}
+//           .hright{padding:32px 20px!important}
+//           .h3col{grid-template-columns:1fr!important}
+//           .h2col{grid-template-columns:1fr!important}
+//         }
+//       `}</style>
+
+//       {/* ══ HERO ══ */}
+//       <section style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
+//         <div className="hgrid" ref={heroRef} style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "52fr 48fr", minHeight: 560 }}>
+
+//           {/* Left */}
+//           <div className="hleft" style={{ padding: "52px 48px 52px 40px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+//             <div className="ha0" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "5px 13px", borderRadius: 20, background: "rgba(34,197,94,.07)", border: "1px solid rgba(34,197,94,.2)", width: "fit-content", marginBottom: 22 }}>
+//               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", animation: "hp 2s infinite", display: "inline-block" }}/>
+//               <span style={{ fontSize: 11, fontWeight: 600, color: "#059669", letterSpacing: ".03em" }}>AxonHire is live · 4,200+ open jobs</span>
+//             </div>
+
+//             <h1 className="ha1" style={{ fontSize: "clamp(32px,4.2vw,48px)", fontWeight: 800, letterSpacing: "-.045em", lineHeight: 1.08, color: "var(--text-1)", marginBottom: 6 }}>
+//               The AI layer between
+//             </h1>
+//             <h1 className="ha1" style={{ fontSize: "clamp(30px,3.8vw,44px)", fontWeight: 800, letterSpacing: "-.045em", lineHeight: 1.08, color: "#0057B8", marginBottom: 6 }}>
+//               talent and opportunity.
+//             </h1>
+//             <div className="ha1" style={{ width: 52, height: 3, background: "#0057B8", borderRadius: 2, marginBottom: 18, transformOrigin: "left", animation: "hb .7s .3s both" }}/>
+
+//             <p className="ha2" style={{ fontSize: 14, color: "var(--text-2)", lineHeight: 1.78, maxWidth: 400, marginBottom: 28 }}>
+//               AxonHire reads every resume, scores every match 0–100, and delivers a ranked shortlist — so recruiters stop guessing and candidates stop being overlooked.
+//             </p>
+
+//             {/* Search */}
+//             <div className="ha3" style={{ marginBottom: 16, maxWidth: 440 }}>
+//               <div style={{ display: "flex", background: "var(--bg-subtle)", border: "1.5px solid var(--border-strong)", borderRadius: 8, overflow: "hidden", transition: "border-color .15s" }}
+//                 onFocusCapture={e => e.currentTarget.style.borderColor = "#0057B8"}
+//                 onBlurCapture={e => e.currentTarget.style.borderColor = "var(--border-strong)"}
+//               >
+//                 <div style={{ display: "flex", alignItems: "center", paddingLeft: 12, color: "var(--text-3)" }}>
+//                   <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+//                 </div>
+//                 <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && navigate("/jobs")}
+//                   placeholder="Role, skill, or company…"
+//                   style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontFamily: "Inter,sans-serif", fontSize: 13, color: "var(--text-1)", height: 44, padding: "0 10px" }}/>
+//                 <button onClick={() => navigate("/jobs")} style={{ margin: 4, padding: "0 16px", background: "#0057B8", color: "white", border: "none", borderRadius: 5, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+//                   Search
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="ha3" style={{ display: "flex", gap: 9, flexWrap: "wrap", marginBottom: 24 }}>
+//               <button className="hbtn" onClick={go}
+//                 style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 22px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 2px 12px rgba(0,87,184,.22)" }}>
+//                 {isLoggedIn ? "Browse Jobs" : "Get started — free"}
+//                 <svg width="13" height="13" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+//               </button>
+//               <Link to="/ai-bot" className="hlink"
+//                 style={{ display: "flex", alignItems: "center", padding: "10px 20px", color: "var(--text-2)", border: "1px solid var(--border-strong)", borderRadius: 6, fontSize: 13, fontWeight: 500, textDecoration: "none" }}>
+//                 Try AI Coach
+//               </Link>
+//             </div>
+
+//             {/* Social proof */}
+//             <div className="ha4" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+//               <div style={{ display: "flex" }}>
+//                 {["#0891b2","#7c3aed","#059669","#ea580c","#2563eb"].map((bg, i) => (
+//                   <div key={i} style={{ width: 26, height: 26, borderRadius: "50%", background: bg, border: "2px solid var(--bg-surface)", marginLeft: i ? -7 : 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "white", position: "relative", zIndex: 5 - i }}>
+//                     {String.fromCharCode(65 + i)}
+//                   </div>
+//                 ))}
+//               </div>
+//               <span style={{ fontSize: 11, color: "var(--text-3)" }}>
+//                 <strong style={{ color: "var(--text-2)", fontWeight: 600 }}>12,000+</strong> professionals joined this month
+//               </span>
+//             </div>
+//           </div>
+
+//           {/* Right — AI Brain illustration + job cards */}
+//           <div className="hright" style={{ padding: "28px 28px 28px 40px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 10 }}>
+//             <div style={{ borderRadius: 12, background: "var(--bg-subtle)", border: "1px solid var(--border)", padding: "12px 8px 0px", marginBottom: 4 }}>
+//               <AIBrainIllustration />
+//             </div>
+
+//             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
+//               <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: ".07em" }}>AI-matched for your profile</span>
+//               <button onClick={() => navigate("/jobs")} style={{ fontSize: 10, color: "#0057B8", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0 }}>See all →</button>
+//             </div>
+
+//             {[
+//               { title: "Frontend Engineer", co: "Axon Labs",   sal: "₹6–10 LPA",  col: "#0891b2", match: 94, tag: "New" },
+//               { title: "Data Analyst",      co: "InsightIQ",   sal: "₹5–9 LPA",   col: "#2563eb", match: 87, tag: "Hot" },
+//               { title: "DevOps Engineer",   co: "InfraScale",  sal: "₹12–20 LPA", col: "#7c3aed", match: 72, tag: ""    },
+//             ].map((jb, i) => (
+//               <div key={i} className="hjob" onClick={() => navigate("/jobs")}
+//                 style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, opacity: 1 - i * .18 }}>
+//                 <div style={{ width: 32, height: 32, borderRadius: 7, background: jb.col, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "white", flexShrink: 0 }}>{jb.co[0]}</div>
+//                 <div style={{ flex: 1, minWidth: 0 }}>
+//                   <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{jb.title}</div>
+//                   <div style={{ fontSize: 10, color: "var(--text-3)" }}>{jb.co} · {jb.sal}</div>
+//                 </div>
+//                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
+//                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+//                     <div style={{ width: 44, height: 4, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
+//                       <div style={{ height: "100%", background: jb.match >= 85 ? "#059669" : jb.match >= 70 ? "#0057B8" : "#f59e0b", width: `${jb.match}%`, borderRadius: 2 }}/>
+//                     </div>
+//                     <span style={{ fontSize: 11, fontWeight: 700, color: jb.match >= 85 ? "#059669" : jb.match >= 70 ? "#0057B8" : "#f59e0b", fontFamily: "monospace" }}>{jb.match}%</span>
+//                   </div>
+//                   {jb.tag && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "#0057B810", border: "1px solid #0057B830", color: "#0057B8", fontWeight: 700 }}>{jb.tag}</span>}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* ══ STATS ══ */}
+//       <div ref={statsRef} style={{ background: "#0f172a", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
+//         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "space-around", flexWrap: "wrap", gap: 10 }}>
+//           {[
+//             { n: `${j.toLocaleString()}+`, l: "Active jobs",        c: "#60a5fa" },
+//             { n: `${c.toLocaleString()}+`, l: "Companies hiring",   c: "#a78bfa" },
+//             { n: `${a}%`,                   l: "AI match accuracy",  c: "#34d399" },
+//             { n: "< 2 min",                 l: "Time to first match",c: "#fbbf24" },
+//             { n: "Free",                    l: "For candidates",     c: "#f472b6" },
+//           ].map((s, i) => (
+//             <React.Fragment key={s.l}>
+//               {i > 0 && <div style={{ width: 1, height: 28, background: "rgba(255,255,255,.1)" }}/>}
+//               <div style={{ textAlign: "center" }}>
+//                 <div style={{ fontSize: 24, fontWeight: 700, color: s.c, letterSpacing: "-.03em", fontFamily: "monospace" }}>{s.n}</div>
+//                 <div style={{ fontSize: 10, color: "rgba(255,255,255,.38)", marginTop: 2 }}>{s.l}</div>
+//               </div>
+//             </React.Fragment>
+//           ))}
+//         </div>
+//       </div>
+
+//       {/* ══ BODY ══ */}
+//       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "60px 40px 72px" }}>
+
+//         {/* HOW AI SCORING WORKS */}
+//         <div ref={howRef} style={{ opacity: howVis ? 1 : 0, transform: howVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 56 }}>
+//           <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center", background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "36px 44px" }}>
+//             <div>
+//               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 10 }}>How it works</div>
+//               <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)", marginBottom: 12, lineHeight: 1.2 }}>AI scores every resume against every job. Automatically.</h2>
+//               <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.78, marginBottom: 22 }}>Upload your PDF once. Our AI reads it, extracts skills and experience, then scores it against every job on the platform — giving you and recruiters a real match number, not a guess.</p>
+//               <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+//                 {[
+//                   { n: "01", t: "Resume parsing",      d: "PDF → structured profile in under 2 seconds",        c: "#0057B8" },
+//                   { n: "02", t: "Semantic matching",   d: "Context-aware — we understand what skills mean",      c: "#7c3aed" },
+//                   { n: "03", t: "Score generation",    d: "0–100 match score per job, assigned instantly",       c: "#059669" },
+//                   { n: "04", t: "Ranked pipeline",     d: "Recruiters see highest scores first, always",         c: "#ea580c" },
+//                 ].map(f => (
+//                   <div key={f.n} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+//                     <span style={{ fontSize: 9, fontWeight: 700, color: f.c, fontFamily: "monospace", background: `${f.c}12`, padding: "2px 7px", borderRadius: 3, flexShrink: 0, marginTop: 1 }}>{f.n}</span>
+//                     <div>
+//                       <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-1)" }}>{f.t}</div>
+//                       <div style={{ fontSize: 11, color: "var(--text-3)", lineHeight: 1.5 }}>{f.d}</div>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//             <div>
+//               <div style={{ background: "var(--bg-subtle)", borderRadius: 10, padding: "20px 16px" }}><ScoringIllustration /></div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* PIPELINE PREVIEW */}
+//         <div ref={pipeRef} style={{ opacity: pipeVis ? 1 : 0, transform: pipeVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 56 }}>
+//           <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "36px 44px" }}>
+//             <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+//               <div>
+//                 <div style={{ background: "var(--bg-subtle)", borderRadius: 10, padding: "16px 12px" }}>
+//                   <PipelineIllustration />
+//                 </div>
+//               </div>
+//               <div>
+//                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 10 }}>For recruiters</div>
+//                 <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)", marginBottom: 12, lineHeight: 1.2 }}>A live ranked pipeline. Zero manual sorting.</h2>
+//                 <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.78, marginBottom: 22 }}>Post a job, let AI score every applicant, drag them through stages. The best candidates are always at the top. One click exports your shortlist to Excel.</p>
+//                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7, marginBottom: 22 }}>
+//                   {["AI scores all applicants","Drag-and-drop kanban","Batch AI analysis","Excel export","Resume viewer","Schedule interviews","Email applicants","Analytics dashboard"].map(f => (
+//                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--text-2)", padding: "6px 8px", borderRadius: 5, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
+//                       <svg width="10" height="10" fill="none" stroke="#059669" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+//                       {f}
+//                     </div>
+//                   ))}
+//                 </div>
+//                 <button className="hbtn" onClick={() => navigate("/post-job")}
+//                   style={{ padding: "9px 20px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+//                   Post a job free →
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* FOR WHO */}
+//         <div ref={whoRef} style={{ opacity: whoVis ? 1 : 0, transform: whoVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 48 }}>
+//           <div style={{ textAlign: "center", marginBottom: 28 }}>
+//             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 8 }}>Built for both sides</div>
+//             <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)" }}>Whether you're hiring or being hired.</h2>
+//           </div>
+
+//           <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 44 }}>
+//             {/* Candidate card */}
+//             <div className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "26px 28px", position: "relative", overflow: "hidden" }}>
+//               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#0057B8", borderRadius: "12px 12px 0 0" }}/>
+//               {/* Mini candidate illustration */}
+//               <div style={{ width: "100%", marginBottom: 18, background: "var(--bg-subtle)", borderRadius: 8, padding: "8px 4px" }}>
+//                 <svg viewBox="0 0 320 95" style={{ width: "100%", height: 95 }}>
+//                   {/* Score cards */}
+//                   {[
+//                     { x: 10, job: "Frontend Eng", score: 94, color: "#059669" },
+//                     { x: 118, job: "Data Analyst", score: 87, color: "#0057B8" },
+//                     { x: 226, job: "DevOps", score: 71, color: "#f59e0b" },
+//                   ].map((c, i) => (
+//                     <g key={i}>
+//                       <rect x={c.x} y="5" width="86" height="80" rx="8" fill="white" stroke="#e2e8f0" strokeWidth="1.5"/>
+//                       <text x={c.x + 43} y="24" fontSize="8.5" fill="#64748b" fontFamily="Inter,sans-serif" textAnchor="middle">{c.job}</text>
+//                       <text x={c.x + 43} y="56" fontSize="26" fill={c.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{c.score}%</text>
+//                       <text x={c.x + 43} y="72" fontSize="7.5" fill="#94a3b8" fontFamily="Inter,sans-serif" textAnchor="middle">match score</text>
+//                     </g>
+//                   ))}
+//                 </svg>
+//               </div>
+//               <div style={{ fontSize: 10, fontWeight: 700, color: "#0057B8", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 8 }}>For candidates</div>
+//               <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-1)", letterSpacing: "-.02em", marginBottom: 8 }}>See your fit score before you apply</h3>
+//               <p style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.72, marginBottom: 18 }}>Upload once. See your AI match score for every role. Apply knowing you have a real shot.</p>
+//               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 20 }}>
+//                 {["AI resume analysis","Score per job","Interview AI coach","One-click apply"].map(f => (
+//                   <div key={f} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--text-2)", padding: "5px 8px", borderRadius: 4, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
+//                     <svg width="9" height="9" fill="none" stroke="#0057B8" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+//                     {f}
+//                   </div>
+//                 ))}
+//               </div>
+//               <button className="hbtn" onClick={() => navigate(isLoggedIn ? "/jobs" : "/register")}
+//                 style={{ padding: "8px 20px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+//                 {isLoggedIn ? "Browse jobs" : "Start for free"}
+//               </button>
+//             </div>
+
+//             {/* AI Coach card */}
+//             <div className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "26px 28px", position: "relative", overflow: "hidden" }}>
+//               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#7c3aed", borderRadius: "12px 12px 0 0" }}/>
+//               {/* Mini chat illustration */}
+//               <div style={{ width: "100%", marginBottom: 18, background: "var(--bg-subtle)", borderRadius: 8, padding: "8px 4px" }}>
+//                 <svg viewBox="0 0 320 95" style={{ width: "100%", height: 95 }}>
+//                   {[
+//                     { x: 10, y: 8, w: 180, text: "How do I answer 'Tell me about yourself'?", user: true },
+//                     { x: 130, y: 36, w: 180, text: "Start with your most recent role and...", user: false },
+//                     { x: 10, y: 58, w: 140, text: "What about salary negotiation?", user: true },
+//                   ].map((m, i) => (
+//                     <g key={i}>
+//                       <rect x={m.x} y={m.y} width={m.w} height="22" rx="6" fill={m.user ? "#0057B8" : "white"} stroke={m.user ? "none" : "#e2e8f0"} strokeWidth="1"/>
+//                       <text x={m.x + 8} y={m.y + 14} fontSize="7.5" fill={m.user ? "white" : "#334155"} fontFamily="Inter,sans-serif">{m.text}</text>
+//                     </g>
+//                   ))}
+//                 </svg>
+//               </div>
+//               <div style={{ fontSize: 10, fontWeight: 700, color: "#7c3aed", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 8 }}>Free AI Coach</div>
+//               <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-1)", letterSpacing: "-.02em", marginBottom: 8 }}>Prepare for any interview — right now</h3>
+//               <p style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.72, marginBottom: 18 }}>Ask anything: mock questions, salary tips, how to explain a gap, cover letter help. Free and instant.</p>
+//               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 20 }}>
+//                 {["Mock interviews","Salary guidance","Cover letters","Gap explanations"].map(f => (
+//                   <div key={f} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--text-2)", padding: "5px 8px", borderRadius: 4, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
+//                     <svg width="9" height="9" fill="none" stroke="#7c3aed" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+//                     {f}
+//                   </div>
+//                 ))}
+//               </div>
+//               <Link to="/ai-bot"
+//                 style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "rgba(124,58,237,.08)", color: "#7c3aed", border: "1px solid rgba(124,58,237,.3)", borderRadius: 6, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
+//                 Open AI Coach →
+//               </Link>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* TRUST */}
+//         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 10, marginBottom: 52 }}>
+//           {[
+//             { svg: <svg width="18" height="18" fill="none" stroke="#0057B8" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, t: "Secure by default",    s: "Resumes stored encrypted. Never shared without consent." },
+//             { svg: <svg width="18" height="18" fill="none" stroke="#f59e0b" strokeWidth="1.8" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,          t: "Instant results",      s: "AI scoring runs the moment you apply — no waiting." },
+//             { svg: <svg width="18" height="18" fill="none" stroke="#059669" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>,           t: "Always up to date",    s: "Job listings refresh in real time. You never see stale data." },
+//             { svg: <svg width="18" height="18" fill="none" stroke="#7c3aed" strokeWidth="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,             t: "Full transparency",    s: "See exactly why you got your AI score." },
+//           ].map(t => (
+//             <div key={t.t} className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 9, padding: "16px 14px" }}>
+//               <div style={{ marginBottom: 10 }}>{t.svg}</div>
+//               <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-1)", marginBottom: 4 }}>{t.t}</div>
+//               <div style={{ fontSize: 11, color: "var(--text-3)", lineHeight: 1.55 }}>{t.s}</div>
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* FINAL CTA */}
+//         <div style={{ background: "#0f172a", borderRadius: 14, padding: "48px 52px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap", position: "relative", overflow: "hidden" }}>
+//           <div style={{ position: "absolute", right: -60, top: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(0,87,184,.12)", pointerEvents: "none" }}/>
+//           <div style={{ position: "absolute", left: -40, bottom: -70, width: 200, height: 200, borderRadius: "50%", background: "rgba(124,58,237,.08)", pointerEvents: "none" }}/>
+//           <div style={{ position: "relative" }}>
+//             <AxonLogo size={28} showText={true} />
+//             <h3 style={{ fontSize: "clamp(18px,2.2vw,26px)", fontWeight: 800, color: "white", letterSpacing: "-.03em", margin: "12px 0 8px" }}>Find your fit today. It's free.</h3>
+//             <p style={{ fontSize: 13, color: "rgba(255,255,255,.42)", lineHeight: 1.65, maxWidth: 400, margin: 0 }}>No credit card. Takes under 2 minutes. Start seeing your AI match scores immediately.</p>
+//           </div>
+//           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", flexShrink: 0, position: "relative" }}>
+//             <button className="hbtn" onClick={go}
+//               style={{ padding: "11px 28px", background: "#0057B8", color: "white", border: "none", borderRadius: 7, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 18px rgba(0,87,184,.35)" }}>
+//               {isLoggedIn ? "Go to Jobs" : "Sign up free"}
+//             </button>
+//             <Link to="/ai-bot" className="hlink"
+//               style={{ padding: "11px 22px", background: "transparent", color: "rgba(255,255,255,.55)", border: "1px solid rgba(255,255,255,.14)", borderRadius: 7, fontSize: 13, fontWeight: 500, textDecoration: "none", display: "inline-block" }}>
+//               Try AI Coach
+//             </Link>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* FOOTER */}
+//       <footer style={{ borderTop: "1px solid var(--border)", background: "var(--bg-surface)", padding: "20px 40px" }}>
+//         <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+//           <AxonLogo size={22} showText={true} />
+//           <div style={{ display: "flex", gap: 20 }}>
+//             {[["Jobs", "/jobs"], ["Post a Job", "/post-job"], ["AI Coach", "/ai-bot"], ["Dashboard", "/recruiter-dashboard"], ["Feedback", "/feedback"]].map(([l, h]) => (
+//               <Link key={l} to={h} className="hft" style={{ fontSize: 11, color: "var(--text-3)", textDecoration: "none" }}>{l}</Link>
+//             ))}
+//           </div>
+//           <p style={{ fontSize: 10, color: "var(--text-3)" }}>© 2026 AxonHire · Operational</p>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// }
+
+
 
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+// ─── GOOGLE FONTS (Editorial Typography) ───
+const FontLink = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+  `}</style>
+);
+
+// ─── HOOKS (Preserved from your original code) ───
 function useVisible(thresh = 0.12) {
   const ref = useRef(null);
   const [vis, setVis] = useState(false);
@@ -1276,7 +1999,7 @@ function useCountUp(target, dur = 1400, go = false) {
   return v;
 }
 
-// ── SVG ILLUSTRATION: AI Brain / Neural Network ──
+// ─── SVGS (Preserved exactly from your original code to guarantee they work) ───
 function AIBrainIllustration() {
   return (
     <svg viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", maxWidth: "100%" }}>
@@ -1309,104 +2032,77 @@ function AIBrainIllustration() {
         .sf2{animation:score-fill2 2s .8s both}
         .sf3{animation:score-fill3 2s 1.1s both}
       `}</style>
-
-      {/* Background grid */}
       <defs>
         <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
-          <path d="M28 0H0V28" fill="none" stroke="#0057B812" strokeWidth="0.5"/>
+          <path d="M28 0H0V28" fill="none" stroke="var(--accent)" strokeWidth="0.5" opacity="0.15"/>
         </pattern>
       </defs>
       <rect width="420" height="320" fill="url(#grid)" rx="16"/>
-
-      {/* Center brain circle */}
-      <circle cx="210" cy="155" r="52" fill="#0057B808" stroke="#0057B830" strokeWidth="1.5"/>
-      <circle cx="210" cy="155" r="38" fill="#0057B810" stroke="#0057B840" strokeWidth="1"/>
-      <circle cx="210" cy="155" r="24" fill="#0057B818" stroke="#0057B860" strokeWidth="1"/>
-
-      {/* Orbiting dots */}
-      <g style={{ transformOrigin: "210px 155px" }}>
-        <circle className="n1" cx="268" cy="155" r="7" fill="#0057B8" opacity=".9"/>
-      </g>
-      <g style={{ transformOrigin: "210px 155px", animation: "orbit2 5s linear infinite" }}>
-        <circle cx="252" cy="119" r="5" fill="#7c3aed" opacity=".8"/>
-      </g>
-      <g style={{ transformOrigin: "210px 155px", animation: "orbit3 7s linear infinite" }}>
-        <circle cx="176" cy="130" r="4" fill="#059669" opacity=".7"/>
-      </g>
-
-      {/* Neural connection lines */}
-      <line className="l1" x1="80" y1="80" x2="210" y2="155" stroke="#0057B850" strokeWidth="1.2"/>
-      <line className="l2" x1="340" y1="70" x2="210" y2="155" stroke="#7c3aed50" strokeWidth="1.2"/>
-      <line className="l3" x1="60" y1="240" x2="210" y2="155" stroke="#0057B850" strokeWidth="1.2"/>
-      <line className="l4" x1="360" y1="250" x2="210" y2="155" stroke="#05966950" strokeWidth="1.2"/>
-      <line className="l1" x1="210" y1="30" x2="210" y2="155" stroke="#7c3aed40" strokeWidth="1"/>
-
-      {/* Nodes */}
-      <circle className="n2" cx="80" cy="80" r="7" fill="#0057B8"/>
+      <circle cx="210" cy="155" r="52" fill="var(--accent)" opacity="0.05" stroke="var(--accent)" strokeWidth="1.5" strokeOpacity="0.3"/>
+      <circle cx="210" cy="155" r="38" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.4"/>
+      <circle cx="210" cy="155" r="24" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.6"/>
+      <g style={{ transformOrigin: "210px 155px" }}><circle className="n1" cx="268" cy="155" r="7" fill="var(--accent)" opacity=".9"/></g>
+      <g style={{ transformOrigin: "210px 155px", animation: "orbit2 5s linear infinite" }}><circle cx="252" cy="119" r="5" fill="#7c3aed" opacity=".8"/></g>
+      <g style={{ transformOrigin: "210px 155px", animation: "orbit3 7s linear infinite" }}><circle cx="176" cy="130" r="4" fill="#059669" opacity=".7"/></g>
+      <line className="l1" x1="80" y1="80" x2="210" y2="155" stroke="var(--accent)" strokeWidth="1.2" opacity="0.5"/>
+      <line className="l2" x1="340" y1="70" x2="210" y2="155" stroke="#7c3aed" strokeWidth="1.2" opacity="0.5"/>
+      <line className="l3" x1="60" y1="240" x2="210" y2="155" stroke="var(--accent)" strokeWidth="1.2" opacity="0.5"/>
+      <line className="l4" x1="360" y1="250" x2="210" y2="155" stroke="#059669" strokeWidth="1.2" opacity="0.5"/>
+      <line className="l1" x1="210" y1="30" x2="210" y2="155" stroke="#7c3aed" strokeWidth="1" opacity="0.4"/>
+      <circle className="n2" cx="80" cy="80" r="7" fill="var(--accent)"/>
       <circle className="n3" cx="340" cy="70" r="6" fill="#7c3aed"/>
-      <circle className="n4" cx="60" cy="240" r="7" fill="#0057B8"/>
+      <circle className="n4" cx="60" cy="240" r="7" fill="var(--accent)"/>
       <circle className="n5" cx="360" cy="250" r="5" fill="#059669"/>
       <circle className="n6" cx="210" cy="30" r="6" fill="#7c3aed"/>
-      <circle className="n7" cx="380" cy="155" r="5" fill="#0057B8"/>
-
-      {/* Secondary connections */}
-      <line x1="80" y1="80" x2="340" y2="70" stroke="#0057B820" strokeWidth="0.8"/>
-      <line x1="60" y1="240" x2="360" y2="250" stroke="#0057B820" strokeWidth="0.8"/>
-      <line x1="80" y1="80" x2="60" y2="240" stroke="#0057B815" strokeWidth="0.6"/>
-
-      {/* Brain icon in center */}
+      <circle className="n7" cx="380" cy="155" r="5" fill="var(--accent)"/>
+      <line x1="80" y1="80" x2="340" y2="70" stroke="var(--accent)" strokeWidth="0.8" opacity="0.2"/>
+      <line x1="60" y1="240" x2="360" y2="250" stroke="var(--accent)" strokeWidth="0.8" opacity="0.2"/>
+      <line x1="80" y1="80" x2="60" y2="240" stroke="var(--accent)" strokeWidth="0.6" opacity="0.15"/>
       <g transform="translate(197,143)">
-        <path d="M13 2C9.5 2 7 4.5 7 7.5c0 .5.1 1 .2 1.5C5.4 9.7 4 11.2 4 13c0 2.2 1.8 4 4 4h10c2.2 0 4-1.8 4-4 0-1.8-1.4-3.3-3.2-3.9.1-.5.2-1 .2-1.5C19 4.5 16.5 2 13 2z" fill="#0057B8" opacity=".9"/>
-        <line x1="13" y1="6" x2="13" y2="10" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-        <line x1="10" y1="9" x2="16" y2="9" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M13 2C9.5 2 7 4.5 7 7.5c0 .5.1 1 .2 1.5C5.4 9.7 4 11.2 4 13c0 2.2 1.8 4 4 4h10c2.2 0 4-1.8 4-4 0-1.8-1.4-3.3-3.2-3.9.1-.5.2-1 .2-1.5C19 4.5 16.5 2 13 2z" fill="var(--accent)" opacity=".9"/>
+        <line x1="13" y1="6" x2="13" y2="10" stroke="var(--bg-surface)" strokeWidth="1.2" strokeLinecap="round"/>
+        <line x1="10" y1="9" x2="16" y2="9" stroke="var(--bg-surface)" strokeWidth="1.2" strokeLinecap="round"/>
       </g>
-
-      {/* Floating card 1 — Resume score */}
       <g className="card1" transform="translate(0,0)">
-        <rect x="12" y="108" width="120" height="72" rx="9" fill="white" stroke="#0057B825" strokeWidth="1"/>
-        <rect x="12" y="108" width="120" height="72" rx="9" fill="#0057B806"/>
-        <circle cx="32" cy="128" r="10" fill="#0057B815"/>
-        <path d="M28 128.5 l3 3 5-5" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <rect x="48" y="122" width="60" height="4" rx="2" fill="#0057B820"/>
-        <rect x="48" y="130" width="40" height="3" rx="1.5" fill="#0057B810"/>
-        <text x="22" y="156" fontSize="8" fill="#0057B880" fontFamily="Inter,sans-serif" fontWeight="600">MATCH SCORE</text>
-        <rect x="22" y="160" width="82" height="6" rx="3" fill="#0057B815"/>
-        <rect x="22" y="160" className="sf3" height="6" rx="3" fill="#0057B8"/>
+        <rect x="12" y="108" width="120" height="72" rx="9" fill="var(--bg-surface)" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.25"/>
+        <rect x="12" y="108" width="120" height="72" rx="9" fill="var(--accent)" opacity="0.05"/>
+        <circle cx="32" cy="128" r="10" fill="var(--accent)" opacity="0.15"/>
+        <path d="M28 128.5 l3 3 5-5" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        <rect x="48" y="122" width="60" height="4" rx="2" fill="var(--accent)" opacity="0.2"/>
+        <rect x="48" y="130" width="40" height="3" rx="1.5" fill="var(--accent)" opacity="0.1"/>
+        <text x="22" y="156" fontSize="8" fill="var(--accent)" opacity="0.8" fontFamily="Inter,sans-serif" fontWeight="600">MATCH SCORE</text>
+        <rect x="22" y="160" width="82" height="6" rx="3" fill="var(--accent)" opacity="0.15"/>
+        <rect x="22" y="160" className="sf3" height="6" rx="3" fill="var(--accent)"/>
         <text x="108" y="166" fontSize="8" fill="#059669" fontFamily="monospace" fontWeight="700">94%</text>
       </g>
-
-      {/* Floating card 2 — AI ranked */}
       <g className="card2" transform="translate(0,0)">
-        <rect x="288" y="98" width="118" height="80" rx="9" fill="white" stroke="#7c3aed25" strokeWidth="1"/>
-        <rect x="288" y="98" width="118" height="80" rx="9" fill="#7c3aed05"/>
+        <rect x="288" y="98" width="118" height="80" rx="9" fill="var(--bg-surface)" stroke="#7c3aed" strokeWidth="1" strokeOpacity="0.25"/>
+        <rect x="288" y="98" width="118" height="80" rx="9" fill="#7c3aed" opacity="0.05"/>
         <text x="298" y="115" fontSize="8" fill="#7c3aed" fontFamily="Inter,sans-serif" fontWeight="700">AI RANKED</text>
         {[
           { name: "B. Jones", score: "92%", w: "sf3", color: "#059669", y: 0 },
-          { name: "A. Smith", score: "85%", w: "sf1", color: "#0057B8", y: 20 },
+          { name: "A. Smith", score: "85%", w: "sf1", color: "var(--accent)", y: 20 },
           { name: "C. Lee",   score: "71%", w: "sf2", color: "#f59e0b", y: 40 },
         ].map((r, i) => (
           <g key={i} transform={`translate(0,${r.y})`}>
             <circle cx="302" cy="129" r="7" fill={r.color} opacity=".15"/>
             <text x="299" y="132" fontSize="7" fill={r.color} fontFamily="Inter,sans-serif" fontWeight="700">{i+1}</text>
-            <text x="314" y="132" fontSize="8" fill="#1e293b" fontFamily="Inter,sans-serif">{r.name}</text>
+            <text x="314" y="132" fontSize="8" fill="var(--text-1)" fontFamily="Inter,sans-serif">{r.name}</text>
             <text x="378" y="132" fontSize="8" fill={r.color} fontFamily="monospace" fontWeight="700">{r.score}</text>
           </g>
         ))}
       </g>
-
-      {/* Bottom card — live hiring */}
-      <rect x="110" y="244" width="200" height="52" rx="9" fill="white" stroke="#05966925" strokeWidth="1"/>
-      <circle cx="130" cy="262" r="8" fill="#05966915"/>
+      <rect x="110" y="244" width="200" height="52" rx="9" fill="var(--bg-surface)" stroke="#059669" strokeWidth="1" strokeOpacity="0.25"/>
+      <circle cx="130" cy="262" r="8" fill="#059669" opacity="0.15"/>
       <path d="M127 262 l2.5 2.5 4-4" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
       <text x="144" y="258" fontSize="9" fill="#059669" fontFamily="Inter,sans-serif" fontWeight="700">HIRE FASTER</text>
-      <text x="144" y="270" fontSize="8" fill="#64748b" fontFamily="Inter,sans-serif">4,200+ jobs · AI-matched</text>
-      <rect x="120" y="278" width="160" height="4" rx="2" fill="#05966915"/>
+      <text x="144" y="270" fontSize="8" fill="var(--text-3)" fontFamily="Inter,sans-serif">4,200+ jobs · AI-matched</text>
+      <rect x="120" y="278" width="160" height="4" rx="2" fill="#059669" opacity="0.15"/>
       <rect x="120" y="278" width="140" height="4" rx="2" fill="#059669" opacity=".5"/>
     </svg>
   );
 }
 
-// ── SVG ILLUSTRATION: How AI Scoring Works ──
 function ScoringIllustration() {
   return (
     <svg viewBox="0 0 380 240" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%" }}>
@@ -1422,83 +2118,63 @@ function ScoringIllustration() {
         .tg2{animation:fade-tag .4s 1.8s both}
         .tg3{animation:fade-tag .4s 2.1s both}
       `}</style>
-
-      {/* Resume doc */}
-      <rect x="20" y="30" width="100" height="128" rx="8" fill="white" stroke="#e2e8f0" strokeWidth="1.5"/>
-      <circle cx="44" cy="52" r="10" fill="#0057B815"/>
-      <rect x="60" y="46" width="50" height="5" rx="2.5" fill="#0057B820"/>
-      <rect x="60" y="55" width="35" height="3" rx="1.5" fill="#e2e8f0"/>
-      <rect x="28" y="74" width="84" height="3" rx="1.5" fill="#e2e8f0"/>
-      <rect x="28" y="82" width="84" height="3" rx="1.5" fill="#e2e8f0"/>
-      <rect x="28" y="90" width="60" height="3" rx="1.5" fill="#e2e8f0"/>
-      <rect x="28" y="104" width="84" height="3" rx="1.5" fill="#0057B815"/>
-      <rect x="28" y="112" width="70" height="3" rx="1.5" fill="#0057B815"/>
-      <rect x="28" y="120" width="84" height="3" rx="1.5" fill="#7c3aed15"/>
-      <rect x="28" y="128" width="50" height="3" rx="1.5" fill="#7c3aed15"/>
-      {/* scan line */}
+      <rect x="20" y="30" width="100" height="128" rx="8" fill="var(--bg-surface)" stroke="var(--border-strong)" strokeWidth="1.5"/>
+      <circle cx="44" cy="52" r="10" fill="var(--accent)" opacity="0.15"/>
+      <rect x="60" y="46" width="50" height="5" rx="2.5" fill="var(--accent)" opacity="0.2"/>
+      <rect x="60" y="55" width="35" height="3" rx="1.5" fill="var(--border-strong)"/>
+      <rect x="28" y="74" width="84" height="3" rx="1.5" fill="var(--border-strong)"/>
+      <rect x="28" y="82" width="84" height="3" rx="1.5" fill="var(--border-strong)"/>
+      <rect x="28" y="90" width="60" height="3" rx="1.5" fill="var(--border-strong)"/>
+      <rect x="28" y="104" width="84" height="3" rx="1.5" fill="var(--accent)" opacity="0.15"/>
+      <rect x="28" y="112" width="70" height="3" rx="1.5" fill="var(--accent)" opacity="0.15"/>
+      <rect x="28" y="120" width="84" height="3" rx="1.5" fill="#7c3aed" opacity="0.15"/>
+      <rect x="28" y="128" width="50" height="3" rx="1.5" fill="#7c3aed" opacity="0.15"/>
       <clipPath id="docClip"><rect x="20" y="30" width="100" height="128" rx="8"/></clipPath>
-      <rect x="20" y="30" width="100" height="3" fill="#0057B840" clipPath="url(#docClip)" className="sl"/>
-
-      {/* Arrow */}
-      <path d="M128 94 L158 94" stroke="#0057B850" strokeWidth="1.5" strokeDasharray="4 3"/>
-      <path d="M153 90 L158 94 L153 98" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-
-      {/* AI Box */}
-      <rect x="162" y="68" width="56" height="52" rx="10" fill="#0057B8"/>
-      <text x="190" y="88" fontSize="9" fill="white" fontFamily="Inter,sans-serif" fontWeight="700" textAnchor="middle">AI</text>
-      <text x="190" y="100" fontSize="7" fill="white" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">scoring</text>
-      <text x="190" y="112" fontSize="7" fill="white" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">engine</text>
-      {/* pulsing ring */}
-      <circle cx="190" cy="94" r="28" fill="none" stroke="#0057B840" strokeWidth="8" opacity=".5"/>
-
-      {/* Arrow out */}
-      <path d="M222 94 L252 94" stroke="#0057B850" strokeWidth="1.5" strokeDasharray="4 3"/>
-      <path d="M247 90 L252 94 L247 98" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-
-      {/* Output tags */}
+      <rect x="20" y="30" width="100" height="3" fill="var(--accent)" opacity="0.4" clipPath="url(#docClip)" className="sl"/>
+      <path d="M128 94 L158 94" stroke="var(--accent)" opacity="0.5" strokeWidth="1.5" strokeDasharray="4 3"/>
+      <path d="M153 90 L158 94 L153 98" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="162" y="68" width="56" height="52" rx="10" fill="var(--accent)"/>
+      <text x="190" y="88" fontSize="9" fill="var(--bg-surface)" fontFamily="Inter,sans-serif" fontWeight="700" textAnchor="middle">AI</text>
+      <text x="190" y="100" fontSize="7" fill="var(--bg-surface)" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">scoring</text>
+      <text x="190" y="112" fontSize="7" fill="var(--bg-surface)" opacity=".7" fontFamily="Inter,sans-serif" textAnchor="middle">engine</text>
+      <circle cx="190" cy="94" r="28" fill="none" stroke="var(--accent)" strokeWidth="8" opacity=".2"/>
+      <path d="M222 94 L252 94" stroke="var(--accent)" opacity="0.5" strokeWidth="1.5" strokeDasharray="4 3"/>
+      <path d="M247 90 L252 94 L247 98" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       <g className="tg1">
-        <rect x="256" y="34" width="100" height="22" rx="5" fill="#05966910" stroke="#05966940" strokeWidth="1"/>
+        <rect x="256" y="34" width="100" height="22" rx="5" fill="#059669" opacity="0.1" stroke="#059669" strokeWidth="1" strokeOpacity="0.4"/>
         <polyline className="ck" points="266,45 270,49 278,41" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
         <text x="284" y="49" fontSize="9" fill="#059669" fontFamily="Inter,sans-serif" fontWeight="600">Skills match</text>
       </g>
       <g className="tg2">
-        <rect x="256" y="62" width="100" height="22" rx="5" fill="#0057B810" stroke="#0057B840" strokeWidth="1"/>
-        <polyline className="ck2" points="266,73 270,77 278,69" stroke="#0057B8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-        <text x="284" y="77" fontSize="9" fill="#0057B8" fontFamily="Inter,sans-serif" fontWeight="600">Experience</text>
+        <rect x="256" y="62" width="100" height="22" rx="5" fill="var(--accent)" opacity="0.1" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.4"/>
+        <polyline className="ck2" points="266,73 270,77 278,69" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        <text x="284" y="77" fontSize="9" fill="var(--accent)" fontFamily="Inter,sans-serif" fontWeight="600">Experience</text>
       </g>
       <g className="tg3">
-        <rect x="256" y="90" width="100" height="22" rx="5" fill="#7c3aed10" stroke="#7c3aed40" strokeWidth="1"/>
+        <rect x="256" y="90" width="100" height="22" rx="5" fill="#7c3aed" opacity="0.1" stroke="#7c3aed" strokeWidth="1" strokeOpacity="0.4"/>
         <polyline className="ck3" points="266,101 270,105 278,97" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
         <text x="284" y="105" fontSize="9" fill="#7c3aed" fontFamily="Inter,sans-serif" fontWeight="600">Culture fit</text>
       </g>
-
-      {/* Score badge */}
-      <rect x="276" y="126" width="60" height="36" rx="8" fill="#0057B8"/>
-      <text x="306" y="140" fontSize="8" fill="white" opacity=".8" fontFamily="Inter,sans-serif" textAnchor="middle">SCORE</text>
-      <text x="306" y="155" fontSize="16" fill="white" fontFamily="monospace" fontWeight="700" textAnchor="middle">94%</text>
-
-      {/* Bottom label */}
-      <text x="190" y="210" fontSize="10" fill="#64748b" fontFamily="Inter,sans-serif" textAnchor="middle">Resume → AI Analysis → Match Score</text>
+      <rect x="276" y="126" width="60" height="36" rx="8" fill="var(--accent)"/>
+      <text x="306" y="140" fontSize="8" fill="var(--bg-surface)" opacity=".8" fontFamily="Inter,sans-serif" textAnchor="middle">SCORE</text>
+      <text x="306" y="155" fontSize="16" fill="var(--bg-surface)" fontFamily="monospace" fontWeight="700" textAnchor="middle">94%</text>
+      <text x="190" y="210" fontSize="10" fill="var(--text-3)" fontFamily="Inter,sans-serif" textAnchor="middle">Resume → AI Analysis → Match Score</text>
     </svg>
   );
 }
 
-// ── SVG ILLUSTRATION: Pipeline / Kanban preview ──
 function PipelineIllustration() {
   return (
     <svg viewBox="0 0 400 230" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%" }}>
       <style>{`
         @keyframes card-move { 0%{transform:translateX(0)} 60%{transform:translateX(82px)} 100%{transform:translateX(82px)} }
         @keyframes card-appear { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
-        @keyframes highlight-col { 0%,100%{fill:#0057B808} 50%{fill:#0057B815} }
         .cm1{animation:card-move 4s 1s ease-in-out infinite}
         .ca1{animation:card-appear .5s .3s both}
         .ca2{animation:card-appear .5s .5s both}
         .ca3{animation:card-appear .5s .7s both}
         .ca4{animation:card-appear .5s .9s both}
       `}</style>
-
-      {/* Column headers */}
       {[
         { x: 8,   label: "New",         color: "#6366f1", count: 3 },
         { x: 90,  label: "Viewed",      color: "#3b82f6", count: 2 },
@@ -1507,53 +2183,45 @@ function PipelineIllustration() {
         { x: 336, label: "Hired",       color: "#06b6d4", count: 1 },
       ].map((col, i) => (
         <g key={i}>
-          <rect x={col.x} y="8" width="74" height="182" rx="7" fill={`${col.color}08`} stroke={`${col.color}25`} strokeWidth="1"/>
-          <rect x={col.x} y="8" width="74" height="26" rx="7" fill={`${col.color}15`}/>
-          <rect x={col.x + 7} y="8" width="74" height="8" rx="0" fill={`${col.color}15`}/>
+          <rect x={col.x} y="8" width="74" height="182" rx="7" fill={col.color} opacity="0.05" stroke={col.color} strokeWidth="1" strokeOpacity="0.25"/>
+          <rect x={col.x} y="8" width="74" height="26" rx="7" fill={col.color} opacity="0.1"/>
+          <rect x={col.x + 7} y="8" width="74" height="8" rx="0" fill={col.color} opacity="0.1"/>
           <text x={col.x + 37} y="24" fontSize="8" fill={col.color} fontFamily="Inter,sans-serif" fontWeight="700" textAnchor="middle">{col.label}</text>
-          <circle cx={col.x + 60} cy="20" r="7" fill={`${col.color}20`}/>
+          <circle cx={col.x + 60} cy="20" r="7" fill={col.color} opacity="0.2"/>
           <text x={col.x + 60} y="23" fontSize="8" fill={col.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{col.count}</text>
         </g>
       ))}
-
-      {/* Cards in New column */}
       {[
         { y: 42,  name: "A. Smith", score: 94, color: "#059669" },
-        { y: 76,  name: "B. Jones", score: 87, color: "#0057B8" },
+        { y: 76,  name: "B. Jones", score: 87, color: "var(--accent)" },
         { y: 110, name: "C. Lee",   score: 71, color: "#f59e0b" },
       ].map((card, i) => (
         <g key={i} className={`ca${i+1}`}>
-          <rect x="12" y={card.y} width="66" height="28" rx="5" fill="white" stroke="#e2e8f0" strokeWidth="1"/>
-          <circle cx="24" cy={card.y + 14} r="7" fill={`${card.color}20`}/>
+          <rect x="12" y={card.y} width="66" height="28" rx="5" fill="var(--bg-surface)" stroke="var(--border-strong)" strokeWidth="1"/>
+          <circle cx="24" cy={card.y + 14} r="7" fill={card.color} opacity="0.2"/>
           <text x="24" y={card.y + 17} fontSize="7" fill={card.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{card.name[0]}</text>
-          <text x="34" y={card.y + 12} fontSize="7" fill="#334155" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
+          <text x="34" y={card.y + 12} fontSize="7" fill="var(--text-1)" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
           <text x="34" y={card.y + 22} fontSize="7" fill={card.color} fontFamily="monospace" fontWeight="700">{card.score}%</text>
         </g>
       ))}
-
-      {/* Moving card animation */}
       <g className="cm1">
-        <rect x="12" y="42" width="66" height="28" rx="5" fill="#0057B8" stroke="#0057B8" strokeWidth="1" opacity=".15"/>
+        <rect x="12" y="42" width="66" height="28" rx="5" fill="var(--accent)" stroke="var(--accent)" strokeWidth="1" opacity=".15"/>
       </g>
-
-      {/* Cards in Shortlisted */}
       {[
         { y: 42, name: "X. Wang", score: 91 },
         { y: 76, name: "D. Patel", score: 83 },
       ].map((card, i) => (
         <g key={i} className="ca3">
-          <rect x="176" y={card.y} width="66" height="28" rx="5" fill="white" stroke="#e2e8f0" strokeWidth="1"/>
-          <circle cx="188" cy={card.y + 14} r="7" fill="#10b98120"/>
+          <rect x="176" y={card.y} width="66" height="28" rx="5" fill="var(--bg-surface)" stroke="var(--border-strong)" strokeWidth="1"/>
+          <circle cx="188" cy={card.y + 14} r="7" fill="#10b981" opacity="0.2"/>
           <text x="188" y={card.y + 17} fontSize="7" fill="#10b981" fontFamily="monospace" fontWeight="700" textAnchor="middle">{card.name[0]}</text>
-          <text x="198" y={card.y + 12} fontSize="7" fill="#334155" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
+          <text x="198" y={card.y + 12} fontSize="7" fill="var(--text-1)" fontFamily="Inter,sans-serif" fontWeight="600">{card.name}</text>
           <text x="198" y={card.y + 22} fontSize="7" fill="#10b981" fontFamily="monospace" fontWeight="700">{card.score}%</text>
         </g>
       ))}
-
-      {/* Hired card */}
       <g className="ca4">
-        <rect x="340" y="42" width="66" height="28" rx="5" fill="#06b6d410" stroke="#06b6d440" strokeWidth="1"/>
-        <circle cx="352" cy="56" r="7" fill="#06b6d420"/>
+        <rect x="340" y="42" width="66" height="28" rx="5" fill="#06b6d4" opacity="0.1" stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.4"/>
+        <circle cx="352" cy="56" r="7" fill="#06b6d4" opacity="0.2"/>
         <path d="M349 56 l2.5 2.5 4-4" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
         <text x="362" y="53" fontSize="7" fill="#06b6d4" fontFamily="Inter,sans-serif" fontWeight="600">E. Kim</text>
         <text x="362" y="63" fontSize="7" fill="#06b6d4" fontFamily="monospace" fontWeight="700">HIRED ✓</text>
@@ -1562,401 +2230,321 @@ function PipelineIllustration() {
   );
 }
 
-// ── LOGO SVG ──
 function AxonLogo({ size = 28, showText = true }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="14" stroke="#0057B8" strokeWidth="1.5" fill="#0057B808"/>
-        {/* A shape made of neural nodes */}
-        <circle cx="16" cy="7" r="2.5" fill="#0057B8"/>
-        <circle cx="9" cy="23" r="2" fill="#0057B8"/>
-        <circle cx="23" cy="23" r="2" fill="#0057B8"/>
+        <circle cx="16" cy="16" r="14" stroke="var(--accent)" strokeWidth="1.5" fill="var(--accent)" fillOpacity="0.08"/>
+        <circle cx="16" cy="7" r="2.5" fill="var(--accent)"/>
+        <circle cx="9" cy="23" r="2" fill="var(--accent)"/>
+        <circle cx="23" cy="23" r="2" fill="var(--accent)"/>
         <circle cx="12.5" cy="17" r="1.5" fill="#7c3aed"/>
         <circle cx="19.5" cy="17" r="1.5" fill="#7c3aed"/>
-        {/* Lines */}
-        <line x1="16" y1="9.5" x2="9" y2="21" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round"/>
-        <line x1="16" y1="9.5" x2="23" y2="21" stroke="#0057B8" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="16" y1="9.5" x2="9" y2="21" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="16" y1="9.5" x2="23" y2="21" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round"/>
         <line x1="11.8" y1="17.5" x2="20.2" y2="17.5" stroke="#7c3aed" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
       {showText && (
         <span style={{ fontSize: size * 0.57, fontWeight: 800, letterSpacing: "-0.04em", fontFamily: "Inter,sans-serif", color: "var(--text-1)" }}>
-          Axon<span style={{ color: "#0057B8" }}>Hire</span>
+          Axon<span style={{ color: "var(--accent)" }}>Hire</span>
         </span>
       )}
     </div>
   );
 }
 
+
+// ─── MAIN HOME COMPONENT ───
 export default function Home() {
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [statsRef, statsVis] = useVisible(0.2);
+
   const [heroRef, heroVis] = useVisible(0.1);
   const [howRef, howVis] = useVisible(0.1);
+  const [candRef, candVis] = useVisible(0.1);
   const [pipeRef, pipeVis] = useVisible(0.1);
-  const [whoRef, whoVis] = useVisible(0.1);
+  const [statsRef, statsVis] = useVisible(0.2);
 
   const j = useCountUp(4200, 1400, statsVis);
   const c = useCountUp(1800, 1600, statsVis);
   const a = useCountUp(94, 1000, statsVis);
 
   const go = () => {
-    if (isLoggedIn) { user?.role === "recruiter" ? navigate("/recruiter-dashboard") : navigate("/jobs"); }
-    else navigate("/register");
+    if (isLoggedIn) {
+      user?.role === "recruiter" || user?.role === "admin" ? navigate("/recruiter-dashboard") : navigate("/jobs");
+    } else {
+      navigate("/register");
+    }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-page)", fontFamily: "Inter,sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)", fontFamily: "Inter,sans-serif", overflowX: "hidden" }}>
+      <FontLink />
+      
+      {/* ─── SCOPED CSS FOR THE REDESIGN ─── */}
       <style>{`
-        @keyframes hf { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
-        @keyframes hb { from{transform:scaleX(0)} to{transform:scaleX(1)} }
-        @keyframes hp { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,.2)} 50%{box-shadow:0 0 0 7px rgba(34,197,94,.04)} }
-        @keyframes hglow { 0%,100%{opacity:.5} 50%{opacity:1} }
-        .ha0{animation:hf .55s .05s both} .ha1{animation:hf .55s .15s both}
-        .ha2{animation:hf .55s .25s both} .ha3{animation:hf .55s .35s both}
-        .ha4{animation:hf .55s .45s both} .ha5{animation:hf .55s .55s both}
-        .hbtn{transition:all .15s}
-        .hbtn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,87,184,.28)!important}
-        .hsec{transition:all .15s;cursor:pointer}
-        .hsec:hover{border-color:#0057B8!important;transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,87,184,.09)!important}
-        .hjob{transition:all .15s;cursor:pointer}
-        .hjob:hover{border-color:#0057B8!important;transform:translateX(4px)}
-        .hlink{transition:all .15s}
-        .hlink:hover{border-color:#0057B8!important;color:#0057B8!important}
-        .hft{transition:color .15s}
-        .hft:hover{color:#0057B8!important}
-        @media(max-width:860px){
-          .hgrid{grid-template-columns:1fr!important}
-          .hleft{border-right:none!important;border-bottom:1px solid var(--border);padding:36px 20px!important}
-          .hright{padding:32px 20px!important}
-          .h3col{grid-template-columns:1fr!important}
-          .h2col{grid-template-columns:1fr!important}
+        .editorial { font-family: 'Playfair Display', Georgia, serif; }
+        
+        .ax-fade { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .ax-fade.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        
+        .ax-btn {
+          padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+          cursor: pointer; transition: all 0.2s ease; border: none; font-family: inherit;
+          display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .ax-btn-primary { background: var(--text-1); color: var(--bg-page); }
+        .ax-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        
+        .ax-btn-outline { background: transparent; color: var(--text-1); border: 1px solid var(--border-strong); }
+        .ax-btn-outline:hover { border-color: var(--text-1); }
+
+        .ax-bento {
+          background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+          transition: all 0.3s ease; padding: 32px;
+        }
+        .ax-bento:hover { border-color: var(--border-strong); box-shadow: 0 12px 32px rgba(0,0,0,0.06); transform: translateY(-2px); }
+
+        .ax-input {
+          display: flex; align-items: center; background: var(--bg-subtle);
+          border: 1px solid var(--border-strong); border-radius: 8px; padding: 4px;
+          transition: border-color 0.2s;
+        }
+        .ax-input:focus-within { border-color: var(--accent); }
+        .ax-input input {
+          flex: 1; background: transparent; border: none; outline: none;
+          color: var(--text-1); padding: 0 16px; font-family: inherit; font-size: 14px;
+        }
+
+        .ax-glow { position: absolute; filter: blur(100px); border-radius: 50%; z-index: 0; opacity: 0.15; pointer-events: none; }
+
+        @media(max-width: 860px) {
+          .ax-grid { grid-template-columns: 1fr !important; }
+          .ax-swap-mobile { order: -1; }
         }
       `}</style>
 
-      {/* ══ HERO ══ */}
-      <section style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
-        <div className="hgrid" ref={heroRef} style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "52fr 48fr", minHeight: 560 }}>
-
-          {/* Left */}
-          <div className="hleft" style={{ padding: "52px 48px 52px 40px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <div className="ha0" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "5px 13px", borderRadius: 20, background: "rgba(34,197,94,.07)", border: "1px solid rgba(34,197,94,.2)", width: "fit-content", marginBottom: 22 }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", animation: "hp 2s infinite", display: "inline-block" }}/>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#059669", letterSpacing: ".03em" }}>AxonHire is live · 4,200+ open jobs</span>
+      {/* ══ ACT 1: HERO ══ */}
+      <section style={{ position: "relative", padding: "80px 24px 60px", borderBottom: "1px solid var(--border)" }}>
+        <div className="ax-glow" style={{ top: 0, left: 0, width: "50%", height: "100%", background: "var(--accent)" }} />
+        
+        <div ref={heroRef} className="ax-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 64, alignItems: "center", position: "relative", zIndex: 1 }}>
+          
+          <div className={`ax-fade ${heroVis ? 'visible' : ''}`}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 20, background: "var(--bg-subtle)", border: "1px solid var(--border-strong)", marginBottom: 24 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981" }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-2)", letterSpacing: "0.03em" }}>Intelligent hiring is here</span>
             </div>
 
-            <h1 className="ha1" style={{ fontSize: "clamp(32px,4.2vw,48px)", fontWeight: 800, letterSpacing: "-.045em", lineHeight: 1.08, color: "var(--text-1)", marginBottom: 6 }}>
-              The AI layer between
+            <h1 className="editorial" style={{ fontSize: "clamp(40px, 5vw, 64px)", fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.05, color: "var(--text-1)", marginBottom: 20 }}>
+              The AI layer between <br/>
+              <span style={{ fontStyle: "italic", color: "var(--accent)" }}>talent</span> & opportunity.
             </h1>
-            <h1 className="ha1" style={{ fontSize: "clamp(30px,3.8vw,44px)", fontWeight: 800, letterSpacing: "-.045em", lineHeight: 1.08, color: "#0057B8", marginBottom: 6 }}>
-              talent and opportunity.
-            </h1>
-            <div className="ha1" style={{ width: 52, height: 3, background: "#0057B8", borderRadius: 2, marginBottom: 18, transformOrigin: "left", animation: "hb .7s .3s both" }}/>
 
-            <p className="ha2" style={{ fontSize: 14, color: "var(--text-2)", lineHeight: 1.78, maxWidth: 400, marginBottom: 28 }}>
-              AxonHire reads every resume, scores every match 0–100, and delivers a ranked shortlist — so recruiters stop guessing and candidates stop being overlooked.
+            <p style={{ fontSize: 16, color: "var(--text-2)", lineHeight: 1.6, marginBottom: 40, maxWidth: 480 }}>
+              AxonHire reads every resume, scores every match, and delivers a ranked shortlist. Candidates stop guessing; recruiters stop sorting.
             </p>
 
-            {/* Search */}
-            <div className="ha3" style={{ marginBottom: 16, maxWidth: 440 }}>
-              <div style={{ display: "flex", background: "var(--bg-subtle)", border: "1.5px solid var(--border-strong)", borderRadius: 8, overflow: "hidden", transition: "border-color .15s" }}
-                onFocusCapture={e => e.currentTarget.style.borderColor = "#0057B8"}
-                onBlurCapture={e => e.currentTarget.style.borderColor = "var(--border-strong)"}
-              >
-                <div style={{ display: "flex", alignItems: "center", paddingLeft: 12, color: "var(--text-3)" }}>
-                  <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                </div>
-                <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && navigate("/jobs")}
-                  placeholder="Role, skill, or company…"
-                  style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontFamily: "Inter,sans-serif", fontSize: 13, color: "var(--text-1)", height: 44, padding: "0 10px" }}/>
-                <button onClick={() => navigate("/jobs")} style={{ margin: 4, padding: "0 16px", background: "#0057B8", color: "white", border: "none", borderRadius: 5, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                  Search
-                </button>
-              </div>
+            <div className="ax-input" style={{ maxWidth: 400, marginBottom: 24 }}>
+              <input 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+                onKeyDown={e => e.key === "Enter" && navigate("/jobs")}
+                placeholder="Role, skill, or company..."
+              />
+              <button onClick={() => navigate("/jobs")} className="ax-btn ax-btn-primary" style={{ padding: "10px 20px" }}>Search</button>
             </div>
 
-            <div className="ha3" style={{ display: "flex", gap: 9, flexWrap: "wrap", marginBottom: 24 }}>
-              <button className="hbtn" onClick={go}
-                style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 22px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 2px 12px rgba(0,87,184,.22)" }}>
-                {isLoggedIn ? "Browse Jobs" : "Get started — free"}
-                <svg width="13" height="13" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              <button onClick={go} className="ax-btn" style={{ background: "var(--accent)", color: "white" }}>
+                {isLoggedIn ? "Browse Jobs" : "Get started for free"}
               </button>
-              <Link to="/ai-bot" className="hlink"
-                style={{ display: "flex", alignItems: "center", padding: "10px 20px", color: "var(--text-2)", border: "1px solid var(--border-strong)", borderRadius: 6, fontSize: 13, fontWeight: 500, textDecoration: "none" }}>
+              <Link to="/ai-bot" style={{ fontSize: 14, fontWeight: 500, color: "var(--text-2)", textDecoration: "none", borderBottom: "1px solid var(--border-strong)" }}>
                 Try AI Coach
               </Link>
             </div>
-
-            {/* Social proof */}
-            <div className="ha4" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ display: "flex" }}>
-                {["#0891b2","#7c3aed","#059669","#ea580c","#2563eb"].map((bg, i) => (
-                  <div key={i} style={{ width: 26, height: 26, borderRadius: "50%", background: bg, border: "2px solid var(--bg-surface)", marginLeft: i ? -7 : 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "white", position: "relative", zIndex: 5 - i }}>
-                    {String.fromCharCode(65 + i)}
-                  </div>
-                ))}
-              </div>
-              <span style={{ fontSize: 11, color: "var(--text-3)" }}>
-                <strong style={{ color: "var(--text-2)", fontWeight: 600 }}>12,000+</strong> professionals joined this month
-              </span>
-            </div>
           </div>
 
-          {/* Right — AI Brain illustration + job cards */}
-          <div className="hright" style={{ padding: "28px 28px 28px 40px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 10 }}>
-            <div style={{ borderRadius: 12, background: "var(--bg-subtle)", border: "1px solid var(--border)", padding: "12px 8px 0px", marginBottom: 4 }}>
+          <div className={`ax-fade delay-1 ${heroVis ? 'visible' : ''}`} style={{ position: "relative" }}>
+            <div className="ax-bento" style={{ padding: "20px 16px" }}>
               <AIBrainIllustration />
             </div>
-
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: ".07em" }}>AI-matched for your profile</span>
-              <button onClick={() => navigate("/jobs")} style={{ fontSize: 10, color: "#0057B8", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", padding: 0 }}>See all →</button>
-            </div>
-
-            {[
-              { title: "Frontend Engineer", co: "Axon Labs",   sal: "₹6–10 LPA",  col: "#0891b2", match: 94, tag: "New" },
-              { title: "Data Analyst",      co: "InsightIQ",   sal: "₹5–9 LPA",   col: "#2563eb", match: 87, tag: "Hot" },
-              { title: "DevOps Engineer",   co: "InfraScale",  sal: "₹12–20 LPA", col: "#7c3aed", match: 72, tag: ""    },
-            ].map((jb, i) => (
-              <div key={i} className="hjob" onClick={() => navigate("/jobs")}
-                style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12, opacity: 1 - i * .18 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 7, background: jb.col, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "white", flexShrink: 0 }}>{jb.co[0]}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-1)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{jb.title}</div>
-                  <div style={{ fontSize: 10, color: "var(--text-3)" }}>{jb.co} · {jb.sal}</div>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <div style={{ width: 44, height: 4, borderRadius: 2, background: "var(--border)", overflow: "hidden" }}>
-                      <div style={{ height: "100%", background: jb.match >= 85 ? "#059669" : jb.match >= 70 ? "#0057B8" : "#f59e0b", width: `${jb.match}%`, borderRadius: 2 }}/>
-                    </div>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: jb.match >= 85 ? "#059669" : jb.match >= 70 ? "#0057B8" : "#f59e0b", fontFamily: "monospace" }}>{jb.match}%</span>
-                  </div>
-                  {jb.tag && <span style={{ fontSize: 8, padding: "1px 5px", borderRadius: 3, background: "#0057B810", border: "1px solid #0057B830", color: "#0057B8", fontWeight: 700 }}>{jb.tag}</span>}
-                </div>
-              </div>
-            ))}
           </div>
+
         </div>
       </section>
 
-      {/* ══ STATS ══ */}
-      <div ref={statsRef} style={{ background: "#0f172a", borderBottom: "1px solid rgba(255,255,255,.07)" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px 40px", display: "flex", alignItems: "center", justifyContent: "space-around", flexWrap: "wrap", gap: 10 }}>
-          {[
-            { n: `${j.toLocaleString()}+`, l: "Active jobs",        c: "#60a5fa" },
-            { n: `${c.toLocaleString()}+`, l: "Companies hiring",   c: "#a78bfa" },
-            { n: `${a}%`,                   l: "AI match accuracy",  c: "#34d399" },
-            { n: "< 2 min",                 l: "Time to first match",c: "#fbbf24" },
-            { n: "Free",                    l: "For candidates",     c: "#f472b6" },
-          ].map((s, i) => (
-            <React.Fragment key={s.l}>
-              {i > 0 && <div style={{ width: 1, height: 28, background: "rgba(255,255,255,.1)" }}/>}
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 700, color: s.c, letterSpacing: "-.03em", fontFamily: "monospace" }}>{s.n}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,.38)", marginTop: 2 }}>{s.l}</div>
-              </div>
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      {/* ══ BODY ══ */}
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "60px 40px 72px" }}>
-
-        {/* HOW AI SCORING WORKS */}
-        <div ref={howRef} style={{ opacity: howVis ? 1 : 0, transform: howVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 56 }}>
-          <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center", background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "36px 44px" }}>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 10 }}>How it works</div>
-              <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)", marginBottom: 12, lineHeight: 1.2 }}>AI scores every resume against every job. Automatically.</h2>
-              <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.78, marginBottom: 22 }}>Upload your PDF once. Our AI reads it, extracts skills and experience, then scores it against every job on the platform — giving you and recruiters a real match number, not a guess.</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
-                {[
-                  { n: "01", t: "Resume parsing",      d: "PDF → structured profile in under 2 seconds",        c: "#0057B8" },
-                  { n: "02", t: "Semantic matching",   d: "Context-aware — we understand what skills mean",      c: "#7c3aed" },
-                  { n: "03", t: "Score generation",    d: "0–100 match score per job, assigned instantly",       c: "#059669" },
-                  { n: "04", t: "Ranked pipeline",     d: "Recruiters see highest scores first, always",         c: "#ea580c" },
-                ].map(f => (
-                  <div key={f.n} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, color: f.c, fontFamily: "monospace", background: `${f.c}12`, padding: "2px 7px", borderRadius: 3, flexShrink: 0, marginTop: 1 }}>{f.n}</span>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-1)" }}>{f.t}</div>
-                      <div style={{ fontSize: 11, color: "var(--text-3)", lineHeight: 1.5 }}>{f.d}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <div style={{ background: "var(--bg-subtle)", borderRadius: 10, padding: "20px 16px" }}><ScoringIllustration /></div>
-            </div>
+      {/* ══ ACT 2: HOW IT WORKS (The Problem & AI Solution) ══ */}
+      <section style={{ padding: "100px 24px", background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
+        <div ref={howRef} style={{ maxWidth: 1200, margin: "0 auto" }}>
+          
+          <div className={`ax-fade ${howVis ? 'visible' : ''}`} style={{ textAlign: "center", marginBottom: 64 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 12 }}>How it works</div>
+            <h2 className="editorial" style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--text-1)", marginBottom: 16 }}>
+              AI scores every resume. <br/> <span style={{ fontStyle: "italic", color: "var(--accent)" }}>Automatically.</span>
+            </h2>
+            <p style={{ fontSize: 15, color: "var(--text-2)", maxWidth: 540, margin: "0 auto", lineHeight: 1.6 }}>
+              Upload your PDF once. Our engine extracts the narrative, understands semantic context, and scores it against every job on the platform in seconds.
+            </p>
           </div>
-        </div>
 
-        {/* PIPELINE PREVIEW */}
-        <div ref={pipeRef} style={{ opacity: pipeVis ? 1 : 0, transform: pipeVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 56 }}>
-          <div style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "36px 44px" }}>
-            <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
-              <div>
-                <div style={{ background: "var(--bg-subtle)", borderRadius: 10, padding: "16px 12px" }}>
-                  <PipelineIllustration />
+          <div className={`ax-grid ax-fade delay-1 ${howVis ? 'visible' : ''}`} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {[
+                { n: "01", t: "Semantic Parsing", d: "We map your entire career narrative, not just Ctrl+F keywords." },
+                { n: "02", t: "Contextual Scoring", d: "0–100 match score assigned instantly based on true skill alignment." },
+                { n: "03", t: "Actionable Insights", d: "Identify exact skill gaps before you apply, eliminating the guesswork." }
+              ].map(step => (
+                <div key={step.n} className="ax-bento" style={{ padding: 24, display: "flex", gap: 16, alignItems: "flex-start" }}>
+                   <div style={{ padding: "4px 8px", borderRadius: 4, background: "var(--bg-subtle)", color: "var(--text-1)", fontFamily: "monospace", fontWeight: 700, fontSize: 12, border: "1px solid var(--border-strong)" }}>
+                     {step.n}
+                   </div>
+                   <div>
+                     <h4 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-1)", marginBottom: 6 }}>{step.t}</h4>
+                     <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.6, margin: 0 }}>{step.d}</p>
+                   </div>
                 </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 10 }}>For recruiters</div>
-                <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)", marginBottom: 12, lineHeight: 1.2 }}>A live ranked pipeline. Zero manual sorting.</h2>
-                <p style={{ fontSize: 13, color: "var(--text-2)", lineHeight: 1.78, marginBottom: 22 }}>Post a job, let AI score every applicant, drag them through stages. The best candidates are always at the top. One click exports your shortlist to Excel.</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7, marginBottom: 22 }}>
-                  {["AI scores all applicants","Drag-and-drop kanban","Batch AI analysis","Excel export","Resume viewer","Schedule interviews","Email applicants","Analytics dashboard"].map(f => (
-                    <div key={f} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "var(--text-2)", padding: "6px 8px", borderRadius: 5, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
-                      <svg width="10" height="10" fill="none" stroke="#059669" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                      {f}
-                    </div>
-                  ))}
+              ))}
+            </div>
+            
+            <div className="ax-bento" style={{ padding: "40px 24px", display: "flex", justifyContent: "center", background: "var(--bg-subtle)" }}>
+              <div style={{ maxWidth: 400, width: "100%" }}><ScoringIllustration /></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══ ACT 3: CANDIDATE JOURNEY ══ */}
+      <section style={{ padding: "100px 24px", background: "var(--bg-page)", borderBottom: "1px solid var(--border)" }}>
+        <div ref={candRef} className="ax-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          
+          <div className={`ax-fade ${candVis ? 'visible' : ''}`}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 16 }}>For Candidates</div>
+            <h2 className="editorial" style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--text-1)", marginBottom: 20 }}>
+              Stop sending your resume <br/> into the void.
+            </h2>
+            <p style={{ fontSize: 15, color: "var(--text-2)", lineHeight: 1.6, marginBottom: 32 }}>
+              See your AI match score for every role upfront. Apply knowing you have a real shot, and use our free AI Coach to prepare for the interview.
+            </p>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32 }}>
+              {["Instant Match Scores", "Missing Keyword Alerts", "AI Interview Prep", "One-Click Apply"].map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 500, color: "var(--text-1)" }}>
+                  <span style={{ color: "#10b981", fontWeight: "bold" }}>✓</span> {f}
                 </div>
-                <button className="hbtn" onClick={() => navigate("/post-job")}
-                  style={{ padding: "9px 20px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                  Post a job free →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* FOR WHO */}
-        <div ref={whoRef} style={{ opacity: whoVis ? 1 : 0, transform: whoVis ? "none" : "translateY(24px)", transition: "all .6s .1s", marginBottom: 48 }}>
-          <div style={{ textAlign: "center", marginBottom: 28 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-3)", marginBottom: 8 }}>Built for both sides</div>
-            <h2 style={{ fontSize: "clamp(20px,2.5vw,28px)", fontWeight: 800, letterSpacing: "-.035em", color: "var(--text-1)" }}>Whether you're hiring or being hired.</h2>
-          </div>
-
-          <div className="h2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 44 }}>
-            {/* Candidate card */}
-            <div className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "26px 28px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#0057B8", borderRadius: "12px 12px 0 0" }}/>
-              {/* Mini candidate illustration */}
-              <div style={{ width: "100%", marginBottom: 18, background: "var(--bg-subtle)", borderRadius: 8, padding: "8px 4px" }}>
-                <svg viewBox="0 0 320 95" style={{ width: "100%", height: 95 }}>
-                  {/* Score cards */}
-                  {[
-                    { x: 10, job: "Frontend Eng", score: 94, color: "#059669" },
-                    { x: 118, job: "Data Analyst", score: 87, color: "#0057B8" },
-                    { x: 226, job: "DevOps", score: 71, color: "#f59e0b" },
-                  ].map((c, i) => (
-                    <g key={i}>
-                      <rect x={c.x} y="5" width="86" height="80" rx="8" fill="white" stroke="#e2e8f0" strokeWidth="1.5"/>
-                      <text x={c.x + 43} y="24" fontSize="8.5" fill="#64748b" fontFamily="Inter,sans-serif" textAnchor="middle">{c.job}</text>
-                      <text x={c.x + 43} y="56" fontSize="26" fill={c.color} fontFamily="monospace" fontWeight="700" textAnchor="middle">{c.score}%</text>
-                      <text x={c.x + 43} y="72" fontSize="7.5" fill="#94a3b8" fontFamily="Inter,sans-serif" textAnchor="middle">match score</text>
-                    </g>
-                  ))}
-                </svg>
-              </div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#0057B8", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 8 }}>For candidates</div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-1)", letterSpacing: "-.02em", marginBottom: 8 }}>See your fit score before you apply</h3>
-              <p style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.72, marginBottom: 18 }}>Upload once. See your AI match score for every role. Apply knowing you have a real shot.</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 20 }}>
-                {["AI resume analysis","Score per job","Interview AI coach","One-click apply"].map(f => (
-                  <div key={f} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--text-2)", padding: "5px 8px", borderRadius: 4, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
-                    <svg width="9" height="9" fill="none" stroke="#0057B8" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    {f}
-                  </div>
-                ))}
-              </div>
-              <button className="hbtn" onClick={() => navigate(isLoggedIn ? "/jobs" : "/register")}
-                style={{ padding: "8px 20px", background: "#0057B8", color: "white", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                {isLoggedIn ? "Browse jobs" : "Start for free"}
-              </button>
+              ))}
             </div>
 
-            {/* AI Coach card */}
-            <div className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "26px 28px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#7c3aed", borderRadius: "12px 12px 0 0" }}/>
-              {/* Mini chat illustration */}
-              <div style={{ width: "100%", marginBottom: 18, background: "var(--bg-subtle)", borderRadius: 8, padding: "8px 4px" }}>
-                <svg viewBox="0 0 320 95" style={{ width: "100%", height: 95 }}>
-                  {[
-                    { x: 10, y: 8, w: 180, text: "How do I answer 'Tell me about yourself'?", user: true },
-                    { x: 130, y: 36, w: 180, text: "Start with your most recent role and...", user: false },
-                    { x: 10, y: 58, w: 140, text: "What about salary negotiation?", user: true },
-                  ].map((m, i) => (
-                    <g key={i}>
-                      <rect x={m.x} y={m.y} width={m.w} height="22" rx="6" fill={m.user ? "#0057B8" : "white"} stroke={m.user ? "none" : "#e2e8f0"} strokeWidth="1"/>
-                      <text x={m.x + 8} y={m.y + 14} fontSize="7.5" fill={m.user ? "white" : "#334155"} fontFamily="Inter,sans-serif">{m.text}</text>
-                    </g>
-                  ))}
-                </svg>
-              </div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#7c3aed", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 8 }}>Free AI Coach</div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-1)", letterSpacing: "-.02em", marginBottom: 8 }}>Prepare for any interview — right now</h3>
-              <p style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.72, marginBottom: 18 }}>Ask anything: mock questions, salary tips, how to explain a gap, cover letter help. Free and instant.</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 20 }}>
-                {["Mock interviews","Salary guidance","Cover letters","Gap explanations"].map(f => (
-                  <div key={f} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "var(--text-2)", padding: "5px 8px", borderRadius: 4, background: "var(--bg-subtle)", border: "1px solid var(--border)" }}>
-                    <svg width="9" height="9" fill="none" stroke="#7c3aed" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    {f}
-                  </div>
-                ))}
-              </div>
-              <Link to="/ai-bot"
-                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 20px", background: "rgba(124,58,237,.08)", color: "#7c3aed", border: "1px solid rgba(124,58,237,.3)", borderRadius: 6, fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
-                Open AI Coach →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* TRUST */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 10, marginBottom: 52 }}>
-          {[
-            { svg: <svg width="18" height="18" fill="none" stroke="#0057B8" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, t: "Secure by default",    s: "Resumes stored encrypted. Never shared without consent." },
-            { svg: <svg width="18" height="18" fill="none" stroke="#f59e0b" strokeWidth="1.8" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,          t: "Instant results",      s: "AI scoring runs the moment you apply — no waiting." },
-            { svg: <svg width="18" height="18" fill="none" stroke="#059669" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>,           t: "Always up to date",    s: "Job listings refresh in real time. You never see stale data." },
-            { svg: <svg width="18" height="18" fill="none" stroke="#7c3aed" strokeWidth="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,             t: "Full transparency",    s: "See exactly why you got your AI score." },
-          ].map(t => (
-            <div key={t.t} className="hsec" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", borderRadius: 9, padding: "16px 14px" }}>
-              <div style={{ marginBottom: 10 }}>{t.svg}</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-1)", marginBottom: 4 }}>{t.t}</div>
-              <div style={{ fontSize: 11, color: "var(--text-3)", lineHeight: 1.55 }}>{t.s}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* FINAL CTA */}
-        <div style={{ background: "#0f172a", borderRadius: 14, padding: "48px 52px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", right: -60, top: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(0,87,184,.12)", pointerEvents: "none" }}/>
-          <div style={{ position: "absolute", left: -40, bottom: -70, width: 200, height: 200, borderRadius: "50%", background: "rgba(124,58,237,.08)", pointerEvents: "none" }}/>
-          <div style={{ position: "relative" }}>
-            <AxonLogo size={28} showText={true} />
-            <h3 style={{ fontSize: "clamp(18px,2.2vw,26px)", fontWeight: 800, color: "white", letterSpacing: "-.03em", margin: "12px 0 8px" }}>Find your fit today. It's free.</h3>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,.42)", lineHeight: 1.65, maxWidth: 400, margin: 0 }}>No credit card. Takes under 2 minutes. Start seeing your AI match scores immediately.</p>
-          </div>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", flexShrink: 0, position: "relative" }}>
-            <button className="hbtn" onClick={go}
-              style={{ padding: "11px 28px", background: "#0057B8", color: "white", border: "none", borderRadius: 7, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 18px rgba(0,87,184,.35)" }}>
-              {isLoggedIn ? "Go to Jobs" : "Sign up free"}
+            <button onClick={() => navigate(isLoggedIn ? "/jobs" : "/register")} className="ax-btn ax-btn-primary">
+              {isLoggedIn ? "Browse Jobs" : "Create Profile Free"}
             </button>
-            <Link to="/ai-bot" className="hlink"
-              style={{ padding: "11px 22px", background: "transparent", color: "rgba(255,255,255,.55)", border: "1px solid rgba(255,255,255,.14)", borderRadius: 7, fontSize: 13, fontWeight: 500, textDecoration: "none", display: "inline-block" }}>
-              Try AI Coach
-            </Link>
           </div>
-        </div>
-      </div>
 
-      {/* FOOTER */}
-      <footer style={{ borderTop: "1px solid var(--border)", background: "var(--bg-surface)", padding: "20px 40px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          <AxonLogo size={22} showText={true} />
-          <div style={{ display: "flex", gap: 20 }}>
+          <div className={`ax-fade delay-1 ${candVis ? 'visible' : ''}`}>
+             <div className="ax-bento" style={{ padding: 24, borderTop: "4px solid var(--accent)" }}>
+                <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8 }}>
+                  {[
+                    { job: "Frontend Eng", score: 94, color: "#10b981" },
+                    { job: "Data Analyst", score: 87, color: "var(--accent)" },
+                    { job: "DevOps", score: 71, color: "#f59e0b" },
+                  ].map((c, i) => (
+                    <div key={i} style={{ flex: "0 0 130px", border: "1px solid var(--border)", borderRadius: 12, padding: "20px 16px", textAlign: "center", background: "var(--bg-page)" }}>
+                       <div style={{ fontSize: 12, color: "var(--text-1)", fontWeight: 500, marginBottom: 12, whiteSpace: "nowrap" }}>{c.job}</div>
+                       <div style={{ fontSize: 32, fontWeight: 700, fontFamily: "monospace", color: c.color }}>{c.score}%</div>
+                       <div style={{ fontSize: 10, color: "var(--text-3)", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>Match Score</div>
+                    </div>
+                  ))}
+                </div>
+             </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══ ACT 4: RECRUITER PIPELINE ══ */}
+      <section style={{ padding: "100px 24px", background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
+        <div ref={pipeRef} className="ax-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          
+          <div className={`ax-fade delay-1 ax-swap-mobile ${pipeVis ? 'visible' : ''}`}>
+             <div className="ax-bento" style={{ padding: "24px 16px", background: "var(--bg-subtle)" }}>
+                <PipelineIllustration />
+             </div>
+          </div>
+
+          <div className={`ax-fade ${pipeVis ? 'visible' : ''}`}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#10b981", marginBottom: 16 }}>For Recruiters</div>
+            <h2 className="editorial" style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--text-1)", marginBottom: 20 }}>
+              A live ranked pipeline. <br/> Zero manual sorting.
+            </h2>
+            <p style={{ fontSize: 15, color: "var(--text-2)", lineHeight: 1.6, marginBottom: 32 }}>
+              Post a job, let AI score every applicant, and drag them through stages. The best candidates are always at the top.
+            </p>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32 }}>
+              {["Drag & Drop Kanban", "Batch Analysis", "Excel Export", "Bias-Free Scoring"].map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 500, color: "var(--text-1)" }}>
+                  <span style={{ color: "#10b981", fontWeight: "bold" }}>✓</span> {f}
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => navigate("/post-job")} className="ax-btn ax-btn-outline">
+              Post a job free →
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══ ACT 5: STATS & FINAL CTA ══ */}
+      <section style={{ padding: "80px 24px" }}>
+        
+        {/* Stats */}
+        <div ref={statsRef} style={{ maxWidth: 1000, margin: "0 auto 80px", display: "flex", flexWrap: "wrap", justifyContent: "space-around", gap: 32, padding: "32px 0", borderBottom: "1px solid var(--border)" }}>
+          {[
+            { num: j, label: "Active Jobs", col: "var(--text-1)" },
+            { num: c, label: "Companies Hiring", col: "var(--text-1)" },
+            { num: a, suffix: "%", label: "Match Accuracy", col: "#10b981" }
+          ].map((stat, i) => (
+            <div key={i} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 36, fontWeight: 700, fontFamily: "monospace", color: stat.col, letterSpacing: "-0.04em", marginBottom: 4 }}>
+                {stat.num}{stat.suffix || "+"}
+              </div>
+              <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)", fontWeight: 600 }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
+          <h2 className="editorial" style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 600, letterSpacing: "-0.02em", color: "var(--text-1)", marginBottom: 20 }}>
+            Ready to rewrite your narrative?
+          </h2>
+          <p style={{ fontSize: 16, color: "var(--text-2)", maxWidth: 500, margin: "0 auto 32px", lineHeight: 1.6 }}>
+            Whether you're hiring top talent or looking to be hired, AxonHire is the bridge. Free for candidates. Free to post for recruiters.
+          </p>
+          <button onClick={go} className="ax-btn ax-btn-primary" style={{ padding: "16px 32px", fontSize: 15 }}>
+            {isLoggedIn ? "Go to Dashboard" : "Create your free account"}
+          </button>
+        </div>
+      </section>
+
+      {/* ══ FOOTER ══ */}
+      <footer style={{ borderTop: "1px solid var(--border)", background: "var(--bg-surface)", padding: "32px 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+          <AxonLogo size={24} showText={true} />
+          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
             {[["Jobs", "/jobs"], ["Post a Job", "/post-job"], ["AI Coach", "/ai-bot"], ["Dashboard", "/recruiter-dashboard"], ["Feedback", "/feedback"]].map(([l, h]) => (
-              <Link key={l} to={h} className="hft" style={{ fontSize: 11, color: "var(--text-3)", textDecoration: "none" }}>{l}</Link>
+              <Link key={l} to={h} style={{ fontSize: 13, color: "var(--text-2)", textDecoration: "none", fontWeight: 500 }}>
+                {l}
+              </Link>
             ))}
           </div>
-          <p style={{ fontSize: 10, color: "var(--text-3)" }}>© 2026 AxonHire · Operational</p>
+          <p style={{ fontSize: 12, color: "var(--text-3)", margin: 0 }}>© {new Date().getFullYear()} AxonHire · Operational</p>
         </div>
       </footer>
     </div>

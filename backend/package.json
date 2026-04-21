@@ -21,6 +21,7 @@
     "cohere-ai": "^7.20.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "csrf-csrf": "^4.0.3",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -38,10 +39,12 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.12",
     "openai": "^6.15.0",
+    "path": "^0.12.7",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^3.11.174",
     "react-markdown": "^10.1.0",
-    "router": "^2.2.0"
+    "router": "^2.2.0",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^6.0.2",

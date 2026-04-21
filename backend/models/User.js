@@ -1,9 +1,10 @@
 //this file defineds how a "user" looks in MongoDB(a schema)
 
 //import mongoose to create schema
-const { min } = require("moment");
+// const { min } = require("moment");
 const mongoose = require("mongoose");
-const { use } = require("react");
+// const { use } = require("react");
+const crypto = require("crypto");//this is for hashing  otp 
 
 //create user schema(structure of a user document)
 const userSchema = new mongoose.Schema({
@@ -15,6 +16,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true, //no duplicate emails
+    lowercase:true,
+    trim:true
   },
   password: {
     type: String,
@@ -76,12 +79,18 @@ const userSchema = new mongoose.Schema({
   otpExpires: { type: Date } // Code expires in 10 mins
 });
 
+//hashtoken function here 
+
+userSchema.statics.hashOTP=function(raw){
+  return crypto.createHash("sha256").update(String(raw)).digest("hex");
+};
+
 //indexing for faster accessing
 userSchema.index({ email: 1 });//to quickly find a user by email (for login)
 userSchema.index({ savedJobs: 1 }); //to quickly find all users who saved a particular job
 
 //stactic contracts for the whole app can use
-userSchema.statics_DURATION=5;
+userSchema.statics.MAX_LOGIN_ATTEMPTS = 5;
 userSchema.statics.LOCK_DURATION=15*60*1000; //15 minutes in ms 
 
 

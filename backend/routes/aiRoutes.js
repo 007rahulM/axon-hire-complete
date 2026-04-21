@@ -1183,7 +1183,8 @@ router.post("/generate-questions", verifyToken, async (req, res) => {
       userPrompt = `Questions for: "${jobTitle}"`;
     }
 
-    const result = await generateJSON(systemPrompt, userPrompt);
+    const foolproofPrompt = systemPrompt + "\n\nCRITICAL: You MUST output your response entirely in valid JSON format. Do not use markdown wrappers.";
+    const result = await generateJSON(systemPrompt, userPrompt,foolproofPrompt);
     let data = result.data;
 
     if (mode === "solver" && Array.isArray(data)) {
@@ -1204,7 +1205,9 @@ router.post("/generate-questions-stream", verifyToken, async (req, res) => {
   try {
     const { jobTitle, mode } = req.body;
     if (!jobTitle) return res.status(400).json({ message: "Input required." });
-
+res.setHeader("Content-Type", "text/plain; charset=utf-8"); 
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("Connection", "keep-alive");
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");

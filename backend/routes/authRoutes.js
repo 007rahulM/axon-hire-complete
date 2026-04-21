@@ -15,6 +15,7 @@ const crypto=require("crypto");
 const {body,validationResult}=require("express-validator");
 const logger=require("../utils/logger");
 const { toBinaryUploadRequest } = require("cohere-ai/core/file");
+const isProduction = process.env.NODE_ENV === "production";
 
 
 
@@ -75,8 +76,12 @@ if(!erros.isEmpty()){
     }
 
     // Secure OTP generation using crypto
-    const otp = crypto.randomInt(100000, 999999).toString();
-    user.otp = otp;
+    const otp = crypto.randomInt(100000, 1000000).toString(); 
+    
+    //we using the shar256 to hash the otp in the user model 
+    //hash imcoming otp 
+    const hashedOTP=User.hashOTP(otp);
+    user.otp = hashedOTP;
     user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 Minutes
 
     await user.save();
@@ -88,7 +93,7 @@ if(!erros.isEmpty()){
   } catch (err) {
 
     //on error logger
-    logger.error(`Registration failed for ${email}: ${err.message}`);
+    logger.error(`Registration failed for ${err.message}`,{email:req.body?.email});
 
     console.error("Register Error:", err);
     res.status(500).json({ message: "Server error" });
@@ -107,9 +112,13 @@ router.post("/verify-otp", async (req, res) => {
     if (!user) return res.status(400).json({ message: "User not found" });
 
     // Check if OTP matches and hasn't expired
-    if (user.otp !== otp || user.otpExpires < Date.now()) {
+    if (!user.otp || !user.otpExpires || user.otpExpires < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
+const hashedInput=User.hashOTP(otp);
+if(hashedInput!==user.otp){
+  return res.status(400).json({message:"Invalid or expired OTP"});
+}
 
     // Activate User
     user.isVerified = true;
@@ -139,8 +148,8 @@ router.post("/verify-otp", async (req, res) => {
 
 res.cookie("token",token,{
   httpOnly:true,
-  secure:process.env.NODE_ENV==="production",
-  sameSite:"strict",
+secure:isProduction,
+ sameSite: isProduction ? "none" : "strict", // 'none' fixes the cross-site production bug
   maxAge:12*60*60*1000, //12 hours
 });
 
@@ -154,6 +163,7 @@ res.status(200).json({
     });
 
   } catch (err) {
+    logger.error(`Verification failed for ${err.message}`,{email:req.body?.email});
     console.error("Verification Error:",err);
     res.status(500).json({ message: "Server error" });
   }
@@ -215,8 +225,8 @@ body("confirm").custom((value,{req})=>value==req.body.password).withMessage("Pas
     }
 
     // GENERATE OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
-    user.otp = otp;
+    const otp = crypto.randomInt(100000, 1000000).toString();
+    user.otp = User.hashOTP(otp);
     
     // Set Expiration: 10 minutes (10 * 60s * 1000ms)
     user.otpExpires = Date.now() + 10 * 60 * 1000; 
@@ -331,8 +341,8 @@ if(!user.isVerified){
 
     res.cookie("token",token,{
     httpOnly:true,
-      secure:process.env.NODE_ENV==="production",
-      sameSite:"strict",
+     secure:isProduction,
+     sameSite: isProduction ? "none" : "strict", // 'none' fixes the cross-site production bug
       maxAge:12*60*60*1000, //12 hours
     })
 
@@ -413,8 +423,8 @@ router.post("/google", async (req, res) => {
     //the token is now stored in the cookies 
     res.cookie("token",appToken,{
       httpOnly:true,
-      secure:process.env.NODE_ENV=="production",
-      sameSite:"strict",
+     secure:isProduction,
+   sameSite: isProduction ? "none" : "strict", // 'none' fixes the cross-site production bug
       maxAge:24*60*60*1000, //24 hours
     })
 
@@ -501,8 +511,8 @@ router.put("/onboard-recruiter", [
 //update token in cookies
 res.cookie("token",newToken,{
   httpOnly:true,
-  secure:process.env.NODE_ENV==="production",
-  sameSite:"strict",
+secure:isProduction,
+ sameSite: isProduction ? "none" : "strict", // 'none' fixes the cross-site production bug
   maxAge:12*60*60*1000, //12 hours
 
 })
@@ -527,8 +537,8 @@ res.cookie("token",newToken,{
 router.post("/logout",(req,res)=>{
   res.clearCookie("token",{
     httpOnly:true,
-    secure:process.env.NODE_ENV==="production",
-    sameSite:"strict",
+  secure:isProduction,
+  sameSite: isProduction ? "none" : "strict", // 'none' fixes the cross-site production bug
   });
   res.json({message:"Logged out successfully"});
 });
@@ -537,11 +547,23 @@ router.post("/logout",(req,res)=>{
 ////////////////////////////////////////////////////////////////////////////////
 
 
-//// GET /api/csrf-token — frontend calls this first to get a CSRF token
-router.get("/csrf-token", (req, res) => {
-  const token = generateToken(req, res); // Sets the cookie too
-  res.json({ csrfToken: token });
-});
+// //// GET /api/csrf-token — frontend calls this first to get a CSRF token
+// router.get("/csrf-token", (req, res) => {
+//   const token = generateToken(req, res); // Sets the cookie too
+//   res.json({ csrfToken: token });
+// });
 
+
+// Add this near your other routes
+router.get("/verify", verifyToken, async (req, res) => {
+  try {
+    // If verifyToken passes, req.user will exist
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

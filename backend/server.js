@@ -18,6 +18,7 @@ const fs=require("fs");//import file system tool
 const helmet=require("helmet"); //import helmet for security headers
 
 
+
 const {rateLimit,ipKeyGenerator }=require("express-rate-limit"); //import rate limiter to prevent brute force attacks
 
 //inport the cookie parser
@@ -183,6 +184,7 @@ app.use("/api/admin", adminRoutes);
 
 
 
+
 app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/alerts", alertRoutes);
@@ -193,7 +195,11 @@ app.use("/api/alerts", alertRoutes);
 
 
 
-
+//start the ai worker (only in production or if explixitly enabled)
+if(process.env.NODE_ENV!=="test"){
+  require("./workers/aiWorker");
+  logger.info("AI worker started");
+}
 
 
 

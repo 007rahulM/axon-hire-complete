@@ -15,6 +15,7 @@ const { performAnalysis } = require("./aiRoutes"); // 👈 Export this function 
 const parseResumeFromUrl = require("../utils/resumeParser");
 const { calculateV3Score } = require("../utils/matchingEngine");
 const { calculateExperienceMonths } = require("../utils/durationMath");
+const aiQueue = require("../queues/aiQueue");
 
 
 
@@ -46,27 +47,47 @@ router.post("/:jobId/apply", verifyToken, async (req, res) => {
 
     await newApplication.save();
 
-    // 🚀 3. BACKGROUND AI EVALUATION (Prevents Request Delay)
-    if (job.autoEvaluate) {
-      // We run this without 'await' so the user gets a response instantly
-      // Use setImmediate to ensure it runs after the current event loop
-      setImmediate(async () => {
-        try {
-          console.log(`🧠 Background AI Audit starting for ${user.name}...`);
+    // // 🚀 3. BACKGROUND AI EVALUATION (Prevents Request Delay)
+    // if (job.autoEvaluate) {
+    //   // We run this without 'await' so the user gets a response instantly
+    //   // Use setImmediate to ensure it runs after the current event loop
+    //   setImmediate(async () => {
+    //     try {
+    //       console.log(`🧠 Background AI Audit starting for ${user.name}...`);
           
-          // Use the full orchestrator that gives summaries and learning loops
-          const result = await performAnalysis(user.resumeUrl, jobId, job.evaluationMode);
+    //       // Use the full orchestrator that gives summaries and learning loops
+    //       const result = await performAnalysis(user.resumeUrl, jobId, job.evaluationMode);
           
-          if (result.success) {
-            newApplication.aiAnalysis = [result.analysis];
-            await newApplication.save();
-            console.log(`✅ Background AI Audit complete for ${user.name}`);
-          }
-        } catch (err) {
-          console.error("❌ Background AI Audit failed:", err.message);
-        }
+    //       if (result.success) {
+    //         newApplication.aiAnalysis = [result.analysis];
+    //         await newApplication.save();
+    //         console.log(`✅ Background AI Audit complete for ${user.name}`);
+    //       }
+    //     } catch (err) {
+    //       console.error("❌ Background AI Audit failed:", err.message);
+    //     }
+    //   });
+    // }
+
+    //new auto evaute which uses queue system and workers
+    if(job.autoEvaluate){
+      await aiQueue.add("analyze-resume",{
+        applicationId:newApplication._id.toString(),
+        resumeUrl:user.resumeUrl,
+        jobId:jobId,
+        evaluationMode:job.evaluationMode,
+      },{
+        attepms:3,  //retry up to 3 times on failure
+        backoff:{
+          type:"exponential", 
+          dealay:5000, //waits 5s, then 10s, then 20 s between retires
+
+        },
+        removeOnComplete:100, //keep last 100 completed jobs for debugging
+        removeOnFail:200, //keep last 200 failed jobs for investigation
       });
-    }
+    } 
+
 
     // 4. Notifications & Emails
     await Notification.create({

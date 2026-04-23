@@ -1,68 +1,121 @@
-name: 🗺️ Auto-Update Mindmap & README
+# This is a GitHub Actions workflow file (YAML format)
+# YAML is human-readable and uses indentation (spaces, not tabs)
+# Workflows automate CI/CD tasks. This one updates docs via PRs
+# File location: .github/workflows/update-docs.yml (required for GitHub to find it)
+# Name: Shows in the Actions tab. Use emojis/descriptive names for clarity
+name: Auto Update Mindmap & README
 
-# ─── Triggers ────────────────────────────────────────────────────────────────
+# 'on:' defines triggers—what events start this workflow
+# 'push' runs on every push to any branch. Good for auto-updates
+# 'branches: - main' means only main branch (not all branches like "**")
+# 'paths-ignore' skips runs if only these files change (saves time/resources)
+# Why? Docs updates shouldn't trigger themselves (loop prevention)
 on:
   push:
-    # Trigger on every branch so the mindmap stays accurate on feature branches too.
-    # README is only updated for feat: commits (handled inside the script).
     branches:
-      - "**"
-    # Re-generate whenever source files change; skip if only docs changed
+      - main  # Only main branch
     paths-ignore:
-      - "mindmap.md"
-      - "README.md"
-      - ".github/**"
-      - "**/*.md"
-      - "scripts/update-mindmap.js"
+      - "mindmap.md"       # Skip if only mindmap changes
+      - "README.md"        # Skip if only README changes
+      - ".github/"         # Skip workflow/GH config changes
+      - "**/*.md"          # Skip any markdown files
+      - "scripts/update-mindmap.js"  # Skip if the script itself changes
 
-# Only one run at a time per branch (cancel in-progress if a new push arrives)
+# 'concurrency' prevents multiple runs at once per branch
+# 'group' names the group (unique per branch). 'cancel-in-progress' stops old runs
+# Why? Avoids conflicts if pushes happen fast. Saves compute time
 concurrency:
   group: update-docs-${{ github.ref }}
   cancel-in-progress: true
 
+# 'jobs:' defines the tasks. Each job runs on a separate VM (virtual machine like Ubuntu Linux)
+# One job here: 'update-docs'. Jobs can run in parallel or depend on others
 jobs:
   update-docs:
+    # 'name:' is the display name in Actions tab
     name: Regenerate mindmap.md & README.md
+    # 'runs-on:' specifies the VM (ubuntu-latest is free/common)
     runs-on: ubuntu-latest
 
-    # Required so the job can push back to the repo
+    # 'permissions:' controls what the job can do (security!)
+    # 'contents: read' allows reading repo files (for checkout/script)
+    # 'pull-requests: write' allows creating/merging PRs (for auto-updates)
+    # Why these? Minimum needed—no direct pushes (respects rules)
+    # 'GITHUB_TOKEN' (auto-provided) uses these perms
     permissions:
-      contents: write
+      contents: read
+      pull-requests: write
 
+    # 'steps:' are the actions/commands in order. They run in order
     steps:
-      # ── 1. Checkout full history so git log works ─────────────────────────
-      - name: Checkout repository
+      # Step 1: Download the repo code so the script can run
+      # 'uses:' calls a pre-built action from GitHub Marketplace
+      # '@v4' pins the version (avoid breaking changes)
+      # 'with:' passes inputs to the action
+      # 'fetch-depth: 0' gets full git history (needed for script's git log)
+      # 'token:' uses built-in GITHUB_TOKEN for auth
+      # Why? Script needs history to generate mindmap
+      - name: Checkout repository  # Descriptive name for logs
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── 2. Set up Node.js (script uses only built-ins, but still useful) ──
+      # Step 2: Install Node.js (script is JS, needs runtime)
+      # 'uses:' another action. 'node-version' sets version
+      # Why? Ensure consistent environment (CI/CD principle)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20"  # Match your local version if possible
 
-      # ── 3. Run the mindmap updater ────────────────────────────────────────
+      # Step 3: Run your custom script
+      # 'run:' executes shell commands (bash on Ubuntu)
+      # 'env:' passes environment variables to the command
+      # Variables come from GitHub context (e.g., github.sha is commit ID)
+      # Why? Script updates files based on commit data
       - name: Run update-mindmap script
-        run: node scripts/update-mindmap.js
+        run: node scripts/update-mindmap.js  # Your script path
         env:
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          # Passed so the script can decide whether to update README
-          # (only happens for feat: commits)
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GITHUB_SHA: ${{ github.sha }}      # Current commit ID
+          GITHUB_REF_NAME: ${{ github.ref_name }}  # Branch name (e.g., main)
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}  # Last commit message
 
-      # ── 4. Commit & push only if the files actually changed ───────────────
-      - name: Commit updated docs
+      # Step 4: Create a PR with updated files
+      # 'uses:' peter-evans/create-pull-request action (from Marketplace)
+      # Detects changes to specified files and opens a PR
+      # 'id:' gives the step a name for referencing outputs later
+      # 'with:' configures the action (inputs)
+      # 'token:' for auth. 'commit-message/title/body:' PR details
+      # 'branch:' unique name per run (avoids conflicts)
+      # 'delete-branch:' clean up after merge
+      # 'add-paths:' only includes these files in PR (if changed)
+      # Why PR? Respects repo rules. Action handles commit/PR creation
+      - name: Create Pull Request
+        id: create-pr  # Reference this step's output (e.g., PR number)
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "auto-update mindmap & README [skip ci]\n\nTriggered by commit ${{ github.sha }} on ${{ github.ref_name }}\nAuthor: ${{ github.actor }}"  # Commit message on PR branch
+          title: "docs: auto-update mindmap & README"  # PR title
+          body: "This PR auto-updates the mindmap and README based on recent changes.\n\nTriggered by commit ${{ github.sha }}.\n\nAuto-generated by GitHub Actions."  # PR description
+          branch: update-docs-${{ github.run_number }}  # Unique branch (run_number is incrementing ID)
+          delete-branch: true  # Delete branch after merge
+          add-paths: |  # Multiline list of files to include
+            mindmap.md
+            README.md
+
+      # Step 5: Auto-merge the PR if checks pass
+      # 'if:' condition—only run if PR was created (checks output)
+      # 'run:' uses GitHub CLI (gh) for merging
+      # 'gh pr merge' merges the PR. '--auto' waits for checks
+      # '--squash' combines commits. '--delete-branch false' lets action handle it
+      # 'env:' provides token for CLI auth
+      # Why? Automates merge after rules are satisfied (e.g., scans pass)
+      # If checks fail, PR stays open for manual merge
+      - name: Auto-merge PR
+        if: steps.create-pr.outputs.pull-request-number  # Only if PR exists
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add mindmap.md README.md
-          # Exit 0 even when nothing changed (diff returns 1 when files differ)
-          git diff --staged --quiet && echo "No changes — skipping commit" && exit 0
-          git commit -m "docs: auto-update mindmap & README [skip ci]
-
-          Triggered by commit ${{ github.sha }} on ${{ github.ref_name }}
-          Author: ${{ github.actor }}"
-          git push
+          gh pr merge ${{ steps.create-pr.outputs.pull-request-number }} --auto --squash --delete-branch false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

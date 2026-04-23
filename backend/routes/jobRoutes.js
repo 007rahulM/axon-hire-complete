@@ -323,13 +323,13 @@
     
 //     const now = new Date();
 //     const result = await Job.updateMany(
-//       { deadline: { $lt: now }, isOpen: true },
-//       { $set: { isOpen: false } }
-//     );
-    
-//     res.json({ success: true, closedCount: result.modifiedCount });
-//   } catch (err) {
-//     res.status(500).json({ success: false, error: err.message });
+  //       { deadline: { $lt: now }, isOpen: true },
+  //       { $set: { isOpen: false } }
+  //     );
+  
+  //     res.json({ success: true, closedCount: result.modifiedCount });
+  //   } catch (err) {
+    //     res.status(500).json({ success: false, error: err.message });
 //   }
 // });
 
@@ -349,56 +349,137 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 const JobAlert = require("../models/JobAlert");
 const nodemailer = require("nodemailer");
 const logger=require('../utils/logger');
+const redis=require("../utils/cache");
+
+// // ─────────────────────────────────────────────────────────────────
+// // GET /api/jobs – Public, with pagination & filters
+// // ─────────────────────────────────────────────────────────────────
+// router.get("/", async (req, res) => {
+  //   try {
+    //     const page = parseInt(req.query.page) || 1;
+    //     const limit = parseInt(req.query.limit) || 12;
+    //     const title = req.query.title || "";
+    //     const location = req.query.location || "";
+    //     const remote = req.query.remote === "true"; // ?remote=true
+    //     const type = req.query.type || ""; // e.g. "Full-time"
+    //     const minSalary = req.query.minSalary ? parseInt(req.query.minSalary) : null;
+    //     const maxSalary = req.query.maxSalary ? parseInt(req.query.maxSalary) : null;
+    
+    //     const filter = { isOpen: true };
+    
+    //     if (title) filter.title = { $regex: title, $options: "i" };
+    //     if (location) filter.location = { $regex: location, $options: "i" };
+    //     if (type) filter.type = type;
+    //     if (remote) filter.location = { $regex: "remote", $options: "i" }; // location contains "remote"
+    //     if (minSalary !== null || maxSalary !== null) {
+      //       filter.salary = {};
+      //       if (minSalary !== null) filter.salary.$gte = minSalary;
+      //       if (maxSalary !== null) filter.salary.$lte = maxSalary;
+      //     }
+      
+      //     const skip = (page - 1) * limit;
+      //     const total = await Job.countDocuments(filter);
+      //     const jobs = await Job.find(filter)
+      //       .sort({ createdAt: -1 })
+      //       .skip(skip)
+      //       .limit(limit);
+      
+      //     res.json({
+        //       jobs,
+        //       pagination: {
+          //         page,
+          //         limit,
+          //         total,
+          //         totalPages: Math.ceil(total / limit),
+          //         hasMore: skip + jobs.length < total,
+          //       },
+          //     });
+          //   } catch (err) {
+            //     console.error("Error fetching jobs:", err.message);
+            //     res.status(500).json({ message: "Server error" });
+            //   }
+            // });
+            
 
 
-// ─────────────────────────────────────────────────────────────────
-// GET /api/jobs – Public, with pagination & filters
-// ─────────────────────────────────────────────────────────────────
-router.get("/", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 12;
-    const title = req.query.title || "";
-    const location = req.query.location || "";
-    const remote = req.query.remote === "true"; // ?remote=true
-    const type = req.query.type || ""; // e.g. "Full-time"
-    const minSalary = req.query.minSalary ? parseInt(req.query.minSalary) : null;
-    const maxSalary = req.query.maxSalary ? parseInt(req.query.maxSalary) : null;
+            //helper to clear job list cahces (wildcard delete)
+            const clearJobListCache=async()=>{
+                const keys=await redis.keys("jobs:page:*"); //find all keys starting with jobs:
+                if(keys.length >0){
+                    await redis.del(...keys)  //delete all 
+                }
+            }
 
-    const filter = { isOpen: true };
 
-    if (title) filter.title = { $regex: title, $options: "i" };
-    if (location) filter.location = { $regex: location, $options: "i" };
-    if (type) filter.type = type;
-    if (remote) filter.location = { $regex: "remote", $options: "i" }; // location contains "remote"
-    if (minSalary !== null || maxSalary !== null) {
-      filter.salary = {};
-      if (minSalary !== null) filter.salary.$gte = minSalary;
-      if (maxSalary !== null) filter.salary.$lte = maxSalary;
+
+            
+            // // GET /api/jobs – Public, with pagination & filters and with caching 
+            
+            router.get("/",async(req,res)=>{
+              try{
+                const page=parseInt(req.query.page)||1;
+                const limit=parseInt(req.query.limit)||12;
+    const title=req.query.title || "";
+    const location=req.query.location || "";
+    const remote=req.query.remote === "true";
+    const type=req.query.type ||"";
+    const minSalary=req.query.minSalary?parseInt(req.query.minSalary):null;
+    const maxSalary=req.query.maxSalary?parseInt(req.query.maxSalary):null;
+
+    //build unique cache key from query params (differen filters =different cache)
+
+    const cachekey=`jobs:page:${page}:limit:${limit}:title:${title}:location:${location}:remote:${remote}:type:${type}:minSalary:${minSalary}:maxSalary:${maxSalary}`;
+
+    //step 1 check cache first (fast)
+    const cached=await redis.get(cachekey);
+    if(cached){
+      return res.json(cached); //@upstash/redis auto-parse JSON -instant return
+
     }
 
-    const skip = (page - 1) * limit;
-    const total = await Job.countDocuments(filter);
-    const jobs = await Job.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    //step 2 cahce miss - query DB (slow, but only once per unique key)
+    const filter={isOpen:true};
+    if(title)filter.title={$regex:title, $options: "i"};
+    if(location)filter.location={$regex:location, $options: "i"};
+   if(type) filter.type = type; 
+    if(remote) filter.location={$regex:"remote", $options:"i"};
+    if(minSalary !==null || maxSalary!==null){
+      filter.salary={};
+      if(minSalary!==null)filter.salary.$gte=minSalary;
+      if(maxSalary!==null)filter.salary.$lte=maxSalary;
+    }
 
-    res.json({
-      jobs,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasMore: skip + jobs.length < total,
-      },
-    });
-  } catch (err) {
-    console.error("Error fetching jobs:", err.message);
-    res.status(500).json({ message: "Server error" });
-  }
+const skip=(page-1)*limit;
+const total=await Job.countDocuments(filter);
+const jobs=await Job.find(filter)
+.sort({createdAt:-1})
+.skip(skip)
+.limit(limit)
+.populate("postedBy","name profilePicture") //Add this for full job details
+.lean(); //.lean() for faster queries (plain objects, no Monogees overhead)
+
+
+const result={
+  jobs,
+  pagination:{
+  page,
+  limit,
+  total,
+  totalPages:Math.ceil(total/limit),
+  hasMore:skip + jobs.length <total,
+},
+  };
+
+  //step 3 store i cahce for 30 second (TTL)
+  await redis.setex(cachekey,90,result); //now the job is refresher 1min 30 sec  if we want w can make it 30 sec later 
+
+  res.json(result);
+}catch(err){
+  logger.error("Jobs fetch failed:",err.message);
+  res.status(500).json({message:"Failed to fetch jobs"});
+}
 });
+
 
 // ─────────────────────────────────────────────────────────────────
 // GET /api/jobs/my-jobs – Recruiter's own jobs
@@ -491,6 +572,9 @@ router.post(
 
       const savedJob = await newJob.save();
 
+      // make the redis clear and get new updated job list to store so delete it 
+      await clearJobListCache();
+
 //logger info on saved
 logger.info(`Job posted by user ${req.user.id}:${title}`);
 
@@ -554,6 +638,10 @@ router.delete("/:id", verifyToken, async (req, res) => {
     await Job.findByIdAndDelete(jobId);
     await Application.deleteMany({ jobId });
 
+
+    //after deletin the jobs also clearn the redis joblist then readd the fressh data all in it 
+    await clearJobListCache();
+
     res.json({ message: "Job and associated applications removed" });
   } catch (err) {
     console.error("Delete job error:", err.message);
@@ -583,6 +671,11 @@ router.patch("/:id/toggle", verifyToken, async (req, res) => {
       { new: true }
     );
 
+
+
+    // when we update a  jobs or patch anything also we need to make the redis clearn and add fresh data or list of jobs in it 
+    await clearJobListCache();
+
     res.json({ message: "Job status updated", job: updatedJob });
   } catch (err) {
     console.error("Toggle error:", err);
@@ -609,5 +702,20 @@ router.post("/cron/cleanup", async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+
+//temp test route
+// Temp test route — DELETE THIS AFTER
+router.get("/redis-test", async (req, res) => {
+  try {
+    await redis.set("test-key", { message: "hello from redis" });
+    const value = await redis.get("test-key");
+    res.json({ value }); // Should return { "value": { "message": "hello from redis" } }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 module.exports = router;

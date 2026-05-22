@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">🚀 Axon Hire</h1>
+  <h1 align="center"> Axon Hire</h1>
   <p align="center">
     <strong>AI-Powered Recruitment Platform — Filter Signal from Noise in Hiring</strong>
   </p>
